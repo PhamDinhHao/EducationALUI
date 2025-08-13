@@ -1,0 +1,24 @@
+// Desktop style
+#quill.desktop {
+  .ql-editor {
+    width: 100% !important;
+  }
+}
+
+// Mobile style
+#quill.mobile  {
+    .ql-editor {
+      width: 600px !important;
+  }
+}
+
+#quill {
+  .ql-editor {
+    height: calc(100vh - 300px) !important;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+  }
+  .ql-tooltip {
+    display: none;
+  }
+}

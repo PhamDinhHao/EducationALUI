@@ -27,6 +27,10 @@ const MENU_ITEMS: MenuItem[] = [
   {
     key: 'challengecap',
     label: <Link to={PagePath.CHALLENGECAP}>Challenge Cap</Link>
+  },
+  {
+    key: 'AI',
+    label: <Link to={PagePath.AI}>AI</Link>
   }
 ]
 

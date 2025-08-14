@@ -9,7 +9,8 @@ import {
   growCapRoute,
   learnCapRoute,
   lifeCapRoute,
-  challengeCapRoute
+  challengeCapRoute,
+  aiRoute,
 } from '@/routes/modules'
 import { Spin } from 'antd'
 
@@ -62,7 +63,7 @@ const configRoutes: RouteObject[] = [
         <RootLayout />
       </PrivateRoute>
     ),
-    children: [...growCapRoute, ...learnCapRoute, ...lifeCapRoute, ...challengeCapRoute]
+    children: [...growCapRoute, ...learnCapRoute, ...lifeCapRoute, ...challengeCapRoute, ...aiRoute]
   },
   {
     path: '*',

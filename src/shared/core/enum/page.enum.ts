@@ -6,6 +6,12 @@ export enum ModuleName {
   LIFECAP = "lifeCap",
   CHALLENGECAP = "challengeCap",
   AI = "ai",
+  BUILD_TOPIC = "build-topic",
+  BUILD_LESSON = "build-lesson",  
+  PERSONAL_PLAN = "personal-plan",
+  TEACHER_ASSISTANT = "teacher-assistant",
+  BUILD_STRUCTURE = "build-structure",
+  EXAM_PREVIEW = "exam-preview"
 }
 
 export enum PageName {
@@ -17,6 +23,12 @@ export enum PageName {
   LIFECAP = "lifeCap",
   CHALLENGECAP = "challengeCap",
   AI = "ai",
+  BUILD_TOPIC = "build-topic",
+  BUILD_LESSON = "build-lesson",
+  PERSONAL_PLAN = "personal-plan",
+  TEACHER_ASSISTANT = "teacher-assistant",
+  BUILD_STRUCTURE = "build-structure",
+  EXAM_PREVIEW = "exam-preview"
 }
 
 export enum PagePath {
@@ -28,5 +40,11 @@ export enum PagePath {
   LEARNCAP = "/learn-cap",
   LIFECAP = "/life-cap",
   CHALLENGECAP = "/challenge-cap",
-  AI = "/ai",
+  AI = "ai",
+  BUILD_TOPIC = "build-topic",
+  BUILD_LESSON = "build-lesson",
+  PERSONAL_PLAN = "personal-plan",
+  TEACHER_ASSISTANT = "teacher-assistant",
+  BUILD_STRUCTURE = "build-structure",
+  EXAM_PREVIEW = "exam-preview"
 }

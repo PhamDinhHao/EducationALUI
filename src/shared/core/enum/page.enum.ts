@@ -6,6 +6,9 @@ export enum ModuleName {
   LIFECAP = "lifeCap",
   CHALLENGECAP = "challengeCap",
   AI = "ai",
+  BUILD_LESSON = "build-lesson",
+  LESSON_FORM = "lesson-form",
+  LESSON_RESULT = "lesson-result"
 }
 
 export enum PageName {
@@ -17,6 +20,9 @@ export enum PageName {
   LIFECAP = "lifeCap",
   CHALLENGECAP = "challengeCap",
   AI = "ai",
+  BUILD_LESSON = "build-lesson",
+  LESSON_FORM = "lesson-form",
+  LESSON_RESULT = "lesson-result"
 }
 
 export enum PagePath {
@@ -29,4 +35,7 @@ export enum PagePath {
   LIFECAP = "/life-cap",
   CHALLENGECAP = "/challenge-cap",
   AI = "/ai",
+  BUILD_LESSON = "build-lesson",  
+  LESSON_FORM = "lesson-form",
+  LESSON_RESULT = "lesson-result"
 }

@@ -1,10 +1,9 @@
-import { lazyLoadModuleRoute, lazyLoadRoute } from '@/routes/LazyLoadRoutes'
+import { lazyLoadModuleRoute } from '@/routes/LazyLoadRoutes'
 import { ModuleName, PageName, PagePath } from '@/shared/core/enum/page.enum'
-
 export const aiRoute = [
   {
     path: PagePath.AI,
-    element: lazyLoadRoute('Base'),
+    element: lazyLoadModuleRoute(ModuleName.AI, PageName.AI),
     children: [
       {
         path: PagePath.AI,
@@ -13,9 +12,22 @@ export const aiRoute = [
             {/* <Suspense fallback={<Spin size="large" />}> */}
               {lazyLoadModuleRoute(ModuleName.AI, PageName.AI)}
             {/* </Suspense> */}
+            
           </>
         )
-      }
+      },
+      {
+        path: PagePath.BUILD_LESSON,
+        element: lazyLoadModuleRoute(ModuleName.BUILD_LESSON, PageName.BUILD_LESSON),
+      },
+      {
+        path: PagePath.LESSON_FORM,
+        element: lazyLoadModuleRoute(ModuleName.LESSON_FORM, PageName.LESSON_FORM),
+      },
+      {
+        path: PagePath.LESSON_RESULT,
+        element: lazyLoadModuleRoute(ModuleName.LESSON_RESULT, PageName.LESSON_RESULT),
+      },
     ]
   }
 ]

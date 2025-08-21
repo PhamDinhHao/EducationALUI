@@ -39,3 +39,15 @@ export type OptionSelect = {
   disabled?: boolean;
   type?: string;
 };
+
+export type LessonResponse = {
+  title?: string;
+  grade?: string;
+  subject?: string; // "toan" | "ly" | ...
+  topic?: string;
+  periods?: number;
+  objectives?: string[];
+  activities?: { step: string; description: string }[];
+  assessment?: string;
+  raw?: string; // fallback khi AI trả text
+};

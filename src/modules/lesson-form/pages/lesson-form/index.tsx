@@ -1,12 +1,11 @@
 import React, { useMemo, useState } from "react";
-import { Button, Form, Input, Select, Typography, Spin, message, Card } from "antd";
+import { Button, Form, Input, Select, Typography, Spin, message } from "antd";
 import { BookOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { LessonResponse } from "../../../../shared/core/types";
 
 const { Title, Text } = Typography;
-
 const API_URL = "http://localhost:5001/api/v1/lessons/generate";
 
 const subjectTopics: Record<string, string[]> = {
@@ -23,13 +22,11 @@ const subjectLabel: Record<string, string> = {
   van: "Ngữ văn",
 };
 
-// Chuẩn hóa payload từ backend
 function normalizeLessonPayload(data: any): LessonResponse {
   if (data?.raw && typeof data.raw === "string") {
     try {
       const cleaned = data.raw.replace(/```json|```/g, "").trim();
-      const parsed = JSON.parse(cleaned);
-      return parsed;
+      return JSON.parse(cleaned);
     } catch {
       return data;
     }
@@ -42,12 +39,14 @@ const LessonForm: React.FC = () => {
   const [subject, setSubject] = useState("toan");
   const [topic, setTopic] = useState(subjectTopics["toan"][0]);
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Nhận loại giáo án từ LessonBuilder
-  const lessonType =
-    location.state?.lessonType || "Giáo án chuẩn (bám sát Bộ GD&ĐT)";
+  // Nhận lessonType, promptText, file từ LessonBuilder
+  const lessonType = location.state?.lessonType || "Giáo án chuẩn (bám sát Bộ GD&ĐT)";
+  const promptText = location.state?.promptText || "";
+  const file = location.state?.file || null;
 
   const topicOptions = useMemo(
     () => subjectTopics[subject].map((t) => ({ label: t, value: t })),
@@ -58,15 +57,19 @@ const LessonForm: React.FC = () => {
     try {
       setLoading(true);
 
-      const payload = {
-        grade: values.grade,
-        subject: values.subject,
-        topic: values.topic,
-        periods: Number(values.periods || 1),
-        lessonType, // 👈 gửi kèm loại giáo án
-      };
+      const formData = new FormData();
+      formData.append("grade", values.grade);
+      formData.append("subject", values.subject);
+      formData.append("topic", values.topic);
+      formData.append("periods", String(Number(values.periods)));
+      formData.append("lessonType", lessonType);
+      formData.append("requestText", promptText);
+      if (file) formData.append("file", file);
 
-      const res = await axios.post(API_URL, payload);
+      const res = await axios.post(API_URL, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
       const data = res.data?.data ?? res.data;
       const normalized: LessonResponse = normalizeLessonPayload(data);
 
@@ -76,11 +79,7 @@ const LessonForm: React.FC = () => {
       message.success("Tạo giáo án thành công!");
     } catch (err: any) {
       console.error(err);
-      const msg =
-        err?.response?.data?.message ||
-        err?.message ||
-        "Lỗi khi tạo giáo án, vui lòng thử lại.";
-      message.error(msg);
+      message.error(err?.response?.data?.message || "Lỗi khi tạo giáo án, vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
@@ -98,7 +97,6 @@ const LessonForm: React.FC = () => {
         padding: "3rem",
       }}
     >
-      {/* Tiêu đề */}
       <div style={{ textAlign: "center", marginBottom: "2rem" }}>
         <BookOutlined style={{ fontSize: 36, color: "#E8612A" }} />
         <Title level={2} style={{ color: "#E8612A", marginTop: 8, marginBottom: 8 }}>
@@ -107,7 +105,6 @@ const LessonForm: React.FC = () => {
         <Text>GEN AI giúp bạn xây dựng giáo án theo chuẩn cấu trúc 5512</Text>
       </div>
 
-      {/* Form */}
       <div
         style={{
           border: "1px solid #E8612A",
@@ -188,27 +185,8 @@ const LessonForm: React.FC = () => {
         </Form>
       </div>
 
-      {/* Gợi ý */}
-      <Card
-        style={{
-          marginTop: 24,
-          maxWidth: 1000,
-          width: "100%",
-          borderRadius: 16,
-          background: "#fff7f3",
-          borderColor: "#ffd7c7",
-        }}
-      >
-        <Text type="secondary">
-          Sau khi tạo thành công, hệ thống sẽ chuyển sang trang kết quả để bạn{" "}
-          <strong>xuất file Word</strong>.
-        </Text>
-      </Card>
-
-      {/* Footer */}
       <Text style={{ display: "block", textAlign: "center", marginTop: 24, color: "gray" }}>
-        Khi đặt câu hỏi, bạn đồng ý với <a href="#">Điều khoản</a> và{" "}
-        <a href="#">Chính sách quyền riêng tư</a>.
+        Khi đặt câu hỏi, bạn đồng ý với <a href="#">Điều khoản</a> và <a href="#">Chính sách quyền riêng tư</a>.
       </Text>
     </div>
   );

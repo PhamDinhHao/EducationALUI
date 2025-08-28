@@ -28,6 +28,14 @@ export const aiRoute = [
         path: PagePath.LESSON_RESULT,
         element: lazyLoadModuleRoute(ModuleName.LESSON_RESULT, PageName.LESSON_RESULT),
       },
+      {
+        path: PagePath.PROMPT_LESSON,
+        element: lazyLoadModuleRoute(ModuleName.PROMPT_LESSON, PageName.PROMPT_LESSON),
+      },
+      {
+        path: PagePath.STEM_LESSON,
+        element: lazyLoadModuleRoute(ModuleName.STEM_LESSON, PageName.STEM_LESSON),
+      },
     ]
   }
 ]

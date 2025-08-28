@@ -41,7 +41,7 @@ const ensureLessonShape = (raw: any): LessonResponse => {
     subject: String(raw?.subject ?? ""),
     grade: String(raw?.grade ?? ""),
     topic: String(raw?.topic ?? ""),
-    periods: Number(raw?.periods ?? 1),
+    periods: Number(raw?.periods) || 1,
     objectives,
     activities,
     assessment: raw?.assessment ? String(raw.assessment) : "",

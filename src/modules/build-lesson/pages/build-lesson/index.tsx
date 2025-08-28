@@ -119,7 +119,8 @@ const LessonBuilder: React.FC = () => {
         </Button>
       </div>
     {/* Thanh search y chang ảnh */}
-      <div style={{ width: "100%", maxWidth: "700px", marginBottom: "2rem" }}>
+      <div style={{ 
+        padding: "2rem", width: "100%", maxWidth: "700px", marginBottom: "2rem" }}>
         <Input
           placeholder="Đặt câu hỏi..."
           value={searchValue}

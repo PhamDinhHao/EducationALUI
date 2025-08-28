@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Button, Form, Input, Select, Typography, Spin, message } from "antd";
+import { Button, Form, Select, Typography, Spin, message } from "antd";
 import { BookOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -22,19 +22,53 @@ const subjectLabel: Record<string, string> = {
   van: "Ngữ văn",
 };
 
+// Chuyển dữ liệu API sang đúng shape LessonResponse
+export const ensureLessonShape = (raw: any): LessonResponse => {
+  const periods = Number(raw?.periods);
+  const safePeriods = isNaN(periods) ? 1 : periods;
+
+  const objectives: string[] = Array.isArray(raw?.objectives)
+    ? raw.objectives.map((o: any) => String(o))
+    : [];
+
+  const activities = Array.isArray(raw?.activities)
+    ? raw.activities.map((a: any) => {
+        if (typeof a === "string") return { step: "", description: a };
+        return {
+          step: a?.step ? String(a.step) : "",
+          description: a?.description ? String(a.description) : "",
+        };
+      })
+    : [];
+
+  return {
+    title: String(raw?.title ?? ""),
+    subject: String(raw?.subject ?? ""),
+    grade: String(raw?.grade ?? ""),
+    topic: String(raw?.topic ?? ""),
+    periods: safePeriods,
+    objectives,
+    activities,
+    assessment: raw?.assessment ? String(raw.assessment) : "",
+  };
+};
+
+// Parse API trả về dạng raw JSON nếu có
 function normalizeLessonPayload(data: any): LessonResponse {
   if (data?.raw && typeof data.raw === "string") {
     try {
       const cleaned = data.raw.replace(/```json|```/g, "").trim();
-      return JSON.parse(cleaned);
-    } catch {
-      return data;
+      const parsed = JSON.parse(cleaned);
+      return ensureLessonShape(parsed);
+    } catch (err) {
+      console.error("Lỗi parse raw JSON:", err);
+      return ensureLessonShape({});
     }
   }
-  return data;
+  return ensureLessonShape(data);
 }
 
-const LessonForm: React.FC = () => {
+const LessonStem: React.FC = () => {
   const [form] = Form.useForm();
   const [subject, setSubject] = useState("toan");
   const [topic, setTopic] = useState(subjectTopics["toan"][0]);
@@ -43,8 +77,8 @@ const LessonForm: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Nhận lessonType, promptText, file từ LessonBuilder
-  const lessonType = location.state?.lessonType || "Giáo án chuẩn (bám sát Bộ GD&ĐT)";
+  // Nhận lessonType từ trang trước
+  const lessonType = location.state?.lessonType || "Giáo án STEAM";
 
   const topicOptions = useMemo(
     () => subjectTopics[subject].map((t) => ({ label: t, value: t })),
@@ -54,23 +88,25 @@ const LessonForm: React.FC = () => {
   const onFinish = async (values: any) => {
     try {
       setLoading(true);
-  
+
       const payload = {
         grade: values.grade,
         subject: values.subject,
         topic: values.topic,
-        periods: Number(values.periods),
         lessonType,
       };
-  
-      const res = await axios.post(API_URL, payload); // gửi JSON
-  
+
+      const res = await axios.post(API_URL, payload);
       const data = res.data?.data ?? res.data;
-      const normalized: LessonResponse = normalizeLessonPayload(data);
-  
+
+      // Chuẩn hóa dữ liệu
+      const normalizedLesson: LessonResponse = normalizeLessonPayload(data);
+
+      // Navigate sang LessonResult với đúng state
       navigate("/ai/lesson-result", {
-        state: { lesson: normalized, subjectLabel, lessonType },
+        state: { lesson: normalizedLesson, subjectLabel, lessonType },
       });
+
       message.success("Tạo giáo án thành công!");
     } catch (err: any) {
       console.error(err);
@@ -81,7 +117,6 @@ const LessonForm: React.FC = () => {
       setLoading(false);
     }
   };
-  
 
   return (
     <div
@@ -120,7 +155,6 @@ const LessonForm: React.FC = () => {
             grade: "12",
             subject: "toan",
             topic: subjectTopics["toan"][0],
-            periods: "1",
           }}
         >
           <div
@@ -158,10 +192,6 @@ const LessonForm: React.FC = () => {
             <Form.Item label={<strong>Chủ đề</strong>} name="topic" rules={[{ required: true }]}>
               <Select options={topicOptions} value={topic} onChange={(val) => setTopic(val)} />
             </Form.Item>
-
-            <Form.Item label={<strong>Số tiết</strong>} name="periods" rules={[{ required: true }]}>
-              <Input placeholder="1" type="number" min={1} />
-            </Form.Item>
           </div>
 
           <div style={{ textAlign: "right", marginTop: 20 }}>
@@ -190,4 +220,4 @@ const LessonForm: React.FC = () => {
   );
 };
 
-export default LessonForm;
+export default LessonStem;

@@ -8,7 +8,9 @@ export enum ModuleName {
   AI = "ai",
   BUILD_LESSON = "build-lesson",
   LESSON_FORM = "lesson-form",
-  LESSON_RESULT = "lesson-result"
+  LESSON_RESULT = "lesson-result",
+  PROMPT_LESSON = "prompt-lesson",
+  STEM_LESSON = "stem-lesson"
 }
 
 export enum PageName {
@@ -22,7 +24,9 @@ export enum PageName {
   AI = "ai",
   BUILD_LESSON = "build-lesson",
   LESSON_FORM = "lesson-form",
-  LESSON_RESULT = "lesson-result"
+  LESSON_RESULT = "lesson-result",
+  PROMPT_LESSON = "prompt-lesson",
+  STEM_LESSON = "stem-lesson"
 }
 
 export enum PagePath {
@@ -37,5 +41,7 @@ export enum PagePath {
   AI = "/ai",
   BUILD_LESSON = "build-lesson",  
   LESSON_FORM = "lesson-form",
-  LESSON_RESULT = "lesson-result"
+  LESSON_RESULT = "lesson-result",
+  PROMPT_LESSON = "prompt-lesson",
+  STEM_LESSON = "stem-lesson"
 }

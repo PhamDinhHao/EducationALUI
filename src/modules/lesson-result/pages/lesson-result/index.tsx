@@ -157,84 +157,66 @@ const LessonResult: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 m-6 flex flex-col items-center">
-      <div className="w-full max-w-5xl bg-white p-6 rounded-xl shadow">
-        <h1 className="text-2xl font-bold text-orange-600 text-center mb-6">
+    <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center">
+      <div className="w-full max-w-5xl bg-white p-6 rounded-2xl shadow-lg">
+        <h1 className="text-3xl font-bold text-orange-600 text-center mb-8">
           📘 Xem & Chỉnh sửa Giáo án
         </h1>
 
         {/* Thông tin cơ bản */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <input
-            type="text"
-            value={editableLesson.title}
-            onChange={(e) => handleChange("title", e.target.value)}
-            placeholder="Tiêu đề"
-            className="p-2 border rounded w-full"
-          />
-          <input
-            type="text"
-            value={editableLesson.subject}
-            onChange={(e) => handleChange("subject", e.target.value)}
-            placeholder="Môn học"
-            className="p-2 border rounded w-full"
-          />
-          <input
-            type="text"
-            value={editableLesson.grade}
-            onChange={(e) => handleChange("grade", e.target.value)}
-            placeholder="Lớp"
-            className="p-2 border rounded w-full"
-          />
-          <input
-            type="text"
-            value={editableLesson.topic}
-            onChange={(e) => handleChange("topic", e.target.value)}
-            placeholder="Chủ đề"
-            className="p-2 border rounded w-full"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          {["title", "subject", "grade", "topic"].map((field, idx) => (
+            <input
+              key={idx}
+              type="text"
+              value={editableLesson[field as keyof LessonResponse] as string}
+              onChange={(e) => handleChange(field as keyof LessonResponse, e.target.value)}
+              placeholder={["Tiêu đề", "Môn học", "Lớp", "Chủ đề"][idx]}
+              className="p-3 border rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"
+            />
+          ))}
           <input
             type="number"
             value={editableLesson.periods}
             onChange={(e) => handleChange("periods", Number(e.target.value))}
             placeholder="Số tiết"
-            className="p-2 border rounded w-full"
+            className="p-3 border rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"
           />
         </div>
 
         {/* Mục tiêu */}
-        <div className="mb-6">
-          <h2 className="font-semibold text-lg mb-2">🎯 Mục tiêu</h2>
-          <ul className="space-y-2">
+        <div className="mb-8 bg-gray-50 p-4 rounded-xl border">
+          <h2 className="font-semibold text-xl mb-3">🎯 Mục tiêu</h2>
+          <ul className="space-y-3">
             {editableLesson.objectives.map((obj, idx) => (
-              <li key={idx} className="flex gap-2">
+              <li key={idx} className="flex gap-2 items-center">
                 <input
                   type="text"
                   value={obj}
                   onChange={(e) => handleObjectiveChange(idx, e.target.value)}
-                  className="flex-1 p-2 border rounded"
+                  className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"
                 />
                 <button
                   onClick={() => removeObjective(idx)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-3 rounded-full"
+                  className="text-gray-400 hover:text-red-500 transition p-1"
                 >
-                  ✕
+                  ❌
                 </button>
               </li>
             ))}
           </ul>
           <button
             onClick={addObjective}
-            className="mt-2 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-full"
+            className="mt-3 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg"
           >
             + Thêm mục tiêu
           </button>
         </div>
 
         {/* Hoạt động */}
-        <div className="mb-6">
-          <h2 className="font-semibold text-lg mb-2">📝 Hoạt động</h2>
-          <ul className="space-y-2">
+        <div className="mb-8 bg-gray-50 p-4 rounded-xl border">
+          <h2 className="font-semibold text-xl mb-3">📝 Hoạt động</h2>
+          <ul className="space-y-3">
             {editableLesson.activities.map((act, idx) => (
               <li key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
                 <input
@@ -242,41 +224,41 @@ const LessonResult: React.FC = () => {
                   placeholder="Tên hoạt động"
                   value={act.step}
                   onChange={(e) => handleActivityChange(idx, "step", e.target.value)}
-                  className="p-2 border rounded"
+                  className="p-2 border rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"
                 />
                 <input
                   type="text"
                   placeholder="Mô tả"
                   value={act.description}
                   onChange={(e) => handleActivityChange(idx, "description", e.target.value)}
-                  className="p-2 border rounded"
+                  className="p-2 border rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"
                 />
                 <button
                   onClick={() => removeActivity(idx)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-3 rounded-full"
+                  className="text-gray-400 hover:text-red-500 transition p-1"
                 >
-                  ✕
+                  ❌
                 </button>
               </li>
             ))}
           </ul>
           <button
             onClick={addActivity}
-            className="mt-2 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-full"
+            className="mt-3 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg"
           >
             + Thêm hoạt động
           </button>
         </div>
 
         {/* Đánh giá */}
-        <div className="mb-6">
-          <h2 className="font-semibold text-lg mb-2">✅ Đánh giá</h2>
+        <div className="mb-8 bg-gray-50 p-4 rounded-xl border">
+          <h2 className="font-semibold text-xl mb-3">✅ Đánh giá</h2>
           <textarea
             rows={4}
             value={editableLesson.assessment}
             onChange={(e) => handleChange("assessment", e.target.value)}
             placeholder="Mô tả cách đánh giá (kiểm tra, bài tập, dự án...)"
-            className="w-full p-2 border rounded"
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"
           />
         </div>
 
@@ -284,13 +266,13 @@ const LessonResult: React.FC = () => {
         <div className="flex justify-center gap-4">
           <button
             onClick={exportToWord}
-            className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full"
+            className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow"
           >
             Xuất Word
           </button>
           <button
             onClick={() => navigate("/ai/build-lesson")}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full"
+            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg shadow"
           >
             Quay lại tạo giáo án
           </button>

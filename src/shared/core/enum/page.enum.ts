@@ -6,6 +6,11 @@ export enum ModuleName {
   LIFECAP = "lifeCap",
   CHALLENGECAP = "challengeCap",
   AI = "ai",
+  SUCCESSIONPLAN = "succession-plan",
+  EXPERIENCEINITIATIVE = "experience-initiative",
+  EXPREANDSUCCE = "expre-and-succe",
+  PLANRESULT = "plan-result",
+  INITIATIVERESULT = "initiative-result",
 }
 
 export enum PageName {
@@ -17,6 +22,11 @@ export enum PageName {
   LIFECAP = "lifeCap",
   CHALLENGECAP = "challengeCap",
   AI = "ai",
+  SUCCESSIONPLAN = "succession-plan",
+  EXPERIENCEINITIATIVE = "experience-initiative",
+  EXPREANDSUCCE = "expre-and-succe",
+  PLANRESULT = "plan-result",
+  INITIATIVERESULT = "initiative-result",
 }
 
 export enum PagePath {
@@ -29,4 +39,9 @@ export enum PagePath {
   LIFECAP = "/life-cap",
   CHALLENGECAP = "/challenge-cap",
   AI = "/ai",
+  SUCCESSIONPLAN = "succession-plan",
+  EXPERIENCEINITIATIVE = "experience-initiative",
+  EXPREANDSUCCE = "expre-and-succe",
+  PLANRESULT = "plan-result",
+  INITIATIVERESULT = "initiative-result",
 }

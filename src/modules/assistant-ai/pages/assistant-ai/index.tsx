@@ -106,15 +106,16 @@ const ExercisePage: React.FC = () => {
     }
   };
   
-  
 
   return (
-    <div className="flex min-h-screen bg-gray-50 mr-40">
+    <div className="flex min-h-screen mr-40">
       <Sidebar />
       <div className="ml-[200px] w-full p-6 pb-48 max-w-[1100px] mx-auto">
-        <div className="text-center mb-8 ">
-          <Title level={1} className="!text-orange-500 !mb-0">Trợ lý AI</Title>
-          <Text className="text-lg text-gray-700">GEN AI hỗ trợ giải bài tập nhanh chóng chính xác</Text>
+        <div className="text-center mb-8">
+          <Title level={2} style={{ color: "#E8612A" }}>Trợ lý AI</Title>
+          <Text className="text-lg text-gray-700">
+            GEN AI hỗ trợ giải bài tập nhanh chóng chính xác
+          </Text>
         </div>
 
         {/* Function Grid */}
@@ -124,9 +125,14 @@ const ExercisePage: React.FC = () => {
               <Card
                 hoverable
                 onClick={() => setActiveFunction(func.key)}
-                style={{ borderColor: activeFunction === func.key ? '#f97316' : '#e6e6e6' }}
+                style={{
+                  borderColor: activeFunction === func.key ? '#E8612A' : '#e6e6e6',
+                  borderRadius: 12,
+                }}
               >
-                <Text strong>{func.label}</Text>
+                <Text strong style={{ color: activeFunction === func.key ? '#E8612A' : '#333' }}>
+                  {func.label}
+                </Text>
               </Card>
             </Col>
           ))}
@@ -136,7 +142,7 @@ const ExercisePage: React.FC = () => {
         <div className="space-y-4 mb-8">
           {messages.map((msg, index) => (
             <div key={index} className={`flex ${index % 2 === 0 ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${index % 2 === 0 ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-800'}`}>
+              <div className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${index % 2 === 0 ? 'bg-[#E8612A] text-white' : 'bg-gray-100 border border-gray-200 text-gray-800'}`}>
                 {msg.imageUrl && <Image src={msg.imageUrl} width={200} className="rounded-lg mb-2" />}
                 <div className="whitespace-pre-wrap">
                   {formatMarkdown(msg.content)}
@@ -148,7 +154,7 @@ const ExercisePage: React.FC = () => {
         </div>
 
         {/* Input */}
-        <div className="fixed bottom-0 left-[200px] right-0 bg-gray-50 p-4">
+        <div className="fixed bottom-0 left-[200px] right-0 bg-white p-4 border-t border-gray-200">
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 max-w-[1100px] mx-auto flex items-center gap-3">
             {imagePreview && (
               <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-lg">
@@ -165,7 +171,13 @@ const ExercisePage: React.FC = () => {
             <Upload showUploadList={false} beforeUpload={handleImageUpload} accept="image/*">
               <Button icon={<PictureOutlined />} />
             </Upload>
-            <Button type="primary" icon={<SendOutlined />} onClick={handleSend} loading={loading} />
+            <Button
+              type="primary"
+              icon={<SendOutlined />}
+              onClick={handleSend}
+              loading={loading}
+              style={{ background: "#E8612A", borderRadius: 25 }}
+            />
           </div>
         </div>
       </div>

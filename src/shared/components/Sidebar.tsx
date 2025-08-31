@@ -23,7 +23,7 @@ const MENU_ITEMS: MenuItem[] = [
       { key: 'teacher-plan', label: <Link to={PagePath.TEACHER_PLAN}>Xây dựng đề</Link> },
       { key: 'teacher-exam', label: <Link to={PagePath.TEACHER_EXAM}>Xây dựng giáo án</Link> },
       { key: 'teacher-mark', label: <Link to={PagePath.TEACHER_MARK}>Kế hoạch cá nhân & Sáng kiến kinh nghiệm</Link> },
-      { key: 'teacher-report', label: <Link to={PagePath.TEACHER_REPORT}>Trợ lý giáo viên</Link> }
+      { key: 'teacher-report', label: <Link to={PagePath.ASSISTANTAI}>Trợ lý giáo viên</Link> }
     ]
   },
   {

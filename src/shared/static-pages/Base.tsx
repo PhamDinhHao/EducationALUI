@@ -5,7 +5,7 @@ const BaseRoute = () => {
   const location = useLocation()
   
   return (
-    <div className='h-screen overflow-y-auto'>
+    <div className='h-screen overflow-y-auto' style={{backgroundColor : '#fff'}}>
       <Outlet />
     </div>
   )

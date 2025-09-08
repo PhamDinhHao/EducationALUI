@@ -1,3 +1,4 @@
+// src/routes/index.tsx
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouteObject, RouterProvider } from 'react-router-dom'
 import RootLayout from '@/shared/layouts/RootLayout'
@@ -13,28 +14,51 @@ import {
   aiRoute,
 } from '@/routes/modules'
 import { Spin } from 'antd'
+import CourseList from '@/modules/Course/pages/CourseList/CourseList'
+import CourseDetail from '../modules/Course/pages/CourseDetail';
+import LessonPlayerPage from '@/modules/Course/pages/LessonPlayerPage/LessonPlayerPage'
 
 const NavigateComponent = lazy(() => import('@/shared/components/Navigate/Navigate'))
 
 const configRoutes: RouteObject[] = [
   {
     path: PagePath.REGISTER,
-    element: <ValidateLoginRoute>{lazyLoadModuleRoute(ModuleName.AUTH, PageName.REGISTER)}</ValidateLoginRoute>
+    element: (
+      <ValidateLoginRoute>
+        {lazyLoadModuleRoute(ModuleName.AUTH, PageName.REGISTER)}
+      </ValidateLoginRoute>
+    )
   },
   {
     path: PagePath.LOGIN,
-    element: <ValidateLoginRoute>{lazyLoadModuleRoute(ModuleName.AUTH, PageName.LOGIN)}</ValidateLoginRoute>
+    element: (
+      <ValidateLoginRoute>
+        {lazyLoadModuleRoute(ModuleName.AUTH, PageName.LOGIN)}
+      </ValidateLoginRoute>
+    )
   },
   {
     path: '/',
     element: <RootLayout />,
     children: [
       {
-        path: PagePath.HOME,
-        element: lazyLoadModuleRoute(ModuleName.HOME, PageName.HOME)
+        index: true, // Khi truy cập "/" thì load CourseList luôn
+        element: <CourseList />
       },
       {
-        index: true,
+        path: 'courses/:id',
+        element: <CourseDetail />
+      },
+       {
+        path: 'lesson/:id', // <-- thêm route LessonPlayerPage
+        element: <LessonPlayerPage />
+      },
+      {
+        path: PagePath.HOME, // Nếu có định nghĩa HOME, vẫn cho nó load CourseList
+        element: <CourseList />
+      },
+      {
+        path: 'navigate',
         element: (
           <Suspense
             fallback={
@@ -46,7 +70,7 @@ const configRoutes: RouteObject[] = [
                   height: '100vh'
                 }}
               >
-                <Spin size='large' />
+                <Spin size="large" />
               </div>
             }
           >

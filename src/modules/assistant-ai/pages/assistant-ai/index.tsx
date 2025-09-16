@@ -11,8 +11,8 @@ const { TextArea } = Input
 const formatMarkdown = (text: string) => {
   if (!text) return "";
   return text
-    .replace(/\*\*(.*?)\*\*/g, "$1")  // bỏ bold
-    .replace(/^\* (.*)$/gm, "- $1")   // đổi * -> -
+    .replace(/\*\*(.*?)\*\*/g, "$1")  
+    .replace(/^\* (.*)$/gm, "- $1")  
     .replace(/\\n/g, "\n")
     .trim();
 };
@@ -44,8 +44,14 @@ const ExercisePage: React.FC = () => {
 
   useEffect(() => {
     const selectedFunc = FUNCTIONS.find(f => f.key === activeFunction)
-    if (selectedFunc) setInputValue(selectedFunc.prompt)
+    if (selectedFunc) {
+      setInputValue(selectedFunc.prompt)   // reset input
+      setMessages([])                      // clear chat history
+      setSelectedImage(null)               // clear file
+      setImagePreview('')                  // clear preview
+    }
   }, [activeFunction])
+  
 
   const handleImageUpload = (file: File) => {
     if (!file.type.startsWith('image/')) {

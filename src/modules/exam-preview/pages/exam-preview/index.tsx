@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useBoundStore } from "@/shared/stores/index";
 import { Question } from "@/shared/core/types/common.type";
 
-import jsPDF from "jspdf";
+import pdfMake from "pdfmake/build/pdfmake";
+import "pdfmake/build/vfs_fonts"; 
+
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import { saveAs } from "file-saver";
+
 
 const EXAM_STORAGE_KEY = "exam_data";
 
@@ -64,42 +67,80 @@ const ExamPreview = () => {
     });
   };
 
-  // Xuất PDF
+  // Xuất PDF bằng pdfmake
   const exportPDF = () => {
-    const doc = new jsPDF();
-    exam.forEach((q, idx) => {
-      doc.text(`${idx + 1}. ${q.question}`, 10, 10 + idx * 25);
-      if (q.options.length) {
-        q.options.forEach((opt, i) =>
-          doc.text(`  - ${opt}`, 15, 15 + idx * 25 + i * 5)
-        );
-      }
-      doc.text(`Answer: ${q.answer}`, 10, 20 + idx * 25 + (q.options.length * 5));
-    });
-    doc.save("exam.pdf");
+    if (!Array.isArray(exam) || exam.length === 0) {
+      alert("Không có dữ liệu để xuất PDF!");
+      return;
+    }
+
+    const docDefinition: any = {
+      content: exam.flatMap((q, idx) => {
+        const items: any[] = [
+          { text: `${idx + 1}. ${q.question}`, bold: true, margin: [0, 5, 0, 5] },
+        ];
+
+        if (Array.isArray(q.options) && q.options.length > 0) {
+          q.options.forEach((opt) => {
+            items.push({ text: `- ${opt}`, margin: [10, 2, 0, 2] });
+          });
+        }
+
+        items.push({
+          text: `Đáp án: ${q.answer}`,
+          color: "green",
+          margin: [0, 5, 0, 10],
+        });
+
+        return items;
+      }),
+      defaultStyle: {
+        font: "Roboto",
+      },
+    };
+
+    pdfMake.createPdf(docDefinition).download("exam.pdf");
   };
 
   // Xuất Word
   const exportWord = async () => {
+    if (!Array.isArray(exam) || exam.length === 0) {
+      alert("Không có dữ liệu để xuất Word!");
+      return;
+    }
+
     const doc = new Document({
       sections: [
         {
-          children: exam
-            .map((q, idx) => [
+          children: exam.flatMap((q, idx) => {
+            const children: Paragraph[] = [];
+
+            // Câu hỏi
+            children.push(
               new Paragraph({
-                children: [
-                  new TextRun({ text: `${idx + 1}. ${q.question}`, bold: true }),
-                ],
-              }),
-              ...q.options.map(
-                (opt) => new Paragraph({ children: [new TextRun(`- ${opt}`)] })
-              ),
+                children: [new TextRun({ text: `${idx + 1}. ${q.question}`, bold: true })],
+              })
+            );
+
+            // Các options (nếu có)
+            if (Array.isArray(q.options) && q.options.length > 0) {
+              q.options.forEach((opt) => {
+                children.push(new Paragraph({ children: [new TextRun(`- ${opt}`)] }));
+              });
+            }
+
+            // Đáp án
+            children.push(
               new Paragraph({
                 children: [new TextRun({ text: `Answer: ${q.answer}`, color: "008000" })],
-              }),
-              new Paragraph({ children: [new TextRun("")] }),
-            ])
-            .flat(),
+              })
+            );
+
+            // Dòng trống
+            children.push(new Paragraph(""));
+
+            return children;
+          }),
         },
       ],
     });

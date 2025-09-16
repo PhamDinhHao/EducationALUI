@@ -11,8 +11,17 @@ interface Matrix {
   [type: string]: { [level: string]: number };
 }
 
+// ✅ Hàm khởi tạo matrix mặc định
+const initMatrix: Matrix = types.reduce((acc, type) => {
+  acc[type] = levels.reduce((obj, level) => {
+    obj[level] = 2; // mặc định 2 câu mỗi level
+    return obj;
+  }, {} as { [level: string]: number });
+  return acc;
+}, {} as Matrix);
+
 const BuildStructure = () => {
-  const [matrix, setMatrix] = useState<Matrix>({});
+  const [matrix, setMatrix] = useState<Matrix>(initMatrix);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -95,7 +104,7 @@ const BuildStructure = () => {
                   <input
                     type="number"
                     min={0}
-                    defaultValue={2}
+                    value={matrix[type][level]} // ✅ dùng value thay vì defaultValue
                     className="w-16 border rounded text-center mt-1"
                     onChange={(e) => handleChange(type, level, Number(e.target.value))}
                   />
@@ -117,7 +126,6 @@ const BuildStructure = () => {
         </div>
       </div>
     </div>
-
   );
 };
 

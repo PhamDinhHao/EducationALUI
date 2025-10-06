@@ -69,7 +69,7 @@ const configRoutes: RouteObject[] = [
   {
     path: '*',
     element: lazyLoadRoute('NotFound')
-  }
+  },
 ]
 
 export const router = createBrowserRouter(configRoutes)

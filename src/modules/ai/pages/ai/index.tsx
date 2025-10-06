@@ -1,11 +1,21 @@
+// src/modules/ai/pages/ai/index.tsx
 import Sidebar from '@/shared/components/Sidebar'
-const HomeAI = () => {
+import { Outlet } from 'react-router-dom'
 
-    return (
-      <div className="max-w-4xl mx-auto p-4 bg-white">
+const HomeAILayout = () => {
+  return (
+    <div className="flex min-h-screen">
+      {/* Sidebar với chiều rộng cố định */}
+      <div className="w-52 bg-white shadow-md">
         <Sidebar />
       </div>
-    )
-  }
-  
-  export default HomeAI
+
+      {/* Outlet chiếm phần còn lại */}
+      <div className="flex-1 bg-gray-50 ">
+        <Outlet />
+      </div>
+    </div>
+  )
+}
+
+export default HomeAILayout

@@ -77,7 +77,7 @@ const generatePrompt = (
   levelLabel: string, 
   topicLabel: string
 ): string => {
-  return `Bạn là gia sư thông minh. Hãy tạo nội dung ôn tập nhanh cho học sinh dựa trên các tham số sau:\n\n- Môn: ${subjectLabel}\n- Lớp: ${grade}\n- Mức độ: ${levelLabel}\n- Chủ đề: ${topicLabel}\n\nYêu cầu output bằng tiếng Việt, rõ ràng, có cấu trúc:\n1) Tóm tắt kiến thức trọng tâm (gạch đầu dòng)\n2) Công thức/định nghĩa quan trọng (code block hoặc định dạng dễ đọc)\n3) 3-5 bài luyện tập mẫu theo đúng chủ đề (ghi rõ câu hỏi → đáp án → giải thích ngắn)\n4) Mẹo ghi nhớ/ lỗi sai thường gặp\n5) Đề xuất lộ trình ôn tập 3 ngày ngắn gọn.`
+  return `Tạo nội dung ôn tập cho học sinh với các tham số:\n\n- Môn: ${subjectLabel}\n- Lớp: ${grade}\n- Mức độ: ${levelLabel}\n- Chủ đề: ${topicLabel}\n\nYêu cầu output bằng tiếng Việt, rõ ràng, có cấu trúc:\n1) Tóm tắt kiến thức trọng tâm (gạch đầu dòng)\n2) Công thức/định nghĩa quan trọng (code block hoặc định dạng dễ đọc)\n3) 3-5 bài luyện tập mẫu theo đúng chủ đề (ghi rõ câu hỏi → đáp án → giải thích ngắn)\n4) Mẹo ghi nhớ (ít nhất 3 mẹo cụ thể)\n5) Lỗi sai thường gặp (ít nhất 3 lỗi phổ biến)\n6) Đề xuất lộ trình ôn tập 3 ngày ngắn gọn.\n\nQUAN TRỌNG: \n- Bắt đầu trực tiếp với nội dung ôn tập, KHÔNG có lời chào hỏi hay giới thiệu vai trò gia sư\n- Đảm bảo hoàn thành đầy đủ tất cả 6 phần, không được cắt cụt\n- Phần "Mẹo ghi nhớ" và "Lỗi sai thường gặp" phải có nội dung cụ thể, không được để trống`
 }
 
 // Components

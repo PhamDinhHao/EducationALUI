@@ -31,5 +31,10 @@ export enum PagePath {
   LIFECAP = "/life-cap",
   CHALLENGECAP = "/challenge-cap",
   AI = "/ai",
-  ASSISTANTAI = "assistant-ai",
+  ASSISTANTAI = "/assistant-ai",
+  // Student pages
+  STUDENT_EXERCISE = "/student/exercise",
+  STUDENT_REVIEW = "/student/review",
+  STUDENT_MINDMAP = "/student/mindmap",
+  STUDENT_PLAN = "/student/plan",
 }

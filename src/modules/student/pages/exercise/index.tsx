@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Badge, Button, Card, Col, Image, Input, Row, Space, Spin, Tooltip, Typography, message, Upload } from 'antd'
 import { 
-  BookOutlined, 
   CalculatorOutlined, 
   EnvironmentOutlined, 
   ExperimentOutlined, 
@@ -12,7 +11,6 @@ import {
   ThunderboltOutlined, 
   UserOutlined 
 } from '@ant-design/icons'
-
 import Sidebar from '@/shared/components/Sidebar'
 import { GeminiService } from '@/modules/ai/pages/ai/Service/gemini.service'
 import { ConversationManager, ConversationMessage } from '@/modules/ai/pages/ai/Service/conversation.manager'
@@ -245,9 +243,11 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
 
     setMessages(prev => [...prev, userMessage])
     setInputValue('')
+    setIsLoading(true)
+    
+    // Reset image ngay khi bắt đầu gửi
     setSelectedImage(null)
     setImagePreview('')
-    setIsLoading(true)
 
     try {
       const manager = conversationManagerRef.current

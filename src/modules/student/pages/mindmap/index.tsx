@@ -2,8 +2,7 @@ import { useRef, useState, useEffect } from 'react'
 import { Card, Typography, Select, Input, Button, Spin, Tooltip, message, Space, Dropdown, Upload, Image } from 'antd'
 import { SendOutlined, BulbOutlined, BranchesOutlined, ZoomInOutlined, ZoomOutOutlined, PlusOutlined, MinusOutlined, DownloadOutlined, FullscreenOutlined, FileImageOutlined, FilePdfOutlined, PictureOutlined, FileTextOutlined, FileWordOutlined, FileExcelOutlined } from '@ant-design/icons'
 import jsMind from 'jsmind'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
+import { simplePDFExporter } from './utils/simplePDFExporter'
 
 import 'jsmind/style/jsmind.css'
 import Sidebar from '@/shared/components/Sidebar'
@@ -44,19 +43,12 @@ const MINDMAP_TYPES = [
 
 // 🔹 Hàm validate và sửa JSON với debug chi tiết
 function validateAndFixJSON(jsonString: string): any {
-  console.log("🔍 Debugging JSON validation...");
-  console.log("📏 JSON length:", jsonString.length);
-  console.log("🔍 First 200 chars:", jsonString.substring(0, 200));
-  console.log("🔍 Last 200 chars:", jsonString.substring(Math.max(0, jsonString.length - 200)));
   
   try {
     // Thử parse JSON gốc
     const result = JSON.parse(jsonString);
-    console.log("✅ JSON parsed successfully on first try");
     return result;
   } catch (error) {
-    console.log("🔧 JSON không hợp lệ, đang thử sửa...");
-    console.log("❌ Original error:", error);
     
     // Sửa các lỗi JSON phổ biến
     let fixedJson = jsonString
@@ -79,11 +71,9 @@ function validateAndFixJSON(jsonString: string): any {
       // Sửa lỗi thiếu dấu hai chấm sau property name
       .replace(/"([^"]+)"\s*([^":,}\]]+)/g, '"$1": "$2"');
     
-    console.log("🔧 Fixed JSON first 200 chars:", fixedJson.substring(0, 200));
     
     try {
       const result = JSON.parse(fixedJson);
-      console.log("✅ Fixed JSON parsed successfully");
       return result;
     } catch (secondError) {
       console.error("❌ Still cannot parse JSON after first fix:", secondError);
@@ -99,11 +89,9 @@ function validateAndFixJSON(jsonString: string): any {
         // Sửa lỗi value không có quotes khi cần thiết
         .replace(/:\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*([,}\]])/g, ': "$1"$2');
       
-      console.log("🔧 Second fix attempt...");
       
       try {
         const result = JSON.parse(secondFixedJson);
-        console.log("✅ Second fix successful");
         return result;
       } catch (thirdError) {
         console.error("❌ All fixes failed:", thirdError);
@@ -111,7 +99,6 @@ function validateAndFixJSON(jsonString: string): any {
         // Nếu vẫn không được, thử tạo JSON hợp lệ từ dữ liệu có sẵn
         try {
           const fallbackJson = createFallbackJSON(jsonString);
-          console.log("🆘 Using fallback JSON");
           return fallbackJson;
         } catch (fallbackError) {
           console.error("❌ Even fallback failed:", fallbackError);
@@ -124,7 +111,6 @@ function validateAndFixJSON(jsonString: string): any {
 
 // 🔹 Hàm tạo JSON fallback khi không thể sửa được
 function createFallbackJSON(jsonString: string): any {
-  console.log("🆘 Creating fallback JSON...");
   
   // Tìm topic chính
   const topicMatch = jsonString.match(/"topic"\s*:\s*"([^"]+)"/);
@@ -143,8 +129,6 @@ function createFallbackJSON(jsonString: string): any {
   // Tạo cấu trúc mindmap đơn giản
   const children = childrenTopics.slice(0, 15).map(topic => ({ topic }));
   
-  console.log(`🆘 Fallback: Main topic "${mainTopic}" with ${children.length} children`);
-  console.log(`📊 Fallback stats: JSON length ${jsonString.length}, extracted ${allTopics.length} topics`);
   
   return {
     topic: mainTopic,
@@ -229,7 +213,6 @@ const MindmapPage = () => {
 
   // File upload handlers
   const handleFileUpload = async (file: File) => {
-    console.log('🔥 File upload attempted:', file.name, file.type, file.size);
     
     // Check if file type is supported by our parser
     if (!FileParser.isFileTypeSupported(file.type)) {
@@ -352,17 +335,13 @@ const MindmapPage = () => {
   };
 
   const addNode = () => {
-    console.log('🔹 AddNode called, jmRef.current:', jmRef.current);
     if (jmRef.current) {
       const selectedNode = jmRef.current.get_selected_node();
-      console.log('🔹 Selected node:', selectedNode);
       if (selectedNode) {
         const newNodeId = `node-${Date.now()}`;
-        console.log('🔹 Adding node with ID:', newNodeId, 'to parent:', selectedNode.id);
         // Sử dụng add_node với format đúng: (parent_node, node_id, topic, data)
         try {
           const result = jmRef.current.add_node(selectedNode.id, newNodeId, 'Nút mới');
-          console.log('🔹 Add node result:', result);
           if (result) {
             message.success('Đã thêm nút mới thành công!');
           } else {
@@ -381,19 +360,14 @@ const MindmapPage = () => {
   };
 
   const removeNode = () => {
-    console.log('🔸 RemoveNode called, jmRef.current:', jmRef.current);
     if (jmRef.current) {
       const selectedNode = jmRef.current.get_selected_node();
-      console.log('🔸 Selected node:', selectedNode);
       if (selectedNode) {
         const rootNode = jmRef.current.get_root();
-        console.log('🔸 Root node:', rootNode);
         if (selectedNode.id !== rootNode.id) {
           // Sử dụng node_id thay vì node object
           try {
-            console.log('🔸 Removing node with ID:', selectedNode.id);
             const result = jmRef.current.remove_node(selectedNode.id);
-            console.log('🔸 Remove node result:', result);
             if (result) {
               message.success('Đã xóa nút thành công!');
             } else {
@@ -414,6 +388,39 @@ const MindmapPage = () => {
     }
   };
 
+  const applyNodeStyling = () => {
+    // Apply styling cho tất cả nodes
+    const nodes = document.querySelectorAll('#jsmind_container jmnode');
+    nodes.forEach((node: any) => {
+      const nodeElement = node.querySelector('jmnodes');
+      if (nodeElement) {
+        // Căn giữa text
+        nodeElement.style.display = 'flex';
+        nodeElement.style.alignItems = 'center';
+        nodeElement.style.justifyContent = 'center';
+        nodeElement.style.textAlign = 'center';
+        nodeElement.style.width = '100%';
+        nodeElement.style.height = '100%';
+        
+        // Cải thiện typography
+        const textElement = nodeElement.querySelector('jmnode');
+        if (textElement) {
+          textElement.style.display = 'flex';
+          textElement.style.alignItems = 'center';
+          textElement.style.justifyContent = 'center';
+          textElement.style.textAlign = 'center';
+          textElement.style.padding = '8px 12px';
+          textElement.style.lineHeight = '1.2';
+          textElement.style.wordWrap = 'break-word';
+          textElement.style.whiteSpace = 'normal';
+          textElement.style.fontFamily = 'Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+          textElement.style.fontWeight = '500';
+          textElement.style.fontSize = '14px';
+        }
+      }
+    });
+  };
+
   const exportMindmapAsJSON = () => {
     if (jmRef.current) {
       // Export as JSON
@@ -431,292 +438,47 @@ const MindmapPage = () => {
   };
 
   const exportMindmapAsPNG = async () => {
-    const container = document.getElementById('jsmind_container');
-    if (!container || !jmRef.current) {
-      message.error('Mindmap chưa được khởi tạo');
-      return;
-    }
-
     try {
-      message.loading('Đang tạo file PNG...', 0);
+      message.loading('Đang tạo file PNG từ jsMind...', 0);
 
-      // Check if jsMind has content
-      const jsmindInner = container.querySelector('.jsmind-inner') as HTMLElement;
-      const nodes = container.querySelectorAll('jmnode');
-      
-      if (!jsmindInner || nodes.length === 0) {
-        message.destroy();
-        message.error('Mindmap chưa có nội dung để xuất. Hãy tạo mindmap trước.');
-        return;
-      }
-
-      console.log('🖼️ Exporting mindmap with clean setup...');
-
-      // Store original container styles
-      const originalStyles = {
-        overflow: container.style.overflow,
-        height: container.style.height,
-        width: container.style.width,
-        maxHeight: container.style.maxHeight,
-        maxWidth: container.style.maxWidth,
-        border: container.style.border,
-        borderRadius: container.style.borderRadius
-      };
-
-      // Prepare container for clean export
-      container.style.overflow = 'hidden'; // Hide scrollbars completely
-      container.style.border = 'none'; // Remove border
-      container.style.borderRadius = '0'; // Remove border radius
-      container.style.background = '#ffffff'; // Ensure white background
-      
-      // Calculate mindmap content dimensions
-      const contentWidth = jsmindInner.scrollWidth;
-      const contentHeight = jsmindInner.scrollHeight;
-      
-      // Set container to exactly fit content (no extra space)
-      container.style.width = `${contentWidth}px`;
-      container.style.height = `${contentHeight}px`;
-      container.style.maxWidth = 'none';
-      container.style.maxHeight = 'none';
-
-      // Wait for styles to apply
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      console.log('🎯 Export dimensions:', {
-        contentWidth,
-        contentHeight,
-        containerScrollWidth: container.scrollWidth,
-        containerScrollHeight: container.scrollHeight
+      // Sử dụng SimplePDFExporter để xuất PNG trực tiếp từ jsMind container
+      await simplePDFExporter.exportToPNG({
+        containerId: 'jsmind_container',
+        filename: `mindmap-${Date.now()}.png`,
+        scale: 2
       });
 
-      // Use html2canvas with precise dimensions
-      const canvas = await html2canvas(container, {
-        backgroundColor: '#ffffff',
-        scale: 2, // High quality
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        width: contentWidth,
-        height: contentHeight,
-        scrollX: 0,
-        scrollY: 0,
-        ignoreElements: (element) => {
-          // Ignore any scrollbar elements
-          return element.tagName === 'SCROLLBAR' || 
-                 element.classList.contains('scrollbar') ||
-                 element.classList.contains('ant-scrollbar');
-        }
-      });
-
-      // Restore original styles immediately
-      Object.assign(container.style, originalStyles);
-
-      console.log('✅ Canvas created successfully:', { 
-        width: canvas.width, 
-        height: canvas.height 
-      });
-
-      if (canvas.width < 100 || canvas.height < 100) {
-        message.destroy();
-        message.error(`Canvas kích thước không hợp lệ: ${canvas.width}x${canvas.height}`);
-        return;
-      }
-
-      // Download the image
-      canvas.toBlob((blob) => {
-        if (blob && blob.size > 1000) {
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `mindmap-${Date.now()}.png`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
-          
-          message.destroy();
-          message.success('🎉 Mindmap đã được xuất PNG thành công!');
-        } else {
-          message.destroy();
-          message.error('Không thể tạo file PNG');
-        }
-      }, 'image/png', 1.0);
+      message.destroy();
+      message.success('🎉 Mindmap đã được xuất PNG thành công! (Giữ nguyên layout & màu sắc)');
 
     } catch (error) {
       message.destroy();
       console.error('Export PNG error:', error);
       message.error('Có lỗi khi xuất PNG: ' + (error instanceof Error ? error.message : 'Unknown error'));
-      
-      // Ensure styles are restored on error
-      const container = document.getElementById('jsmind_container');
-      if (container) {
-        container.style.overflow = '';
-        container.style.height = '600px';
-        container.style.width = '100%';
-        container.style.maxHeight = '';
-        container.style.maxWidth = '';
-        container.style.border = '1px solid #e0e0e0';
-        container.style.borderRadius = '8px';
-        container.style.background = '#fdfdfd';
-      }
     }
   };
 
+
   const exportMindmapAsPDF = async () => {
-    const container = document.getElementById('jsmind_container');
-    if (!container || !jmRef.current) {
-      message.error('Mindmap chưa được khởi tạo');
-      return;
-    }
-
     try {
-      message.loading('Đang tạo file PDF...', 0);
+      message.loading('Đang tạo file PDF từ jsMind...', 0);
 
-      // Check if mindmap has content
-      const jsmindInner = container.querySelector('.jsmind-inner') as HTMLElement;
-      const nodes = container.querySelectorAll('jmnode');
-      
-      if (!jsmindInner || nodes.length === 0) {
-        message.destroy();
-        message.error('Mindmap chưa có nội dung để xuất. Hãy tạo mindmap trước.');
-        return;
-      }
-
-      console.log('📄 Exporting PDF with clean setup...');
-
-      // Store original container styles
-      const originalStyles = {
-        overflow: container.style.overflow,
-        height: container.style.height,
-        width: container.style.width,
-        maxHeight: container.style.maxHeight,
-        maxWidth: container.style.maxWidth,
-        border: container.style.border,
-        borderRadius: container.style.borderRadius
-      };
-
-      // Prepare container for clean export
-      container.style.overflow = 'hidden'; // Hide scrollbars completely
-      container.style.border = 'none'; // Remove border
-      container.style.borderRadius = '0'; // Remove border radius
-      container.style.background = '#ffffff'; // Ensure white background
-      
-      // Calculate mindmap content dimensions
-      const contentWidth = jsmindInner.scrollWidth;
-      const contentHeight = jsmindInner.scrollHeight;
-      
-      // Set container to exactly fit content
-      container.style.width = `${contentWidth}px`;
-      container.style.height = `${contentHeight}px`;
-      container.style.maxWidth = 'none';
-      container.style.maxHeight = 'none';
-
-      // Wait for styles to apply
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      // Use html2canvas for consistent results
-      const canvas = await html2canvas(container, {
-        backgroundColor: '#ffffff',
-        scale: 3, // Higher quality for PDF
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        width: contentWidth,
-        height: contentHeight,
-        scrollX: 0,
-        scrollY: 0,
-        ignoreElements: (element) => {
-          // Ignore any scrollbar elements
-          return element.tagName === 'SCROLLBAR' || 
-                 element.classList.contains('scrollbar') ||
-                 element.classList.contains('ant-scrollbar');
-        }
+      // Sử dụng SimplePDFExporter để xuất PDF trực tiếp từ jsMind container
+      await simplePDFExporter.exportToPDF({
+        containerId: 'jsmind_container',
+        filename: `mindmap-${Date.now()}.pdf`,
+        format: 'a4',
+        orientation: 'landscape',
+        margin: 20
       });
 
-      // Restore original styles immediately
-      Object.assign(container.style, originalStyles);
-
-      if (canvas.width < 100 || canvas.height < 100) {
-        message.destroy();
-        message.error(`Canvas kích thước không hợp lệ: ${canvas.width}x${canvas.height}`);
-        return;
-      }
-
-      const imgData = canvas.toDataURL('image/png', 1.0);
-      
-      if (!imgData || imgData === 'data:,' || imgData.length < 1000) {
-        message.destroy();
-        message.error('Không thể tạo ảnh từ mindmap');
-        return;
-      }
-
-      // Create PDF with optimal sizing
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      const ratio = imgWidth / imgHeight;
-      
-      console.log('📄 Creating PDF with dimensions:', { imgWidth, imgHeight, ratio });
-      
-      // Calculate PDF dimensions to fit content perfectly
-      let pdfWidth, pdfHeight;
-      if (ratio > 1.4) {
-        // Very wide - use A3 landscape
-        pdfWidth = 420; // A3 landscape width in mm
-        pdfHeight = 297; // A3 landscape height in mm
-      } else if (ratio > 1) {
-        // Wide - use A4 landscape
-        pdfWidth = 297; // A4 landscape width in mm
-        pdfHeight = 210; // A4 landscape height in mm
-      } else if (ratio < 0.7) {
-        // Tall - use extended portrait
-        pdfWidth = 210; // A4 portrait width in mm
-        pdfHeight = 420; // Extended height in mm
-      } else {
-        // Normal - use A4 portrait
-        pdfWidth = 210; // A4 portrait width in mm
-        pdfHeight = 297; // A4 portrait height in mm
-      }
-      
-      // Adjust dimensions to maintain aspect ratio
-      if (ratio > pdfWidth / pdfHeight) {
-        pdfHeight = pdfWidth / ratio;
-      } else {
-        pdfWidth = pdfHeight * ratio;
-      }
-      
-      // Create PDF
-      const pdf = new jsPDF({
-        orientation: ratio > 1 ? 'landscape' : 'portrait',
-        unit: 'mm',
-        format: [pdfWidth, pdfHeight]
-      });
-
-      // Add image to PDF (perfect fit)
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      
-      // Save PDF
-      pdf.save(`mindmap-${Date.now()}.pdf`);
-      
       message.destroy();
-      message.success('🎉 Mindmap đã được xuất PDF thành công!');
+      message.success('🎉 Mindmap đã được xuất PDF thành công! (Giữ nguyên layout & màu sắc)');
 
     } catch (error) {
       message.destroy();
       console.error('Export PDF error:', error);
       message.error('Có lỗi khi xuất PDF: ' + (error instanceof Error ? error.message : 'Unknown error'));
-      
-      // Ensure styles are restored on error
-      const container = document.getElementById('jsmind_container');
-      if (container) {
-        container.style.overflow = '';
-        container.style.height = '600px';
-        container.style.width = '100%';
-        container.style.maxHeight = '';
-        container.style.maxWidth = '';
-        container.style.border = '1px solid #e0e0e0';
-        container.style.borderRadius = '8px';
-        container.style.background = '#fdfdfd';
-      }
     }
   };
 
@@ -894,18 +656,20 @@ const MindmapPage = () => {
           // Hiển thị mindmap
           jmRef.current.show(mindmapData);
           
+          // Apply styling để căn giữa text
+          setTimeout(() => {
+            applyNodeStyling();
+          }, 100);
+          
           // Add event listeners for better interaction
-          jmRef.current.add_event_listener(function(type: string, data: any) {
+          jmRef.current.add_event_listener(function(type: string, _data: any) {
             if (type === 'edit_node') {
-              console.log('Node edited:', data);
             } else if (type === 'select_node') {
-              console.log('Node selected:', data);
             }
           });
           
           // CSS đã được định nghĩa trong component
           
-          console.log('jsMind initialized successfully:', jmRef.current);
         } catch (error) {
           console.error("Error initializing jsMind:", error);
         }
@@ -925,25 +689,53 @@ const MindmapPage = () => {
           if (fileType === 'image') {
             // Smart image analysis prompt
             const userContext = inputValue ? ` với góc nhìn: "${inputValue}"` : '';
-            prompt = `Hãy phân tích ảnh đã gửi${userContext} và tạo mindmap JSON chi tiết.
+            prompt = `ROLE: Bạn là chuyên gia phân tích hình ảnh và tạo mindmap giáo dục.
 
-HƯỚNG DẪN PHÂN TÍCH:
-- Xác định chủ đề chính của ảnh (văn bản, biểu đồ, sơ đồ, khái niệm học tập...)
-- Trích xuất tất cả thông tin quan trọng từ ảnh
-- Tổ chức thành cấu trúc mindmap logic với chủ đề chính và các nhánh con
+TASK: Phân tích ảnh đã gửi${userContext} và tạo mindmap JSON chi tiết.
+
+OUTPUT FORMAT (BẮT BUỘC):
+{
+  "topic": "Chủ đề chính từ ảnh",
+  "children": [
+    {"topic": "Nhánh 1"},
+    {"topic": "Nhánh 2", "children": [{"topic": "Chi tiết"}]}
+  ]
+}
+
+EXAMPLES:
+- Ảnh bài học Toán → {"topic": "Toán học lớp 12", "children": [
+    {"topic": "Đại số", "children": [{"topic": "Hàm số"}, {"topic": "Phương trình"}, {"topic": "Bất phương trình"}]},
+    {"topic": "Hình học", "children": [{"topic": "Khối đa diện"}, {"topic": "Mặt cầu"}, {"topic": "Tọa độ không gian"}]}
+  ]}
+- Ảnh sơ đồ sinh học → {"topic": "Hệ tuần hoàn", "children": [
+    {"topic": "Tim", "children": [{"topic": "Cấu tạo"}, {"topic": "Chức năng"}, {"topic": "Hoạt động"}]},
+    {"topic": "Mạch máu", "children": [{"topic": "Động mạch"}, {"topic": "Tĩnh mạch"}, {"topic": "Mao mạch"}]}
+  ]}
+
+ANALYSIS GUIDE:
+1. Xác định chủ đề chính (văn bản, biểu đồ, sơ đồ, khái niệm học tập)
+2. Trích xuất thông tin quan trọng từ ảnh
+3. Tổ chức logic: tổng quát → chi tiết
+4. Tài liệu học tập: khái niệm → định nghĩa → ví dụ → ứng dụng
+5. Biểu đồ/sơ đồ: theo cấu trúc của biểu đồ
+6. Văn bản: ý chính → chi tiết
+
+DETAIL REQUIREMENTS:
+- Tạo mindmap CHI TIẾT và ĐẦY ĐỦ từ nội dung ảnh
+- Mỗi nhánh chính phải có ít nhất 3-5 nhánh con
+- Nhánh con có thể có thêm 2-3 nhánh con cấp 2
+- Trích xuất TẤT CẢ thông tin quan trọng từ ảnh
+- Bao gồm: khái niệm, định nghĩa, công thức, ví dụ, ứng dụng, lưu ý
 - Nếu là tài liệu học tập: chia theo khái niệm, định nghĩa, ví dụ, ứng dụng
-- Nếu là biểu đồ/sơ đồ: theo cấu trúc của biểu đồ
-- Nếu là văn bản: theo ý chính và chi tiết
+- Nếu là biểu đồ/sơ đồ: theo cấu trúc của biểu đồ với chi tiết
+- Nếu là văn bản: theo ý chính và chi tiết với phân tích sâu
 
-QUAN TRỌNG: 
+RULES:
 - Chỉ trả về JSON thuần, KHÔNG có text khác
-- KHÔNG sử dụng markdown backticks
-- Format chính xác: {"topic": "chủ đề tự động nhận diện", "children": [...]}
-- Đảm bảo JSON hợp lệ: mỗi property phải có dấu hai chấm, dấu phẩy đúng vị trí
-- Không có dấu phẩy thừa trước ] hoặc }
-- Mỗi string value phải có dấu ngoặc kép
-- Không có text giải thích trước hoặc sau JSON
-- Kiểm tra lại JSON trước khi trả về`;
+- Tối đa 3 cấp độ children để có đủ chi tiết
+- Mỗi topic ngắn gọn nhưng đầy đủ thông tin
+- Đảm bảo JSON hợp lệ (dấu hai chấm, dấu phẩy, ngoặc kép)
+- Không có dấu phẩy thừa trước ] hoặc }`;
           } else {
             // Smart document analysis prompt với chunking
             const fileTypeDesc = FileParser.getFileTypeDescription(selectedFile.type);
@@ -954,54 +746,111 @@ QUAN TRỌNG:
             let contentToAnalyze = parsedFileContent;
             
             if (parsedFileContent.length > maxContentLength) {
-              console.log(`📄 File content quá dài (${parsedFileContent.length} chars), chia nhỏ để phân tích...`);
               contentToAnalyze = parsedFileContent.substring(0, maxContentLength) + 
                 `\n\n[Lưu ý: Nội dung đã được rút gọn từ ${parsedFileContent.length} ký tự xuống ${maxContentLength} ký tự để tránh JSON quá dài]`;
             }
             
-            prompt = `Hãy phân tích nội dung ${fileTypeDesc} sau đây${userContext} và tạo mindmap JSON chi tiết:
+            prompt = `ROLE: Bạn là chuyên gia phân tích tài liệu và tạo mindmap giáo dục.
 
+TASK: Phân tích nội dung ${fileTypeDesc}${userContext} và tạo mindmap JSON chi tiết.
+
+CONTENT TO ANALYZE:
 ===== NỘI DUNG FILE =====
 ${contentToAnalyze}
 ===== KẾT THÚC NỘI DUNG FILE =====
 
-HƯỚNG DẪN PHÂN TÍCH:
-- Tự động xác định chủ đề chính của tài liệu
-- Phân tích cấu trúc nội dung (tiêu đề, mục lục, phần chính, kết luận...)
-- Trích xuất các khái niệm, định nghĩa, công thức, ví dụ quan trọng
-- Tổ chức theo cấu trúc logic: từ tổng quát đến chi tiết
-- Nếu là bài học: chia theo mục tiêu, nội dung, bài tập, đánh giá
-- Nếu là tài liệu kỹ thuật: chia theo tính năng, hướng dẫn, lưu ý
-- Nếu là bài tập: chia theo dạng bài, phương pháp giải, ví dụ
-- GIỚI HẠN: Tối đa 2 cấp độ children để tránh JSON quá dài
+OUTPUT FORMAT (BẮT BUỘC):
+{
+  "topic": "Chủ đề chính từ nội dung",
+  "children": [
+    {"topic": "Nhánh 1"},
+    {"topic": "Nhánh 2", "children": [{"topic": "Chi tiết"}]}
+  ]
+}
 
-QUAN TRỌNG: 
+EXAMPLES:
+- Tài liệu Toán → {"topic": "Đại số lớp 12", "children": [
+    {"topic": "Hàm số", "children": [{"topic": "Định nghĩa"}, {"topic": "Tính chất"}, {"topic": "Đồ thị"}]},
+    {"topic": "Phương trình", "children": [{"topic": "Bậc nhất"}, {"topic": "Bậc hai"}, {"topic": "Hệ phương trình"}]}
+  ]}
+- Bài học Lịch sử → {"topic": "Chiến tranh thế giới", "children": [
+    {"topic": "Nguyên nhân", "children": [{"topic": "Kinh tế"}, {"topic": "Chính trị"}, {"topic": "Xã hội"}]},
+    {"topic": "Diễn biến", "children": [{"topic": "Giai đoạn 1"}, {"topic": "Giai đoạn 2"}, {"topic": "Kết thúc"}]}
+  ]}
+
+ANALYSIS GUIDE:
+1. Tự động xác định chủ đề chính của tài liệu
+2. Phân tích cấu trúc: tiêu đề → mục lục → phần chính → kết luận
+3. Trích xuất: khái niệm, định nghĩa, công thức, ví dụ quan trọng
+4. Tổ chức logic: tổng quát → chi tiết
+5. Bài học: mục tiêu → nội dung → bài tập → đánh giá
+6. Tài liệu kỹ thuật: tính năng → hướng dẫn → lưu ý
+7. Bài tập: dạng bài → phương pháp → ví dụ
+
+DETAIL REQUIREMENTS:
+- Tạo mindmap CHI TIẾT và ĐẦY ĐỦ từ nội dung tài liệu
+- Mỗi nhánh chính phải có ít nhất 3-5 nhánh con
+- Nhánh con có thể có thêm 2-3 nhánh con cấp 2
+- Trích xuất TẤT CẢ thông tin quan trọng từ tài liệu
+- Bao gồm: khái niệm, định nghĩa, công thức, ví dụ, bài tập, lưu ý
+- Nếu là bài học: chia theo mục tiêu, nội dung chính, bài tập, đánh giá
+- Nếu là tài liệu kỹ thuật: chia theo tính năng, hướng dẫn, lưu ý, ứng dụng
+
+RULES:
 - Chỉ trả về JSON thuần, KHÔNG có text khác
-- Format chính xác: {"topic": "chủ đề tự động nhận diện từ nội dung", "children": [...]}
-- Đảm bảo JSON hợp lệ: mỗi property phải có dấu hai chấm, dấu phẩy đúng vị trí
-- Không có dấu phẩy thừa trước ] hoặc }
-- Mỗi string value phải có dấu ngoặc kép
-- Không có text giải thích trước hoặc sau JSON
-- Kiểm tra lại JSON trước khi trả về`;
+- Tối đa 3 cấp độ children để có đủ chi tiết
+- Mỗi topic ngắn gọn nhưng đầy đủ thông tin
+- Đảm bảo JSON hợp lệ (dấu hai chấm, dấu phẩy, ngoặc kép)
+- Không có dấu phẩy thừa trước ] hoặc }`;
           }
         } else {
-          prompt = `Hãy tạo mindmap JSON chi tiết cho chủ đề: "${inputValue}".
+          prompt = `ROLE: Bạn là chuyên gia tạo mindmap giáo dục.
 
-HƯỚNG DẪN TẠO MINDMAP:
-- Phân tích chủ đề và xác định các khía cạnh chính
-- Tạo cấu trúc từ tổng quát đến chi tiết
-- Bao gồm: định nghĩa, đặc điểm, phân loại, ứng dụng, ví dụ
-- Đảm bảo logic và dễ hiểu
-- GIỚI HẠN: Tối đa 2 cấp độ children để tránh JSON quá dài
+TASK: Tạo mindmap JSON chi tiết cho chủ đề "${inputValue}".
 
-QUAN TRỌNG: 
+OUTPUT FORMAT (BẮT BUỘC):
+{
+  "topic": "${inputValue}",
+  "children": [
+    {"topic": "Nhánh 1"},
+    {"topic": "Nhánh 2", "children": [{"topic": "Chi tiết"}]}
+  ]
+}
+
+EXAMPLES:
+- "Toán học lớp 12" → {"topic": "Toán học lớp 12", "children": [
+    {"topic": "Đại số", "children": [{"topic": "Hàm số"}, {"topic": "Phương trình"}, {"topic": "Bất phương trình"}]},
+    {"topic": "Hình học", "children": [{"topic": "Khối đa diện"}, {"topic": "Mặt cầu"}, {"topic": "Tọa độ không gian"}]},
+    {"topic": "Giải tích", "children": [{"topic": "Đạo hàm"}, {"topic": "Tích phân"}, {"topic": "Ứng dụng"}]}
+  ]}
+- "Hóa học hữu cơ" → {"topic": "Hóa học hữu cơ", "children": [
+    {"topic": "Hiđrocacbon", "children": [{"topic": "Ankan"}, {"topic": "Anken"}, {"topic": "Ankin"}]},
+    {"topic": "Dẫn xuất", "children": [{"topic": "Ancol"}, {"topic": "Axit"}, {"topic": "Este"}]},
+    {"topic": "Polime", "children": [{"topic": "Tổng hợp"}, {"topic": "Ứng dụng"}]}
+  ]}
+
+MINDMAP STRUCTURE GUIDE:
+1. Phân tích chủ đề và xác định các khía cạnh chính
+2. Tạo cấu trúc: tổng quát → chi tiết
+3. Bao gồm: định nghĩa, đặc điểm, phân loại, ứng dụng, ví dụ
+4. Đảm bảo logic và dễ hiểu
+5. Mỗi nhánh phải có ý nghĩa rõ ràng
+
+DETAIL REQUIREMENTS:
+- Tạo mindmap CHI TIẾT và ĐẦY ĐỦ nhất có thể
+- Mỗi nhánh chính phải có ít nhất 3-5 nhánh con
+- Nhánh con có thể có thêm 2-3 nhánh con cấp 2
+- Bao phủ tất cả khía cạnh quan trọng của chủ đề
+- Bao gồm: định nghĩa, đặc điểm, phân loại, ví dụ, ứng dụng, công thức, lưu ý
+- Nếu là môn học: chia theo chương, bài, khái niệm, công thức, bài tập
+- Nếu là chủ đề: chia theo khía cạnh, ứng dụng, ví dụ, lưu ý
+
+RULES:
 - Chỉ trả về JSON thuần, KHÔNG có text khác
-- Format chính xác: {"topic": "${inputValue}", "children": [...]}
-- Đảm bảo JSON hợp lệ: mỗi property phải có dấu hai chấm, dấu phẩy đúng vị trí
-- Không có dấu phẩy thừa trước ] hoặc }
-- Mỗi string value phải có dấu ngoặc kép
-- Không có text giải thích trước hoặc sau JSON
-- Kiểm tra lại JSON trước khi trả về`;
+- Tối đa 3 cấp độ children để có đủ chi tiết
+- Mỗi topic ngắn gọn nhưng đầy đủ thông tin
+- Đảm bảo JSON hợp lệ (dấu hai chấm, dấu phẩy, ngoặc kép)
+- Không có dấu phẩy thừa trước ] hoặc }`;
         }
       } else if (selectedType === 'gdpt2018') {
         if (selectedFile) {
@@ -1009,24 +858,39 @@ QUAN TRỌNG:
             // Smart GDPT 2018 image analysis
             const subjectName = SUBJECTS.find(s => s.value === subject)?.label || 'Học tập';
             const lessonContext = lesson ? ` - Bài học: "${lesson}"` : '';
-            prompt = `Hãy phân tích ảnh đã gửi theo chương trình GDPT 2018 - Lớp ${grade}, Môn ${subjectName}${lessonContext} và tạo mindmap JSON chi tiết.
+            prompt = `ROLE: Bạn là chuyên gia giáo dục theo chương trình GDPT 2018.
 
-HƯỚNG DẪN PHÂN TÍCH THEO GDPT 2018:
-- Xác định mục tiêu học tập từ ảnh (kiến thức, kỹ năng, thái độ)
-- Phân tích nội dung theo cấu trúc: Khái niệm cơ bản → Kiến thức chi tiết → Ứng dụng thực tế
-- Liên kết với chương trình ${subjectName} lớp ${grade}
-- Tổ chức theo năng lực cốt lõi: tư duy, giải quyết vấn đề, hợp tác, giao tiếp
-- Đưa ra các hoạt động học tập phù hợp với lứa tuổi
-- Bao gồm: Mục tiêu, Nội dung chính, Hoạt động, Đánh giá
+TASK: Phân tích ảnh đã gửi theo GDPT 2018 - Lớp ${grade}, Môn ${subjectName}${lessonContext} và tạo mindmap JSON chi tiết.
 
-QUAN TRỌNG: 
-- Chỉ trả về JSON thuần, KHÔNG có text khác, KHÔNG có markdown
-- Format chính xác: {"topic": "Bài học theo GDPT 2018", "children": [...]}
-- Đảm bảo JSON hợp lệ: mỗi property phải có dấu hai chấm, dấu phẩy đúng vị trí
-- Không có dấu phẩy thừa trước ] hoặc }
-- Mỗi string value phải có dấu ngoặc kép
-- Không có text giải thích trước hoặc sau JSON
-- Kiểm tra lại JSON trước khi trả về`;
+OUTPUT FORMAT (BẮT BUỘC):
+{
+  "topic": "Bài học theo GDPT 2018",
+  "children": [
+    {"topic": "Mục tiêu học tập"},
+    {"topic": "Nội dung kiến thức"},
+    {"topic": "Hoạt động học tập"},
+    {"topic": "Đánh giá kết quả"}
+  ]
+}
+
+EXAMPLES:
+- Bài học Toán lớp 12 → {"topic": "Hàm số mũ và logarit", "children": [{"topic": "Mục tiêu"}, {"topic": "Kiến thức"}, {"topic": "Hoạt động"}, {"topic": "Đánh giá"}]}
+- Bài học Sinh học → {"topic": "Di truyền học", "children": [{"topic": "Mục tiêu"}, {"topic": "Kiến thức"}, {"topic": "Hoạt động"}, {"topic": "Đánh giá"}]}
+
+GDPT 2018 ANALYSIS GUIDE:
+1. Xác định mục tiêu học tập (kiến thức, kỹ năng, thái độ)
+2. Phân tích theo cấu trúc: Khái niệm cơ bản → Kiến thức chi tiết → Ứng dụng thực tế
+3. Liên kết với chương trình ${subjectName} lớp ${grade}
+4. Tổ chức theo năng lực cốt lõi: tư duy, giải quyết vấn đề, hợp tác, giao tiếp
+5. Đưa ra hoạt động học tập phù hợp với lứa tuổi
+6. Bao gồm: Mục tiêu, Nội dung chính, Hoạt động, Đánh giá
+
+RULES:
+- Chỉ trả về JSON thuần, KHÔNG có text khác
+- Tối đa 2 cấp độ children
+- Mỗi topic ngắn gọn, dễ hiểu
+- Đảm bảo JSON hợp lệ (dấu hai chấm, dấu phẩy, ngoặc kép)
+- Không có dấu phẩy thừa trước ] hoặc }`;
           } else {
             // Smart GDPT 2018 document analysis với chunking
             const fileTypeDesc = FileParser.getFileTypeDescription(selectedFile.type);
@@ -1038,64 +902,93 @@ QUAN TRỌNG:
             let contentToAnalyze = parsedFileContent;
             
             if (parsedFileContent.length > maxContentLength) {
-              console.log(`📄 GDPT File content quá dài (${parsedFileContent.length} chars), chia nhỏ để phân tích...`);
               contentToAnalyze = parsedFileContent.substring(0, maxContentLength) + 
                 `\n\n[Lưu ý: Nội dung đã được rút gọn từ ${parsedFileContent.length} ký tự xuống ${maxContentLength} ký tự để tránh JSON quá dài]`;
             }
             
-            prompt = `Hãy phân tích nội dung ${fileTypeDesc} theo chương trình GDPT 2018 - Lớp ${grade}, Môn ${subjectName}${lessonContext}:
+            prompt = `ROLE: Bạn là chuyên gia giáo dục theo chương trình GDPT 2018.
 
+TASK: Phân tích nội dung ${fileTypeDesc} theo GDPT 2018 - Lớp ${grade}, Môn ${subjectName}${lessonContext}.
+
+CONTENT TO ANALYZE:
 ===== NỘI DUNG FILE =====
 ${contentToAnalyze}
 ===== KẾT THÚC NỘI DUNG FILE =====
 
-HƯỚNG DẪN PHÂN TÍCH THEO GDPT 2018:
-- Tự động xác định mục tiêu học tập (kiến thức, kỹ năng, thái độ)
-- Phân tích theo cấu trúc bài học GDPT 2018: Khởi động → Hình thành kiến thức → Luyện tập → Vận dụng
-- Liên kết với chương trình ${subjectName} lớp ${grade}
-- Xác định năng lực cần phát triển (tư duy logic, sáng tạo, hợp tác...)
-- Đề xuất hoạt động học tập phù hợp: cá nhân, nhóm, thảo luận, thực hành
-- Bao gồm: Mục tiêu bài học, Kiến thức cốt lõi, Hoạt động học tập, Đánh giá kết quả
-- GIỚI HẠN: Tối đa 2 cấp độ children để tránh JSON quá dài
+OUTPUT FORMAT (BẮT BUỘC):
+{
+  "topic": "Bài học: [tự động nhận diện từ nội dung]",
+  "children": [
+    {"topic": "Mục tiêu học tập"},
+    {"topic": "Kiến thức cốt lõi"},
+    {"topic": "Hoạt động học tập"},
+    {"topic": "Đánh giá kết quả"}
+  ]
+}
 
-QUAN TRỌNG: 
-- Chỉ trả về JSON thuần, KHÔNG có text khác, KHÔNG có markdown
-- Format chính xác: {"topic": "Bài học: [tự động nhận diện từ nội dung]", "children": [...]}
-- Đảm bảo JSON hợp lệ: mỗi property phải có dấu hai chấm, dấu phẩy đúng vị trí
-- Không có dấu phẩy thừa trước ] hoặc }
-- Mỗi string value phải có dấu ngoặc kép
-- Không có text giải thích trước hoặc sau JSON
-- Kiểm tra lại JSON trước khi trả về`;
+EXAMPLES:
+- Tài liệu Toán lớp 12 → {"topic": "Bài học: Hàm số mũ và logarit", "children": [{"topic": "Mục tiêu"}, {"topic": "Kiến thức"}, {"topic": "Hoạt động"}, {"topic": "Đánh giá"}]}
+- Bài học Sinh học → {"topic": "Bài học: Di truyền học", "children": [{"topic": "Mục tiêu"}, {"topic": "Kiến thức"}, {"topic": "Hoạt động"}, {"topic": "Đánh giá"}]}
+
+GDPT 2018 ANALYSIS GUIDE:
+1. Tự động xác định mục tiêu học tập (kiến thức, kỹ năng, thái độ)
+2. Phân tích theo cấu trúc bài học GDPT 2018: Khởi động → Hình thành kiến thức → Luyện tập → Vận dụng
+3. Liên kết với chương trình ${subjectName} lớp ${grade}
+4. Xác định năng lực cần phát triển (tư duy logic, sáng tạo, hợp tác...)
+5. Đề xuất hoạt động học tập phù hợp: cá nhân, nhóm, thảo luận, thực hành
+6. Bao gồm: Mục tiêu bài học, Kiến thức cốt lõi, Hoạt động học tập, Đánh giá kết quả
+
+RULES:
+- Chỉ trả về JSON thuần, KHÔNG có text khác
+- Tối đa 2 cấp độ children để tránh JSON quá dài
+- Mỗi topic ngắn gọn, dễ hiểu
+- Đảm bảo JSON hợp lệ (dấu hai chấm, dấu phẩy, ngoặc kép)
+- Không có dấu phẩy thừa trước ] hoặc }`;
           }
         } else {
           // Auto-generate lesson content for GDPT 2018
           const subjectName = SUBJECTS.find(s => s.value === subject)?.label || 'Học tập';
           const autoLesson = lesson || `Bài học ${subjectName} lớp ${grade}`;
-          prompt = `Hãy tạo mindmap JSON chi tiết cho "${autoLesson}" theo chương trình GDPT 2018.
+          prompt = `ROLE: Bạn là chuyên gia giáo dục theo chương trình GDPT 2018.
 
-HƯỚNG DẪN TẠO BÀI HỌC GDPT 2018:
-- Xác định mục tiêu học tập (kiến thức, kỹ năng, thái độ)
-- Cấu trúc bài học: Khởi động → Hình thành kiến thức → Luyện tập → Vận dụng
-- Phát triển năng lực cốt lõi của môn ${subjectName}
-- Thiết kế hoạt động học tập đa dạng: cá nhân, nhóm, thảo luận
-- Liên kết với thực tế và cuộc sống
-- Bao gồm: Mục tiêu, Nội dung, Hoạt động, Đánh giá
+TASK: Tạo mindmap JSON chi tiết cho "${autoLesson}" theo GDPT 2018.
 
-CẤU TRÚC MINDMAP:
+OUTPUT FORMAT (BẮT BUỘC):
+{
+  "topic": "${autoLesson}",
+  "children": [
+    {"topic": "Mục tiêu học tập"},
+    {"topic": "Nội dung kiến thức"},
+    {"topic": "Hoạt động học tập"},
+    {"topic": "Đánh giá kết quả"}
+  ]
+}
+
+EXAMPLES:
+- "Bài học Toán lớp 12" → {"topic": "Bài học Toán lớp 12", "children": [{"topic": "Mục tiêu"}, {"topic": "Kiến thức"}, {"topic": "Hoạt động"}, {"topic": "Đánh giá"}]}
+- "Bài học Sinh học lớp 11" → {"topic": "Bài học Sinh học lớp 11", "children": [{"topic": "Mục tiêu"}, {"topic": "Kiến thức"}, {"topic": "Hoạt động"}, {"topic": "Đánh giá"}]}
+
+GDPT 2018 LESSON STRUCTURE:
+1. Mục tiêu học tập (kiến thức, kỹ năng, thái độ)
+2. Cấu trúc bài học: Khởi động → Hình thành kiến thức → Luyện tập → Vận dụng
+3. Phát triển năng lực cốt lõi của môn ${subjectName}
+4. Thiết kế hoạt động học tập đa dạng: cá nhân, nhóm, thảo luận
+5. Liên kết với thực tế và cuộc sống
+6. Bao gồm: Mục tiêu, Nội dung, Hoạt động, Đánh giá
+
+MINDMAP STRUCTURE:
 - Chủ đề chính: "${autoLesson}"
 - Nhánh 1: Mục tiêu học tập
 - Nhánh 2: Nội dung kiến thức
 - Nhánh 3: Hoạt động học tập  
 - Nhánh 4: Đánh giá kết quả
 
-QUAN TRỌNG: 
+RULES:
 - Chỉ trả về JSON thuần, KHÔNG có text khác
-- Format chính xác: {"topic": "${autoLesson}", "children": [...]}
-- Đảm bảo JSON hợp lệ: mỗi property phải có dấu hai chấm, dấu phẩy đúng vị trí
-- Không có dấu phẩy thừa trước ] hoặc }
-- Mỗi string value phải có dấu ngoặc kép
-- Không có text giải thích trước hoặc sau JSON
-- Kiểm tra lại JSON trước khi trả về`;
+- Tối đa 2 cấp độ children
+- Mỗi topic ngắn gọn, dễ hiểu
+- Đảm bảo JSON hợp lệ (dấu hai chấm, dấu phẩy, ngoặc kép)
+- Không có dấu phẩy thừa trước ] hoặc }`;
         }
       }
 
@@ -1119,7 +1012,6 @@ QUAN TRỌNG:
         .replace(/```js/gi, "")
         .trim();
 
-      console.log("🔹 Raw response from Gemini:", rawText.substring(0, 500) + "...");
 
       // ✅ tách ra phần JSON hợp lệ
       const firstBrace = rawText.indexOf("{");
@@ -1131,11 +1023,9 @@ QUAN TRỌNG:
       }
 
       const jsonString = rawText.substring(firstBrace, lastBrace + 1);
-      console.log("🔹 Extracted JSON string:", jsonString.substring(0, 200) + "...");
 
       // Sử dụng hàm validate và sửa JSON
       const json = validateAndFixJSON(jsonString);
-      console.log("✅ JSON parsed successfully");
       
       // Kiểm tra xem có sử dụng fallback không
       const isLikelyFallback = json.children && json.children.length <= 15 && jsonString.length > 5000;
@@ -1384,16 +1274,16 @@ QUAN TRỌNG:
                       menu={{
                         items: [
                           {
-                            key: 'png',
-                            label: 'Xuất PNG',
-                            icon: <FileImageOutlined />,
-                            onClick: exportMindmapAsPNG,
-                          },
-                          {
                             key: 'pdf',
-                            label: 'Xuất PDF',
+                            label: 'Xuất PDF (jsPDF + html2canvas)',
                             icon: <FilePdfOutlined />,
                             onClick: exportMindmapAsPDF,
+                          },
+                          {
+                            key: 'png',
+                            label: 'Xuất PNG (html2canvas)',
+                            icon: <FileImageOutlined />,
+                            onClick: exportMindmapAsPNG,
                           },
                           {
                             type: 'divider',
@@ -1415,6 +1305,9 @@ QUAN TRỌNG:
                     </Dropdown>
                     <Tooltip title="Toàn màn hình">
                       <Button icon={<FullscreenOutlined />} onClick={toggleFullscreen} />
+                    </Tooltip>
+                    <Tooltip title="Căn giữa text trong nodes">
+                      <Button icon={<BranchesOutlined />} onClick={applyNodeStyling} />
                     </Tooltip>
                     
                     {/* Zoom Controls */}

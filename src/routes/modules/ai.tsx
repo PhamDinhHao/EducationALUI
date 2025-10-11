@@ -16,16 +16,30 @@ export const aiRoute = [
           </>
         )
       },
+      {
+        path: PagePath.BUILD_LESSON,
+        element: lazyLoadModuleRoute(ModuleName.BUILD_LESSON, PageName.BUILD_LESSON),
+      },
+      {
+        path: PagePath.LESSON_FORM,
+        element: lazyLoadModuleRoute(ModuleName.LESSON_FORM, PageName.LESSON_FORM),
+      },
+      {
+        path: PagePath.LESSON_RESULT,
+        element: lazyLoadModuleRoute(ModuleName.LESSON_RESULT, PageName.LESSON_RESULT),
+      },
+      {
+        path: PagePath.PROMPT_LESSON,
+        element: lazyLoadModuleRoute(ModuleName.PROMPT_LESSON, PageName.PROMPT_LESSON),
+      },
+      {
+        path: PagePath.STEM_LESSON,
+        element: lazyLoadModuleRoute(ModuleName.STEM_LESSON, PageName.STEM_LESSON),
+      },
       // Route cho /ai/build-topic
       {
         path: PagePath.BUILD_TOPIC,
         element: lazyLoadModuleRoute(ModuleName.BUILD_TOPIC, PageName.BUILD_TOPIC),
-      },
-      // Route cho /ai/build-lesson
-      {
-        path: PagePath.BUILD_LESSON,
-        element: lazyLoadModuleRoute(ModuleName.BUILD_LESSON, PageName.BUILD_LESSON)
-      },
       {
         path: PagePath.PERSONAL_PLAN,
         element: lazyLoadModuleRoute(ModuleName.PERSONAL_PLAN, PageName.PERSONAL_PLAN)

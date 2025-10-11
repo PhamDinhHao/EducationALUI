@@ -16,10 +16,10 @@ const MENU_ITEMS: MenuItem[] = [
     icon: <ReadOutlined />,
     label: 'Giáo viên',
     children: [
-      { key: 'teacher-plan', label: <Link to={PagePath.TEACHER_PLAN}>Xây dựng đề</Link> },
+      { key: 'teacher-plan', label: <Link to={PagePath.BUILD_STRUCTURE}>Xây dựng đề</Link> },
       { key: 'teacher-exam', label: <Link to={PagePath.BUILD_LESSON}>Xây dựng giáo án</Link> },
-      { key: 'teacher-mark', label: <Link to={PagePath.TEACHER_MARK}>Kế hoạch cá nhân & Sáng kiến kinh nghiệm</Link> },
-      { key: 'teacher-report', label: <Link to={PagePath.TEACHER_REPORT}>Trợ lý giáo viên</Link> }
+      { key: 'teacher-mark', label: <Link to={PagePath.EXPREANDSUCCE}>Kế hoạch cá nhân & Sáng kiến kinh nghiệm</Link> },
+      { key: 'teacher-report', label: <Link to={PagePath.ASSISTANTAI}>Trợ lý giáo viên</Link> }
     ]
   },
   {

@@ -36,6 +36,7 @@ export const aiRoute = [
         path: PagePath.INITIATIVERESULT,
         element: lazyLoadModuleRoute(ModuleName.INITIATIVERESULT, PageName.INITIATIVERESULT),
       },
+      {
         path: PagePath.BUILD_LESSON,
         element: lazyLoadModuleRoute(ModuleName.BUILD_LESSON, PageName.BUILD_LESSON),
       },
@@ -59,6 +60,7 @@ export const aiRoute = [
       {
         path: PagePath.BUILD_TOPIC,
         element: lazyLoadModuleRoute(ModuleName.BUILD_TOPIC, PageName.BUILD_TOPIC),
+      },
       {
         path: PagePath.PERSONAL_PLAN,
         element: lazyLoadModuleRoute(ModuleName.PERSONAL_PLAN, PageName.PERSONAL_PLAN)

@@ -15,7 +15,7 @@ export enum ModuleName {
   LESSON_FORM = "lesson-form",
   LESSON_RESULT = "lesson-result",
   PROMPT_LESSON = "prompt-lesson",
-  STEM_LESSON = "stem-lesson"
+  STEM_LESSON = "stem-lesson",
   ASSISTANTAI = "assistant-ai",
   BUILD_TOPIC = "build-topic", 
   PERSONAL_PLAN = "personal-plan",
@@ -41,7 +41,7 @@ export enum PageName {
   LESSON_FORM = "lesson-form",
   LESSON_RESULT = "lesson-result",
   PROMPT_LESSON = "prompt-lesson",
-  STEM_LESSON = "stem-lesson"
+  STEM_LESSON = "stem-lesson",
   ASSISTANTAI = "assistant-ai",
   BUILD_TOPIC = "build-topic",
   BUILD_LESSON = "build-lesson",
@@ -66,12 +66,12 @@ export enum PagePath {
   EXPREANDSUCCE = "expre-and-succe",
   PLANRESULT = "plan-result",
   INITIATIVERESULT = "initiative-result",
-  BUILD_LESSON = "build-lesson",  
   LESSON_FORM = "lesson-form",
   LESSON_RESULT = "lesson-result",
   PROMPT_LESSON = "prompt-lesson",
-  STEM_LESSON = "stem-lesson"
-  ASSISTANTAI = "/assistant-ai",
+  STEM_LESSON = "stem-lesson",
+  ASSISTANTAI = "assistant-ai",
+
   // Student pages
   STUDENT_EXERCISE = "/student/exercise",
   STUDENT_REVIEW = "/student/review",

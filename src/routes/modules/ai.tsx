@@ -17,6 +17,25 @@ export const aiRoute = [
         )
       },
       {
+        path: PagePath.SUCCESSIONPLAN,
+        element: lazyLoadModuleRoute(ModuleName.SUCCESSIONPLAN, PageName.SUCCESSIONPLAN),
+      },
+      {
+        path: PagePath.EXPERIENCEINITIATIVE,
+        element: lazyLoadModuleRoute(ModuleName.EXPERIENCEINITIATIVE, PageName.EXPERIENCEINITIATIVE),
+      },
+      {
+        path: PagePath.EXPREANDSUCCE,
+        element: lazyLoadModuleRoute(ModuleName.EXPREANDSUCCE, PageName.EXPREANDSUCCE),
+      },
+      {
+        path: PagePath.PLANRESULT,
+        element: lazyLoadModuleRoute(ModuleName.PLANRESULT, PageName.PLANRESULT),
+      },
+      {
+        path: PagePath.INITIATIVERESULT,
+        element: lazyLoadModuleRoute(ModuleName.INITIATIVERESULT, PageName.INITIATIVERESULT),
+      },
         path: PagePath.BUILD_LESSON,
         element: lazyLoadModuleRoute(ModuleName.BUILD_LESSON, PageName.BUILD_LESSON),
       },

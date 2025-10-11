@@ -1,3 +1,4 @@
+// src/modules/ai/pages/ai/index.tsx
 import Sidebar from '@/shared/components/Sidebar'
 import { Outlet } from 'react-router-dom'
 

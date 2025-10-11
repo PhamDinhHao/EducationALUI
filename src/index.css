@@ -12,3 +12,17 @@ body,
 body {
   overflow-y: hidden;
 }
+/* Khi item được chọn */
+.menu-multiline .ant-menu-item-selected {
+  @apply bg-orange-50 text-orange-500 font-semibold rounded-md;
+}
+
+.menu-multiline .ant-menu-item-selected a {
+  @apply text-orange-500;
+}
+
+/* Khi menu group (Giáo viên, Học sinh) được mở */
+.menu-multiline .ant-menu-submenu-selected > .ant-menu-submenu-title {
+  @apply bg-orange-100 text-orange-600 font-bold rounded-md;
+}
+

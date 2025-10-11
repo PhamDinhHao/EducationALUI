@@ -8,7 +8,7 @@ export * from './student'
 export * from './buildTopic'  
 export * from './buildStructure'
 export * from './personalPlan'
-export * from './teacherAssistant'
+export * from './AssistantAi'
 export * from './buildLesson'
 
      

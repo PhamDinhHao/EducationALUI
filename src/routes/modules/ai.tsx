@@ -66,8 +66,8 @@ export const aiRoute = [
         element: lazyLoadModuleRoute(ModuleName.PERSONAL_PLAN, PageName.PERSONAL_PLAN)
       },
       {
-        path: PagePath.TEACHER_ASSISTANT,
-        element: lazyLoadModuleRoute(ModuleName.TEACHER_ASSISTANT, PageName.TEACHER_ASSISTANT)
+        path: PagePath.ASSISTANTAI,
+        element: lazyLoadModuleRoute(ModuleName.ASSISTANTAI, PageName.ASSISTANTAI)
       },
       {
         path: PagePath.BUILD_STRUCTURE,

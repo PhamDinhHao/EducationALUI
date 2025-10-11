@@ -36,6 +36,26 @@ export const aiRoute = [
         path: PagePath.STEM_LESSON,
         element: lazyLoadModuleRoute(ModuleName.STEM_LESSON, PageName.STEM_LESSON),
       },
+      // Route cho /ai/build-topic
+      {
+        path: PagePath.BUILD_TOPIC,
+        element: lazyLoadModuleRoute(ModuleName.BUILD_TOPIC, PageName.BUILD_TOPIC),
+      {
+        path: PagePath.PERSONAL_PLAN,
+        element: lazyLoadModuleRoute(ModuleName.PERSONAL_PLAN, PageName.PERSONAL_PLAN)
+      },
+      {
+        path: PagePath.TEACHER_ASSISTANT,
+        element: lazyLoadModuleRoute(ModuleName.TEACHER_ASSISTANT, PageName.TEACHER_ASSISTANT)
+      },
+      {
+        path: PagePath.BUILD_STRUCTURE,
+        element: lazyLoadModuleRoute(ModuleName.BUILD_STRUCTURE, PageName.BUILD_STRUCTURE)
+      },
+      {
+        path: PagePath.EXAM_PREVIEW,
+        element: lazyLoadModuleRoute(ModuleName.EXAM_PREVIEW, PageName.EXAM_PREVIEW)
+      }
     ]
   }
 ]

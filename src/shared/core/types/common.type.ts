@@ -51,3 +51,17 @@ export type LessonResponse = {
   assessment?: string;
   raw?: string; // fallback khi AI trả text
 };
+export interface Question {
+  type: string;
+  level: string;
+  question: string;
+  options?: string[];
+  answer: string;
+}
+
+export interface ExamPreviewProps {
+  exam: Question[];
+}
+export interface Matrix {
+  [type: string]: { [level: string]: number };
+}

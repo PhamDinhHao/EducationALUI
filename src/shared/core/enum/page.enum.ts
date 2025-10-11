@@ -6,6 +6,7 @@ export enum ModuleName {
   LIFECAP = "lifeCap",
   CHALLENGECAP = "challengeCap",
   AI = "ai",
+  ASSISTANTAI = "assistant-ai",
 }
 
 export enum PageName {
@@ -17,6 +18,7 @@ export enum PageName {
   LIFECAP = "lifeCap",
   CHALLENGECAP = "challengeCap",
   AI = "ai",
+  ASSISTANTAI = "assistant-ai",
 }
 
 export enum PagePath {
@@ -29,4 +31,5 @@ export enum PagePath {
   LIFECAP = "/life-cap",
   CHALLENGECAP = "/challenge-cap",
   AI = "/ai",
+  ASSISTANTAI = "assistant-ai",
 }

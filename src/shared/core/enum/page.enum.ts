@@ -6,6 +6,22 @@ export enum ModuleName {
   LIFECAP = "lifeCap",
   CHALLENGECAP = "challengeCap",
   AI = "ai",
+  SUCCESSIONPLAN = "succession-plan",
+  EXPERIENCEINITIATIVE = "experience-initiative",
+  EXPREANDSUCCE = "expre-and-succe",
+  PLANRESULT = "plan-result",
+  INITIATIVERESULT = "initiative-result",
+  BUILD_LESSON = "build-lesson",
+  LESSON_FORM = "lesson-form",
+  LESSON_RESULT = "lesson-result",
+  PROMPT_LESSON = "prompt-lesson",
+  STEM_LESSON = "stem-lesson",
+  ASSISTANTAI = "assistant-ai",
+  BUILD_TOPIC = "build-topic", 
+  PERSONAL_PLAN = "personal-plan",
+  TEACHER_ASSISTANT = "teacher-assistant",
+  BUILD_STRUCTURE = "build-structure",
+  EXAM_PREVIEW = "exam-preview"
 }
 
 export enum PageName {
@@ -17,6 +33,22 @@ export enum PageName {
   LIFECAP = "lifeCap",
   CHALLENGECAP = "challengeCap",
   AI = "ai",
+  SUCCESSIONPLAN = "succession-plan",
+  EXPERIENCEINITIATIVE = "experience-initiative",
+  EXPREANDSUCCE = "expre-and-succe",
+  PLANRESULT = "plan-result",
+  INITIATIVERESULT = "initiative-result",
+  LESSON_FORM = "lesson-form",
+  LESSON_RESULT = "lesson-result",
+  PROMPT_LESSON = "prompt-lesson",
+  STEM_LESSON = "stem-lesson",
+  ASSISTANTAI = "assistant-ai",
+  BUILD_TOPIC = "build-topic",
+  BUILD_LESSON = "build-lesson",
+  PERSONAL_PLAN = "personal-plan",
+  TEACHER_ASSISTANT = "teacher-assistant",
+  BUILD_STRUCTURE = "build-structure",
+  EXAM_PREVIEW = "exam-preview"
 }
 
 export enum PagePath {
@@ -29,4 +61,26 @@ export enum PagePath {
   LIFECAP = "/life-cap",
   CHALLENGECAP = "/challenge-cap",
   AI = "/ai",
+  SUCCESSIONPLAN = "/ai/succession-plan",
+  EXPERIENCEINITIATIVE = "/ai/experience-initiative",
+  EXPREANDSUCCE = "/ai/expre-and-succe",
+  PLANRESULT = "/ai/plan-result",
+  INITIATIVERESULT = "/ai/initiative-result",
+  LESSON_FORM = "/ai/lesson-form",
+  LESSON_RESULT = "/ai/lesson-result",
+  PROMPT_LESSON = "/ai/prompt-lesson",
+  STEM_LESSON = "/ai/stem-lesson",
+  ASSISTANTAI = "/ai/assistant-ai",
+
+  // Student pages
+  STUDENT_EXERCISE = "/student/exercise",
+  STUDENT_REVIEW = "/student/review",
+  STUDENT_MINDMAP = "/student/mindmap",
+  STUDENT_PLAN = "/student/plan",
+  BUILD_TOPIC = "/ai/build-topic",
+  BUILD_LESSON = "/ai/build-lesson",
+  PERSONAL_PLAN = "/ai/personal-plan",
+  TEACHER_ASSISTANT = "/ai/teacher-assistant",
+  BUILD_STRUCTURE = "/ai/build-structure",
+  EXAM_PREVIEW = "/ai/exam-preview"
 }

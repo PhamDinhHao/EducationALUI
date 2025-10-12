@@ -12,6 +12,7 @@ import {
   lifeCapRoute,
   challengeCapRoute,
   aiRoute,
+  studentRoute,
 } from '@/routes/modules'
 import { Spin } from 'antd'
 import CourseList from '@/modules/Course/pages/CourseList/CourseList'
@@ -87,12 +88,12 @@ const configRoutes: RouteObject[] = [
         <RootLayout />
       </PrivateRoute>
     ),
-    children: [...growCapRoute, ...learnCapRoute, ...lifeCapRoute, ...challengeCapRoute, ...aiRoute]
+    children: [...growCapRoute, ...learnCapRoute, ...lifeCapRoute, ...challengeCapRoute, ...aiRoute, ...studentRoute]
   },
   {
     path: '*',
     element: lazyLoadRoute('NotFound')
-  }
+  },
 ]
 
 export const router = createBrowserRouter(configRoutes)

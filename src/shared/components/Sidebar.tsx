@@ -4,7 +4,6 @@ import { LogoutOutlined, ReadOutlined, UserOutlined } from '@ant-design/icons'
 import { MenuItem } from '@/shared/core/types'
 import { PagePath } from '@/shared/core/enum/page.enum'
 import { memo, useMemo, useState } from 'react'
-import { useBoundStore } from '@/shared/stores'
 import { useMenu } from '@/shared/hooks/useMenu'
 
 const { Sider } = Layout
@@ -18,7 +17,10 @@ const MENU_ITEMS: MenuItem[] = [
     children: [
       { key: PagePath.BUILD_STRUCTURE, label: <Link to={PagePath.BUILD_STRUCTURE}>Xây dựng đề</Link> },
       { key: PagePath.BUILD_LESSON, label: <Link to={PagePath.BUILD_LESSON}>Xây dựng giáo án</Link> },
-      { key: PagePath.EXPREANDSUCCE, label: <Link to={PagePath.EXPREANDSUCCE}>Kế hoạch cá nhân & Sáng kiến kinh nghiệm</Link> },
+      {
+        key: PagePath.EXPREANDSUCCE,
+        label: <Link to={PagePath.EXPREANDSUCCE}>Kế hoạch cá nhân & Sáng kiến kinh nghiệm</Link>
+      },
       { key: PagePath.ASSISTANTAI, label: <Link to={PagePath.ASSISTANTAI}>Trợ lý giáo viên</Link> }
     ]
   },
@@ -39,20 +41,20 @@ const Sidebar: React.FC = () => {
   const { onMenuClick } = useMenu()
   const location = useLocation()
 
-  const [searchText, setSearchText] = useState("")
+  const [searchText, setSearchText] = useState('')
 
   // Filter menu theo searchText
-  console.log(location.pathname)
+  // console.log(location.pathname)
   const filteredItems = useMemo(() => {
     if (!searchText) return MENU_ITEMS
 
     const lower = searchText.toLowerCase()
 
-    return MENU_ITEMS.map(group => {
+    return MENU_ITEMS.map((group) => {
       if (!group.children) return null
 
-      const filteredChildren = group.children.filter(child =>
-        typeof child.label === "string"
+      const filteredChildren = group.children.filter((child) =>
+        typeof child.label === 'string'
           ? child.label.toLowerCase().includes(lower)
           : (child.label as any)?.props?.children?.toLowerCase().includes(lower)
       )
@@ -65,61 +67,42 @@ const Sidebar: React.FC = () => {
   }, [searchText])
 
   const selectedKey = useMemo(() => {
-    if (location.pathname.startsWith("/ai/")) {
-      return location.pathname.replace("/ai/", "")
+    if (location.pathname.startsWith('/ai/')) {
+      return location.pathname.replace('/ai/', '')
     }
     return location.pathname
   }, [location.pathname])
-  
+
   return (
     <Sider
-      breakpoint="lg"
-      collapsedWidth="0"
+      breakpoint='lg'
+      collapsedWidth='0'
+      className='site-layout-background shadow-sm'
       style={{
         background: '#fff',
         height: '100vh',
-        position: 'fixed',
-        left: 0,
-        top: 0,
         borderRight: '1px solid #f0f0f0',
         paddingTop: '16px',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
       }}
     >
-      <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-        <img src="/image/logo.png" alt="Logo" width={120} height={40} />
-      </div>
-
-      {/* Search box */}
       <div style={{ padding: '0 12px 12px' }}>
-        <Search
-          placeholder="Search"
-          allowClear
-          onChange={(e) => setSearchText(e.target.value)}
-        />
+        <Search placeholder='Search' allowClear onChange={(e) => setSearchText(e.target.value)} />
       </div>
 
       <MenuAntd
         selectedKeys={[selectedKey]}
         defaultOpenKeys={['teacher', 'student']}
         items={filteredItems}
-        mode="inline"
-        theme="light"
+        mode='inline'
+        theme='light'
         onClick={onMenuClick}
-        className="menu-multiline"
+        className='menu-multiline'
       />
 
-
-
-
       <div style={{ borderTop: '1px solid #f0f0f0', padding: '8px' }}>
-        <Button
-          type="text"
-          icon={<LogoutOutlined />}
-          className="flex w-full items-center"
-          style={{ width: '100%' }}
-        >
+        <Button type='text' icon={<LogoutOutlined />} className='flex w-full items-center' style={{ width: '100%' }}>
           Bắt đầu
         </Button>
       </div>

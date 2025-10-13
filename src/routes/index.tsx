@@ -6,37 +6,23 @@ import PrivateRoute from '@/routes/PrivateRoute'
 import ValidateLoginRoute from '@/routes/ValidateLoginRoute'
 import { ModuleName, PageName, PagePath } from '@/shared/core/enum/page.enum'
 import { lazyLoadModuleRoute, lazyLoadRoute } from '@/routes/LazyLoadRoutes'
-import {
-  growCapRoute,
-  learnCapRoute,
-  lifeCapRoute,
-  challengeCapRoute,
-  aiRoute,
-  studentRoute,
-} from '@/routes/modules'
+import { growCapRoute, learnCapRoute, lifeCapRoute, challengeCapRoute, aiRoute, studentRoute } from '@/routes/modules'
 import { Spin } from 'antd'
 import CourseList from '@/modules/Course/pages/CourseList/CourseList'
-import CourseDetail from '../modules/Course/pages/CourseDetail';
+import CourseDetail from '../modules/Course/pages/CourseDetail'
 import LessonPlayerPage from '@/modules/Course/pages/LessonPlayerPage/LessonPlayerPage'
+import AILayout from '@shared/layouts/AILayout.tsx'
 
 const NavigateComponent = lazy(() => import('@/shared/components/Navigate/Navigate'))
 
 const configRoutes: RouteObject[] = [
   {
     path: PagePath.REGISTER,
-    element: (
-      <ValidateLoginRoute>
-        {lazyLoadModuleRoute(ModuleName.AUTH, PageName.REGISTER)}
-      </ValidateLoginRoute>
-    )
+    element: <ValidateLoginRoute>{lazyLoadModuleRoute(ModuleName.AUTH, PageName.REGISTER)}</ValidateLoginRoute>
   },
   {
     path: PagePath.LOGIN,
-    element: (
-      <ValidateLoginRoute>
-        {lazyLoadModuleRoute(ModuleName.AUTH, PageName.LOGIN)}
-      </ValidateLoginRoute>
-    )
+    element: <ValidateLoginRoute>{lazyLoadModuleRoute(ModuleName.AUTH, PageName.LOGIN)}</ValidateLoginRoute>
   },
   {
     path: '/',
@@ -50,7 +36,7 @@ const configRoutes: RouteObject[] = [
         path: 'courses/:id',
         element: <CourseDetail />
       },
-       {
+      {
         path: 'lesson/:id', // <-- thêm route LessonPlayerPage
         element: <LessonPlayerPage />
       },
@@ -71,7 +57,7 @@ const configRoutes: RouteObject[] = [
                   height: '100vh'
                 }}
               >
-                <Spin size="large" />
+                <Spin size='large' />
               </div>
             }
           >
@@ -88,12 +74,21 @@ const configRoutes: RouteObject[] = [
         <RootLayout />
       </PrivateRoute>
     ),
-    children: [...growCapRoute, ...learnCapRoute, ...lifeCapRoute, ...challengeCapRoute, ...aiRoute, ...studentRoute]
+    children: [...growCapRoute, ...learnCapRoute, ...lifeCapRoute, ...challengeCapRoute, ...studentRoute]
+  },
+  {
+    path: '/',
+    element: (
+      <PrivateRoute>
+        <AILayout />
+      </PrivateRoute>
+    ),
+    children: [...aiRoute]
   },
   {
     path: '*',
     element: lazyLoadRoute('NotFound')
-  },
+  }
 ]
 
 export const router = createBrowserRouter(configRoutes)

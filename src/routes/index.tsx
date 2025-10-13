@@ -1,19 +1,23 @@
-// src/routes/index.tsx
-import { lazy, Suspense } from 'react'
+import { lazy } from 'react'
 import { createBrowserRouter, RouteObject, RouterProvider } from 'react-router-dom'
 import RootLayout from '@/shared/layouts/RootLayout'
 import PrivateRoute from '@/routes/PrivateRoute'
 import ValidateLoginRoute from '@/routes/ValidateLoginRoute'
 import { ModuleName, PageName, PagePath } from '@/shared/core/enum/page.enum'
 import { lazyLoadModuleRoute, lazyLoadRoute } from '@/routes/LazyLoadRoutes'
-import { growCapRoute, learnCapRoute, lifeCapRoute, challengeCapRoute, aiRoute, studentRoute } from '@/routes/modules'
-import { Spin } from 'antd'
-import CourseList from '@/modules/Course/pages/CourseList/CourseList'
-import CourseDetail from '../modules/Course/pages/CourseDetail'
-import LessonPlayerPage from '@/modules/Course/pages/LessonPlayerPage/LessonPlayerPage'
+import {
+  growCapRoute,
+  learnCapRoute,
+  lifeCapRoute,
+  challengeCapRoute,
+  aiRoute,
+  studentRoute,
+  homeRoute
+} from '@/routes/modules'
 import AILayout from '@shared/layouts/AILayout.tsx'
+import coursePageRoute from '@/routes/modules/courseRouter.tsx'
 
-const NavigateComponent = lazy(() => import('@/shared/components/Navigate/Navigate'))
+// const NavigateComponent = lazy(() => import('@/shared/components/Navigate/Navigate'))
 
 const configRoutes: RouteObject[] = [
   {
@@ -26,55 +30,20 @@ const configRoutes: RouteObject[] = [
   },
   {
     path: '/',
-    element: <RootLayout />,
-    children: [
-      {
-        index: true, // Khi truy cập "/" thì load CourseList luôn
-        element: <CourseList />
-      },
-      {
-        path: 'courses/:id',
-        element: <CourseDetail />
-      },
-      {
-        path: 'lesson/:id', // <-- thêm route LessonPlayerPage
-        element: <LessonPlayerPage />
-      },
-      {
-        path: PagePath.HOME, // Nếu có định nghĩa HOME, vẫn cho nó load CourseList
-        element: <CourseList />
-      },
-      {
-        path: 'navigate',
-        element: (
-          <Suspense
-            fallback={
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100vh'
-                }}
-              >
-                <Spin size='large' />
-              </div>
-            }
-          >
-            <NavigateComponent />
-          </Suspense>
-        )
-      }
-    ]
-  },
-  {
-    path: '/',
     element: (
       <PrivateRoute>
         <RootLayout />
       </PrivateRoute>
     ),
-    children: [...growCapRoute, ...learnCapRoute, ...lifeCapRoute, ...challengeCapRoute, ...studentRoute]
+    children: [
+      ...homeRoute,
+      ...coursePageRoute,
+      ...growCapRoute,
+      ...learnCapRoute,
+      ...lifeCapRoute,
+      ...challengeCapRoute,
+      ...studentRoute
+    ]
   },
   {
     path: '/',

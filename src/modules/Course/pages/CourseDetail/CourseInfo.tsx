@@ -6,7 +6,6 @@ type Props = {
 };
 
 export default function CourseInfo({ course }: Props) {
-  // Lấy phần introductions từ course, nếu không có thì mảng rỗng
   const introductions = course.introductions ?? [];
 
   return (
@@ -28,7 +27,7 @@ export default function CourseInfo({ course }: Props) {
               listStyle: "none", // loại bỏ bullet mặc định
             }}
           >
-            {introductions.map((item, index) => (
+            {introductions?.map((item, index) => (
               <li
                 key={index}
                 style={{

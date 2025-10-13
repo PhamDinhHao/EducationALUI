@@ -51,15 +51,15 @@ const Sidebar: React.FC = () => {
     const lower = searchText.toLowerCase()
 
     return MENU_ITEMS.map((group) => {
-      if (!group.children) return null
+      if (!group?.children) return null
 
-      const filteredChildren = group.children.filter((child) =>
+      const filteredChildren = group?.children?.filter((child) =>
         typeof child.label === 'string'
           ? child.label.toLowerCase().includes(lower)
           : (child.label as any)?.props?.children?.toLowerCase().includes(lower)
       )
 
-      if (filteredChildren.length > 0) {
+      if (filteredChildren?.length > 0) {
         return { ...group, children: filteredChildren }
       }
       return null

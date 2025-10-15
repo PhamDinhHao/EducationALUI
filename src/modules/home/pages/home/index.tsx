@@ -1,4 +1,4 @@
-import CourseList from '@/modules/Course/pages/CourseList/CourseList.tsx'
+import CourseList from '@/modules/course/pages/CourseList/CourseList.tsx'
 
 const Home = () => {
   return (

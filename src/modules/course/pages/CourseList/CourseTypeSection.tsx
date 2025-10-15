@@ -1,7 +1,7 @@
 //-> render từng nhóm courseType (Divider + Row)// src/modules/Course/components/CourseTypeSection.tsx
 import { Divider, Row, Col } from 'antd'
-import { Course } from '../../types/Course'
-import CourseCardItem from './CourseCardItem'
+import { Course } from '@/modules/course/types/Course.ts'
+import CourseCardItem from './CourseCardItem.tsx'
 
 type Props = {
   type: string

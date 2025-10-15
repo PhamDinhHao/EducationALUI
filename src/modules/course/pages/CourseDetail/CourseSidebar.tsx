@@ -1,5 +1,5 @@
     import { Card, Button } from "antd";
-    import { Course } from "../../types/Course";
+    import { Course } from "@/modules/course/types/Course.ts";
 
     type Props = {
     course: Course;

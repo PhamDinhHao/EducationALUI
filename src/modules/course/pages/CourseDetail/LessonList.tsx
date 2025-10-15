@@ -1,7 +1,7 @@
 import { List, Button, Typography } from "antd";
 import { PlayCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { Lesson } from "../../types/Course";
+import { Lesson } from "@/modules/course/types/Course.ts";
 
 const { Text } = Typography;
 

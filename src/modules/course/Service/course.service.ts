@@ -1,6 +1,6 @@
 // src/modules/Course/Service/course.service.ts
-import { http } from '@/shared/lib/http'
-import { Course } from '../types/Course'
+import { http } from '@shared/lib/http.ts'
+import { Course } from '@/modules/course/types/Course.ts'
 
 export async function getCourses(): Promise<Course[]> {
   const { data } = await http.get<Course[]>('/api/v1/courses')

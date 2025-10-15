@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react'
 import { Spin, message } from 'antd'
 import axios from 'axios'
-import { Course } from '../../types/Course'
-import CourseTypeSection from './CourseTypeSection'
+import { Course } from '@/modules/course/types/Course.ts'
+import CourseTypeSection from './CourseTypeSection.tsx'
 
 const CourseList = () => {
   const [courses, setCourses] = useState<Course[]>([])

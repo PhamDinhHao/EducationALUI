@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Spin, Alert } from "antd";
-import LessonVideo from "./LessonVideo";
-import CommentList, { CommentItem } from "./CommentList";
-import { Lesson } from "../../types/Course";
-import { useBoundStore } from "@/shared/stores";
+import LessonVideo from "./LessonVideo.tsx";
+import CommentList, { CommentItem } from "./CommentList.tsx";
+import { Lesson } from "@/modules/course/types/Course.ts";
+import { useBoundStore } from "@shared/stores";
 
 const LessonPlayerPage = () => {
   const { id } = useParams<{ id: string }>();

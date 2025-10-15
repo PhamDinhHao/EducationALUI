@@ -1,10 +1,10 @@
 import { Card } from "antd";
 import { useState } from "react";
-import { Course } from  "../../types/Course";
-import CardHeader from "./CardHeader";
-import CardInfo from "./CardInfo";
-import CardActions from "./CardActions";
-import { AddFieldModal, EditFieldModal, CourseCustomFields } from '@/modules/Course/Component/Cardcustom';
+import { Course } from "@/modules/course/types/Course.ts";
+import CardHeader from "./CardHeader.tsx";
+import CardInfo from "./CardInfo.tsx";
+import CardActions from "./CardActions.tsx";
+import { AddFieldModal, EditFieldModal, CourseCustomFields } from '@/modules/course/Component/Cardcustom';
 
 type Props = {
   course: Course;

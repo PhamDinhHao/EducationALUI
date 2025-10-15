@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { Spin, Alert } from 'antd'
-import { Course, Lesson } from '../../types/Course'
-import CourseInfo from './CourseInfo'
-import LessonList from './LessonList'
-import CourseSidebar from './CourseSidebar'
+import { Course, Lesson } from '@/modules/course/types/Course.ts'
+import CourseInfo from './CourseInfo.tsx'
+import LessonList from './LessonList.tsx'
+import CourseSidebar from './CourseSidebar.tsx'
 
 export default function CourseDetail() {
   const { id } = useParams<{ id: string }>()

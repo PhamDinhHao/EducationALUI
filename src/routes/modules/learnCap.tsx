@@ -1,8 +1,8 @@
 import { lazyLoadModuleRoute, lazyLoadRoute } from '@/routes/LazyLoadRoutes'
 import { ModuleName, PageName, PagePath } from '@/shared/core/enum/page.enum'
-import CourseList from '@/modules/Course/pages/CourseList/CourseList'
-import CourseDetail from '@/modules/Course/pages/CourseDetail';
-import LessonPlayerPage from '@/modules/Course/pages/LessonPlayerPage/LessonPlayerPage'
+import CourseList from '@/modules/course/pages/CourseList/CourseList'
+import CourseDetail from '@/modules/course/pages/CourseDetail';
+import LessonPlayerPage from '@/modules/course/pages/LessonPlayerPage/LessonPlayerPage'
 export const learnCapRoute = [
   {
     path: PagePath.LEARNCAP,

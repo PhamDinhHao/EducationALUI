@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { List, Avatar, Button, Modal, Input, Typography, Space, message } from "antd";
 import { LikeOutlined, LikeFilled, MessageOutlined } from "@ant-design/icons";
-import { useBoundStore } from "@/shared/stores";
+import { useBoundStore } from "@shared/stores";
 import dayjs from "dayjs";
 
 const { TextArea } = Input;

@@ -1,5 +1,5 @@
-import { Course } from '../../types/Course';
-import CourseCard from '@/modules/Course/Component/CourseCard';
+import { Course } from '@/modules/course/types/Course.ts';
+import CourseCard from '@/modules/course/Component/CourseCard';
 import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 

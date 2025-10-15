@@ -3,7 +3,7 @@ import { useState, memo } from 'react'
 import { Card, Row, Col, Button, Drawer } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-import { Course } from '../../modules/Course/types/Course'
+import { Course } from '@/modules/course/types/Course'
 import { useBoundStore } from '@/shared/stores'
 
 const courses: Course[] = [

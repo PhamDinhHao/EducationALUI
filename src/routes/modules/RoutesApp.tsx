@@ -1,7 +1,7 @@
 // src/routes/RoutesApp.tsx
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import RootLayout from '@/shared/layouts/RootLayout'
-import CourseList from '@/modules/Course/pages/CourseList'
+import CourseList from '@/modules/course/pages/CourseList'
 
 const router = createBrowserRouter([
   {

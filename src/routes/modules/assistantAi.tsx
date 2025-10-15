@@ -1,19 +1,21 @@
 import { lazyLoadModuleRoute, lazyLoadRoute } from '@/routes/LazyLoadRoutes'
 import { ModuleName, PageName, PagePath } from '@/shared/core/enum/page.enum'
 
-export const expreAndSucceRoute = [
+export const assistantAiRoute = [
   {
-    path: PagePath.EXPREANDSUCCE,
+    path: PagePath.ASSISTANTAI,
     element: lazyLoadRoute('Base'),
     children: [
       {
-        path: PagePath.EXPREANDSUCCE,
+        path: PagePath.ASSISTANTAI,
         element: (
           <>
-            {lazyLoadModuleRoute(ModuleName.EXPREANDSUCCE, PageName.EXPREANDSUCCE)}
+            {/* <Suspense fallback={<Spin size="large" />}> */}
+            {lazyLoadModuleRoute(ModuleName.ASSISTANTAI, PageName.ASSISTANTAI)}
+            {/* </Suspense> */}
           </>
         )
-      },
+      }
     ]
   }
 ]

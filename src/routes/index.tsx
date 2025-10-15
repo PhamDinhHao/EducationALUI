@@ -1,4 +1,3 @@
-import { lazy } from 'react'
 import { createBrowserRouter, RouteObject, RouterProvider } from 'react-router-dom'
 import RootLayout from '@/shared/layouts/RootLayout'
 import PrivateRoute from '@/routes/PrivateRoute'

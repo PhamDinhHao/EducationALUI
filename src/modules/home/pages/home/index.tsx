@@ -1,4 +1,8 @@
-import CourseList from '@/modules/course/pages/CourseList/CourseList.tsx'
+import { Divider } from 'antd'
+import TopCategories from '@/modules/home/component/TopCategories/TopCategories.tsx'
+import TopCourses from '@/modules/home/component/TopCourses/TopCourses.tsx'
+import ExplorerCourse from '@/modules/home/component/ExplorerCourse/ExplorerCourse.tsx'
+import TopArticles from '@/modules/home/component/TopArticles/TopArticles.tsx'
 
 const Home = () => {
   return (
@@ -16,11 +20,15 @@ const Home = () => {
             Get Started
           </button>
         </div>
-      </div>{' '}
-      <div className='mt-8 text-center'>
-        <h2 className='mb-6 text-3xl font-bold text-gray-800'>Our Popular Courses</h2>
       </div>
-      <CourseList />
+      <Divider variant='dotted' />
+      <TopCategories />
+      <Divider variant='dotted' />
+      <TopCourses />
+      <Divider variant='dotted' />
+      <ExplorerCourse />
+      <Divider variant='dotted' />
+      <TopArticles />
     </div>
   )
 }

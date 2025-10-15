@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy } from 'react'
 import { createBrowserRouter, RouteObject, RouterProvider } from 'react-router-dom'
 import RootLayout from '@/shared/layouts/RootLayout'
 import PrivateRoute from '@/routes/PrivateRoute'
@@ -12,10 +12,12 @@ import {
   challengeCapRoute,
   aiRoute,
   studentRoute,
+  homeRoute
 } from '@/routes/modules'
-import { Spin } from 'antd'
+import AILayout from '@shared/layouts/AILayout.tsx'
+import coursePageRoute from '@/routes/modules/courseRouter.tsx'
 
-const NavigateComponent = lazy(() => import('@/shared/components/Navigate/Navigate'))
+// const NavigateComponent = lazy(() => import('@/shared/components/Navigate/Navigate'))
 
 const configRoutes: RouteObject[] = [
   {
@@ -28,48 +30,34 @@ const configRoutes: RouteObject[] = [
   },
   {
     path: '/',
-    element: <RootLayout />,
+    element: (
+      <PrivateRoute>
+        <RootLayout />
+      </PrivateRoute>
+    ),
     children: [
-      {
-        path: PagePath.HOME,
-        element: lazyLoadModuleRoute(ModuleName.HOME, PageName.HOME)
-      },
-      {
-        index: true,
-        element: (
-          <Suspense
-            fallback={
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100vh'
-                }}
-              >
-                <Spin size='large' />
-              </div>
-            }
-          >
-            <NavigateComponent />
-          </Suspense>
-        )
-      }
+      ...homeRoute,
+      ...coursePageRoute,
+      ...growCapRoute,
+      ...learnCapRoute,
+      ...lifeCapRoute,
+      ...challengeCapRoute,
+      ...studentRoute
     ]
   },
   {
     path: '/',
     element: (
       <PrivateRoute>
-        <RootLayout />
+        <AILayout />
       </PrivateRoute>
     ),
-    children: [...growCapRoute, ...learnCapRoute, ...lifeCapRoute, ...challengeCapRoute, ...aiRoute, ...studentRoute]
+    children: [...aiRoute]
   },
   {
     path: '*',
     element: lazyLoadRoute('NotFound')
-  },
+  }
 ]
 
 export const router = createBrowserRouter(configRoutes)

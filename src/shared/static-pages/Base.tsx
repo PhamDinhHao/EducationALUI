@@ -1,11 +1,8 @@
-import { PagePath } from '@/shared/core/enum/page.enum'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 
 const BaseRoute = () => {
-  const location = useLocation()
-  
   return (
-    <div className='h-screen overflow-y-auto'>
+    <div className='h-screen overflow-y-auto' style={{ backgroundColor: '#fff' }}>
       <Outlet />
     </div>
   )

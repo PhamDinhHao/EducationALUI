@@ -9,28 +9,20 @@ import { useMenu } from '@/shared/hooks/useMenu'
 
 const MENU_ITEMS: MenuItem[] = [
   {
-    key: 'home',
-    label: <Link to={PagePath.HOME}>Home</Link>
+    key: PagePath.HOME,
+    label: <Link to={PagePath.HOME}>Trang chủ</Link>
   },
   {
-    key: 'growcaps',
-    label: <Link to={PagePath.GROWCAP}>Grow Cap</Link>
+    key: 'Khóa học',
+    label: <Link to='/'>Khóa học</Link>
   },
   {
-    key: 'learncap',
-    label: <Link to={PagePath.LEARNCAP}>Learn Cap</Link>
+    key: 'Bài viết',
+    label: <Link to='/'>Bài viết</Link>
   },
   {
-    key: 'lifecap',
-    label: <Link to={PagePath.LIFECAP}>Life Cap</Link>
-  },
-  {
-    key: 'challengecap',
-    label: <Link to={PagePath.CHALLENGECAP}>Challenge Cap</Link>
-  },
-  {
-    key: 'AI',
-    label: <Link to={PagePath.AI}>AI</Link>
+    key: PagePath.AI,
+    label: <Link to={PagePath.AI}>Gen AI</Link>
   }
 ]
 

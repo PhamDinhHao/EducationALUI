@@ -3,6 +3,8 @@ import TopCategories from '@/modules/home/component/TopCategories/TopCategories.
 import TopCourses from '@/modules/home/component/TopCourses/TopCourses.tsx'
 import ExplorerCourse from '@/modules/home/component/ExplorerCourse/ExplorerCourse.tsx'
 import TopArticles from '@/modules/home/component/TopArticles/TopArticles.tsx'
+import Footer from '@shared/layouts/Footer/Footer.tsx'
+
 
 const Home = () => {
   return (
@@ -29,6 +31,7 @@ const Home = () => {
       <ExplorerCourse />
       <Divider variant='dotted' />
       <TopArticles />
+      <Footer />
     </div>
   )
 }

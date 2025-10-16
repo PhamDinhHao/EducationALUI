@@ -11,10 +11,8 @@ const TopCourses = () => {
     { title: 'Videography', courses: 38 },
     { title: 'Photography', courses: 38 },
     { title: 'Marketing', courses: 38 },
-    { title: 'Content Writing', courses: 38 },
-    { title: 'Finance', courses: 38 },
-    { title: 'Science', courses: 38 },
-    { title: 'Network', courses: 38 }
+    { title: 'Videography', courses: 38 },
+    { title: 'Photography', courses: 38 }
   ]
 
   return (
@@ -22,8 +20,8 @@ const TopCourses = () => {
       <TitleHeaderHome heading='Featured courses' description='Explore our Popular Courses' buttonLabel='All Courses' />
       <ResponsiveGrid<ICourse>
         data={categories}
-        cols={3}
-        colSpans={{ xs: 24, sm: 12, md: 8, lg: 8, xl: 8 }}
+        cols={4}
+        colSpans={{ xs: 24, sm: 12, md: 8, lg: 6, xl: 6 }}
         renderCell={ItemTopCourses}
       />
     </div>

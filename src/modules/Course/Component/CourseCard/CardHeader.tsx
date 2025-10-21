@@ -1,4 +1,4 @@
-import { Card, Typography } from "antd";
+import { Typography } from "antd";
 const { Text } = Typography;
 
 type Props = {

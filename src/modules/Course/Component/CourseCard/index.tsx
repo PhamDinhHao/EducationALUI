@@ -9,19 +9,18 @@ import { AddFieldModal, EditFieldModal, CourseCustomFields } from '@/modules/Cou
 type Props = {
   course: Course;
   isAdmin?: boolean;
-  onUpdated?: (course: Course) => void;
   onNavigate?: (url: string) => void;
 };
 
-export default function CourseCard({ course, isAdmin, onUpdated, onNavigate }: Props) {
+export default function CourseCard({ course, isAdmin, onNavigate }: Props) {
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState<{ key: string; value: string } | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, _] = useState(false);
 
   const handleNavigate = () => onNavigate?.(`/courses/${course.id}`);
-  const handleAddField = async (values: any) => { /* giống code cũ */ };
-  const handleRemoveField = (key: string) => { /* giống code cũ */ };
-  const handleUpdateField = async (values: any) => { /* giống code cũ */ };
+  const handleAddField = async (_values: any) => { /* giống code cũ */ };
+  const handleRemoveField = (_key: string) => { /* giống code cũ */ };
+  const handleUpdateField = async (_values: any) => { /* giống code cũ */ };
 
   return (
     <>

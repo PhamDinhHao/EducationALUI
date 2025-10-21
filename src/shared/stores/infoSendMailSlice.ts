@@ -1,7 +1,5 @@
 import { StateCreator } from 'zustand';
 import dayjs, { Dayjs } from 'dayjs';
-import { DEFAULT_TIME, Measurement } from '@/modules/editor/core/enum/distribution-setting.enum';
-import { DELIVERY_TYPES } from '@/modules/editor/core/enum/distribution-setting.enum';
 
 export interface IInfoSendMail {
   subject: string;
@@ -39,11 +37,11 @@ export const createInfoSendmailSlice: StateCreator<IInfoSendMail, [], [], IInfoS
   addressToId: '',
   addressToType: 'all',
   fromAddress: '',
-  deliveryType: DELIVERY_TYPES.SCHEDULED,
+  deliveryType: 'scheduled',
   date: dayjs(new Date()),
-  hours: DEFAULT_TIME.HOURS,
-  minutes: DEFAULT_TIME.MINUTES,
-  isClickMeasure: Measurement.OFF,
+  hours: '00',
+  minutes: '00',
+  isClickMeasure: 0,
   nameAddressTo: '全登録者',
   nameFromAddress: '',
   signature: '',
@@ -66,11 +64,11 @@ export const createInfoSendmailSlice: StateCreator<IInfoSendMail, [], [], IInfoS
       addressToId: '',
       addressToType: 'all',
       fromAddress: '',
-      deliveryType: DELIVERY_TYPES.SCHEDULED,
+      deliveryType: 'scheduled',
       date: dayjs(new Date()),
-      hours: DEFAULT_TIME.HOURS,
-      minutes: DEFAULT_TIME.MINUTES,
-      isClickMeasure: Measurement.OFF,
+      hours: '00',
+      minutes: '00',
+      isClickMeasure: 0,
       nameAddressTo: '全登録者',
       nameFromAddress: '',
       signature: '',

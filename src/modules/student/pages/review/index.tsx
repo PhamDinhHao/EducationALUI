@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { Card, Typography, Select, Button, Spin, message } from 'antd'
-import { ReadOutlined } from '@ant-design/icons'
 
 import Sidebar from '@/shared/components/Sidebar'
 import { GeminiService, ChatMessage } from '@/modules/ai/pages/ai/Service/gemini.service'
@@ -87,106 +86,6 @@ const ReviewHeader = () => (
       <Title level={1} className="!text-orange-500 !mb-0">Ôn tập</Title>
     </div>
     <Text className="text-lg text-gray-700">GEN AI hỗ trợ ôn tập kiến thức một cách nhanh chóng</Text>
-  </div>
-)
-
-type ReviewFormProps = {
-  subject: string
-  grade: string
-  level: string
-  topic: string
-  topicOptions: TopicOption[]
-  onSubjectChange: (value: string) => void
-  onGradeChange: (value: string) => void
-  onLevelChange: (value: string) => void
-  onTopicChange: (value: string) => void
-}
-
-const ReviewForm = ({
-  subject,
-  grade,
-  level,
-  topic,
-  topicOptions,
-  onSubjectChange,
-  onGradeChange,
-  onLevelChange,
-  onTopicChange
-}: ReviewFormProps) => (
-  <Card className="rounded-2xl" bodyStyle={{ padding: 20 }}>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div>
-        <div className="text-sm font-semibold mb-2">Môn:</div>
-        <Select
-          className="w-full"
-          value={subject}
-          options={SUBJECTS}
-          onChange={(value) => {
-            onSubjectChange(value)
-            // Reset topic when subject changes
-            const newTopics = SUBJECT_TOPICS[value] || []
-            onTopicChange(newTopics[0]?.value || '')
-          }}
-        />
-      </div>
-
-      <div>
-        <div className="text-sm font-semibold mb-2">Lớp:</div>
-        <Select
-          className="w-full"
-          value={grade}
-          options={GRADES}
-          onChange={onGradeChange}
-        />
-      </div>
-
-      <div>
-        <div className="text-sm font-semibold mb-2">Mức độ:</div>
-        <Select
-          className="w-full"
-          value={level}
-          options={LEVELS}
-          onChange={onLevelChange}
-        />
-      </div>
-
-      <div>
-        <div className="text-sm font-semibold mb-2">Chọn bài cần luyện tập:</div>
-        <Select
-          className="w-full"
-          value={topic}
-          options={topicOptions}
-          onChange={onTopicChange}
-        />
-      </div>
-    </div>
-  </Card>
-)
-
-type ReviewResultProps = {
-  result: string
-}
-
-const ReviewResult = ({ result }: ReviewResultProps) => (
-  <Card 
-    className="rounded-2xl mt-4" 
-    title="Kết quả ôn tập" 
-    bodyStyle={{ padding: 0 }}
-  >
-    <div className="max-h-[65vh] overflow-y-auto p-5">
-      <div 
-        className="prose prose-sm max-w-none" 
-        dangerouslySetInnerHTML={{ __html: result }} 
-      />
-    </div>
-  </Card>
-)
-
-const TermsFooter = () => (
-  <div className="text-center mt-3">
-    <Text type='secondary' className="text-xs">
-      Khi đặt câu hỏi, bạn đồng ý với <strong>Điều khoản</strong> và <strong>Chính sách quyền riêng tư</strong>.
-    </Text>
   </div>
 )
 

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { List, Avatar, Button, Modal, Input, Typography, Space, message } from "antd";
 import { LikeOutlined, LikeFilled, MessageOutlined } from "@ant-design/icons";
 import { useBoundStore } from "@/shared/stores";
-import dayjs from "dayjs";
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -71,7 +70,6 @@ export default function CommentList({
   };
 
   // Format thời gian
-  const formatTime = (isoString: string) => dayjs(isoString).format("HH:mm DD/MM/YYYY");
 
   const renderCommentReply = (replies: CommentItem[] = []) =>
     replies.map(reply => (

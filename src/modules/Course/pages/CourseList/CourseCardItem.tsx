@@ -6,12 +6,11 @@ import { message } from 'antd';
 type Props = {
   course: Course;
   isAdmin?: boolean;
-  onUpdated?: (course: Course) => void;
   user?: { id: number; role: string; courses?: number[] }; 
   // user: danh sách khóa học đã mua
 };
 
-export default function CourseCardItem({ course, isAdmin, onUpdated, user }: Props) {
+export default function CourseCardItem({ course, isAdmin, user }: Props) {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -37,7 +36,7 @@ export default function CourseCardItem({ course, isAdmin, onUpdated, user }: Pro
 
   return (
     <div onClick={handleClick} style={{ cursor: 'pointer' }}>
-      <CourseCard course={course} isAdmin={isAdmin} onUpdated={onUpdated} />
+      <CourseCard course={course} isAdmin={isAdmin} />
     </div>
   );
 }

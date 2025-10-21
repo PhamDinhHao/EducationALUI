@@ -1,9 +1,7 @@
 // src/modules/Course/pages/LessonPlayerPage/LessonVideo.tsx
-import { Button, Typography } from "antd";
+import { Button } from "antd";
 import { MessageOutlined } from "@ant-design/icons";
-import { blob } from "stream/consumers";
 
-const { Text } = Typography;
 
 interface LessonVideoProps {
   title: string;

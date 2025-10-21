@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 interface CommentType {
   id: number;
@@ -64,7 +64,7 @@ const RedditCommentSystem = () => {
   const [replyingTo, setReplyingTo] = useState<number | null>(null)
   const [expandedComments, setExpandedComments] = useState<number[]>([])
 
-  const handleVote = (commentId: number, voteType: 'up' | 'down', parentId?: number) => {
+  const handleVote = (commentId: number, voteType: 'up' | 'down') => {
     setComments(prevComments => {
       const updateComment = (comment: CommentType): CommentType => {
         if (comment.id === commentId) {

@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { Spin, Alert } from 'antd'
 import { Course, Lesson } from '../../types/Course'
-import CourseInfo from './CourseInfo'
 import LessonList from './LessonList'
 import CourseSidebar from './CourseSidebar'
 import env from '@/shared/core/constants/env'
@@ -22,18 +21,6 @@ export default function CourseDetail() {
       setError('')
       try {
         const res = await axios.get(`${env.VITE_HOST_API}/courses/${id}`)
-        console.log('Response data:', res.data)
-        const data = res.data
-
-        // Parse introductions nếu là JSON chuỗi
-        let introductions: string[] = []
-        if (data.introductions) {
-          try {
-            introductions = JSON.parse(data.introductions)
-          } catch (parseErr) {
-            console.error('Error parsing introductions JSON:', parseErr)
-          }
-        }
         if (res.data) {
           setCourse({
             id: res.data.id,
@@ -48,7 +35,6 @@ export default function CourseDetail() {
             duration: '116h50p'
           })
           setLessons(res.data.lessons || [])
-          console.log(res.data.introductions)
         }
       } catch (err: any) {
         setError(err.response?.data?.message || 'Lỗi khi tải dữ liệu khóa học')

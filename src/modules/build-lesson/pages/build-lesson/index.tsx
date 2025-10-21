@@ -15,7 +15,6 @@ import {
   BookOutlined,
   CodeOutlined,
   SettingOutlined,
-  UploadOutlined,
   SendOutlined,
   UserOutlined,
   RobotOutlined,

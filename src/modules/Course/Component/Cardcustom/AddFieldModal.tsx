@@ -1,5 +1,4 @@
 import { Modal, Form, Input, Button } from "antd";
-import { useState } from "react";
 
 type Props = {
   open: boolean;

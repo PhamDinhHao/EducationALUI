@@ -61,7 +61,7 @@ const ExamPreview = () => {
   const handleEditOption = (qIdx: number, optIdx: number, value: string) => {
     setExam((prev) => {
       const newExam = [...prev];
-      const options = [...newExam[qIdx].options];
+      const options = [...newExam[qIdx].options || []];
       options[optIdx] = value;
       newExam[qIdx] = { ...newExam[qIdx], options };
       return newExam;

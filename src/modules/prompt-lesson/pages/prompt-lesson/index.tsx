@@ -3,7 +3,6 @@ import { Button, Form, Input, Typography, Spin, message, Card, Row, Col } from "
 import { BookOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { LessonResponse } from "../../../../shared/core/types";
 import Sidebar from "@/shared/components/Sidebar";
 import env from "@/shared/core/constants/env";
 
@@ -38,7 +37,6 @@ const promptTemplates = [
 
 const LessonPrompt: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [lessonPlan, setLessonPlan] = useState<LessonResponse | null>(null);
   const [prompt, setPrompt] = useState(promptTemplates[0].value);
   const [selectedTemplate, setSelectedTemplate] = useState(promptTemplates[0].label);
 
@@ -81,7 +79,6 @@ const LessonPrompt: React.FC = () => {
       const data = response.data?.data ?? response.data;
   
       // Lưu state local (không bắt buộc)
-      setLessonPlan(data);
   
       message.success("Tạo giáo án thành công!");
   

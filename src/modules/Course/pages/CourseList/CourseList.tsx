@@ -37,14 +37,10 @@ const CourseList = () => {
     coursesByType[type].push(course)
   })
 
-  const handleUpdated = (updated: Course) => {
-    setCourses((prev) => prev.map((c) => (c.id === updated.id ? updated : c)))
-  }
-
   return (
     <>
       {Object.entries(coursesByType).map(([type, coursesOfType]) => (
-        <CourseTypeSection key={type} type={type} courses={coursesOfType} isAdmin={isAdmin} onUpdated={handleUpdated} />
+        <CourseTypeSection key={type} type={type} courses={coursesOfType} isAdmin={isAdmin} />
       ))}
     </>
   )

@@ -7,9 +7,10 @@ import { Course } from '../../modules/Course/types/Course'
 import { useBoundStore } from '@/shared/stores'
 
 const courses: Course[] = [
-  { id: 1, title: 'React cơ bản', description: 'Nhập môn React', img: 'https://via.placeholder.com/150', url: '/courses/1' },
-  { id: 2, title: 'Node.js nâng cao', description: 'Backend Node.js', img: 'https://via.placeholder.com/150', url: '/courses/2' },
-  { id: 3, title: 'AI cơ bản', description: 'Trí tuệ nhân tạo', img: 'https://via.placeholder.com/150', url: '/courses/3' },
+  { id: 1, title: 'React cơ bản', description: 'Nhập môn React', img: 'https://via.placeholder.com/150', url: '/courses/1', value: 1, price: 1000000, teacher: 'Nguyễn Văn A', students: 100, duration: '10h' },
+  { id: 2, title: 'Node.js nâng cao', description: 'Backend Node.js', img: 'https://via.placeholder.com/150', url: '/courses/2', value: 2, price: 2000000, teacher: 'Nguyễn Văn B', students: 200, duration: '20h' },
+  { id: 3, title: 'AI cơ bản', description: 'Trí tuệ nhân tạo', img: 'https://via.placeholder.com/150', url: '/courses/3', value: 3, price: 3000000, teacher: 'Nguyễn Văn C', students: 300, duration: '30h' },
+  { id: 3, title: 'AI cơ bản', description: 'Trí tuệ nhân tạo', img: 'https://via.placeholder.com/150', url: '/courses/3', value: 3, price: 3000000, teacher: 'Nguyễn Văn C', students: 300, duration: '30h' },
 ]
 
 const { Meta } = Card

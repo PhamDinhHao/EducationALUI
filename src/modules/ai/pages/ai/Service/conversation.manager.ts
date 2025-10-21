@@ -39,7 +39,6 @@ export class ConversationManager {
   private sessions: Map<string, ConversationMessage[]> = new Map()
   private summaries: Map<string, string> = new Map()
   private config: SessionConfig
-  private geminiService: GeminiService
 
   constructor(config?: Partial<SessionConfig>) {
     this.config = {
@@ -48,7 +47,6 @@ export class ConversationManager {
       autoSummarizeThreshold: 15,  // Tự động summarize khi có >15 tin nhắn
       ...config
     }
-    this.geminiService = new GeminiService()
   }
 
   /**

@@ -6,7 +6,6 @@ import {
   Col,
   Input,
   Button,
-  List,
   Avatar,
   Spin,
   Upload,
@@ -16,7 +15,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import {
   SendOutlined,
-  UserOutlined,
   RobotOutlined,
   PictureOutlined,
 } from "@ant-design/icons";

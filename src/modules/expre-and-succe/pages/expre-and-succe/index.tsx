@@ -21,6 +21,7 @@ import {
   PictureOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
+import Sidebar from "@/shared/components/Sidebar";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -91,11 +92,10 @@ const ExpreAndSucce: React.FC = () => {
         content: res.data?.answer || "AI không trả lời được.",
       };
       setMessages((prev) => [...prev, aiResponse]);
-
       setInputValue("");
       setSelectedImage(null);
       setImagePreview("");
-    } catch (err) {
+    } catch {
       message.error("Có lỗi khi gửi câu hỏi.");
     } finally {
       setLoading(false);
@@ -103,186 +103,142 @@ const ExpreAndSucce: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: 40, background: "#f9f9f9", minHeight: "100vh" }}>
-      <div style={{ marginBottom: 20, textAlign: "center" }}>
-        <Title level={2} style={{ color: "#ff6600", display: "inline" }}>
-          Kế hoạch cá nhân & Sáng kiến kinh nghiệm
-        </Title>
-      </div>
+    <div className="flex min-h-screen bg-gray-50">
+      <Sidebar />
+      <div className="flex-1 px-6 py-8">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center mb-10">
+            <Title level={2} className="!text-orange-500">
+              Kế hoạch cá nhân & Sáng kiến kinh nghiệm
+            </Title>
+            <p className="text-gray-600">
+              Chọn nội dung bạn muốn tạo cùng Trợ lý AI
+            </p>
+          </div>
 
-      <p style={{ marginBottom: 30, textAlign: "center" }}>
-        Chọn nội dung mà bạn muốn tạo
-      </p>
-
-      <Row gutter={24} justify="center" style={{ marginBottom: 30 }}>
-        <Col>
-          <Card
-            hoverable
-            style={{
-              width: 250,
-              borderRadius: 12,
-              border: "1px solid #ff6600",
-              textAlign: "center",
-              padding: 20,
-            }}
-            onClick={() => navigate("/ai/succession-plan")}
-          >
-            <img
-              src="https://img.icons8.com/ios/50/ffa500/note.png"
-              alt="Personal Plan"
-              style={{ marginBottom: 10 }}
-            />
-            <Title level={4}>Kế hoạch cá nhân</Title>
-          </Card>
-        </Col>
-        <Col>
-          <Card
-            hoverable
-            style={{
-              width: 250,
-              borderRadius: 12,
-              border: "1px solid #ff6600",
-              textAlign: "center",
-              padding: 20,
-            }}
-            onClick={() => navigate("/ai/experience-initiative")}
-          >
-            <img
-              src="https://img.icons8.com/ios/50/00bfff/document.png"
-              alt="Experience Initiative"
-              style={{ marginBottom: 10 }}
-            />
-            <Title level={4}>Sáng kiến kinh nghiệm</Title>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Chat Box */}
-      <div
-        style={{
-          maxWidth: 800,
-          margin: "0 auto",
-          background: "#fff",
-          borderRadius: 12,
-          padding: 20,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          display: "flex",
-          flexDirection: "column",
-          height: "70vh",
-        }}
-      >
-        {/* Lịch sử chat */}
-        <div style={{ flex: 1, overflowY: "auto", marginBottom: 12 }}>
-          <List
-            dataSource={messages}
-            renderItem={(msg, index) => (
-              <List.Item
-                key={index}
-                style={{
-                  justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
-                }}
+          {/* Lựa chọn nội dung */}
+          <Row gutter={24} justify="center" className="mb-10">
+            <Col>
+              <Card
+                hoverable
+                className="transition-all hover:shadow-lg border-orange-400 rounded-xl text-center p-6"
+                onClick={() => navigate("/ai/succession-plan")}
               >
-                <List.Item.Meta
-                  avatar={
-                    msg.role === "user" ? (
-                      <Avatar
-                        icon={<UserOutlined />}
-                        style={{ background: "#ff6600" }}
-                      />
-                    ) : (
-                      <Avatar
-                        icon={<RobotOutlined />}
-                        style={{ background: "#00bfff" }}
-                      />
-                    )
-                  }
-                  description={
-                    <div
-                      style={{
-                        background:
-                          msg.role === "user" ? "#ffe7d1" : "#e6f7ff",
-                        padding: "8px 12px",
-                        borderRadius: 12,
-                        maxWidth: 500,
-                        textAlign: "left",
-                        whiteSpace: "pre-wrap",
-                      }}
-                    >
-                      {msg.imageUrl && (
-                        <Image
-                          src={msg.imageUrl}
-                          width={200}
-                          className="rounded-lg mb-2"
-                        />
-                      )}
-                      {msg.content}
-                    </div>
-                  }
+                <img
+                  src="https://img.icons8.com/ios/50/ffa500/note.png"
+                  alt="Personal Plan"
+                  className="mx-auto mb-3"
                 />
-              </List.Item>
-            )}
-          />
-          {loading && (
-            <div style={{ textAlign: "left", marginLeft: 40 }}>
-              <Spin size="small" /> Đang trả lời...
-            </div>
-          )}
-        </div>
+                <Title level={4}>Kế hoạch cá nhân</Title>
+              </Card>
+            </Col>
+            <Col>
+              <Card
+                hoverable
+                className="transition-all hover:shadow-lg border-sky-400 rounded-xl text-center p-6"
+                onClick={() => navigate("/ai/experience-initiative")}
+              >
+                <img
+                  src="https://img.icons8.com/ios/50/00bfff/document.png"
+                  alt="Experience Initiative"
+                  className="mx-auto mb-3"
+                />
+                <Title level={4}>Sáng kiến kinh nghiệm</Title>
+              </Card>
+            </Col>
+          </Row>
 
-        {/* Input chat */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {imagePreview && (
-            <div style={{ position: "relative" }}>
-              <Image
-                src={imagePreview}
-                width={60}
-                height={60}
-                style={{
-                  borderRadius: 8,
-                  objectFit: "cover",
-                  marginRight: 8,
+          {/* Hộp chat */}
+          <div className="bg-white shadow-md rounded-2xl p-5 h-[50vh] flex flex-col">
+            {/* Header */}
+            <div className="border-b pb-3 mb-3 flex items-center gap-2">
+              <Avatar icon={<RobotOutlined />} style={{ background: "#00bfff" }} />
+              <span className="font-semibold text-gray-700">Trợ lý AI</span>
+            </div>
+
+            {/* Lịch sử chat */}
+            <div className="flex-1 overflow-y-auto space-y-3 px-1">
+              {messages.map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`flex ${
+                    msg.role === "user" ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  <div
+                    className={`max-w-[70%] p-3 rounded-2xl shadow-sm ${
+                      msg.role === "user"
+                        ? "bg-orange-100 text-gray-800"
+                        : "bg-sky-100 text-gray-700"
+                    }`}
+                  >
+                    {msg.imageUrl && (
+                      <Image
+                        src={msg.imageUrl}
+                        width={200}
+                        className="rounded-lg mb-2"
+                      />
+                    )}
+                    <p className="whitespace-pre-wrap">{msg.content}</p>
+                  </div>
+                </div>
+              ))}
+              {loading && (
+                <div className="flex items-center text-gray-500 text-sm gap-2">
+                  <Spin size="small" /> Đang trả lời...
+                </div>
+              )}
+            </div>
+
+            {/* Input */}
+            <div className="mt-3 flex items-center gap-2">
+              {imagePreview && (
+                <div className="relative">
+                  <Image
+                    src={imagePreview}
+                    width={60}
+                    height={60}
+                    className="rounded-lg object-cover"
+                  />
+                  <Button
+                    type="text"
+                    size="small"
+                    className="!absolute !top-[-6px] !right-[-6px] !text-red-500"
+                    onClick={removeSelectedImage}
+                  >
+                    ✕
+                  </Button>
+                </div>
+              )}
+              <TextArea
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                autoSize={{ minRows: 1, maxRows: 4 }}
+                placeholder="Nhập tin nhắn..."
+                disabled={loading}
+                onPressEnter={(e) => {
+                  if (!e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
                 }}
               />
-              <Button
-                type="text"
-                size="small"
-                style={{ position: "absolute", top: -8, right: -8, color: "red" }}
-                onClick={removeSelectedImage}
+              <Upload
+                showUploadList={false}
+                beforeUpload={handleImageUpload}
+                accept="image/*"
               >
-                ✕
-              </Button>
+                <Button icon={<PictureOutlined />} />
+              </Upload>
+              <Button
+                type="primary"
+                icon={<SendOutlined />}
+                loading={loading}
+                onClick={handleSend}
+                className="!bg-orange-500 !border-none rounded-full px-4"
+              />
             </div>
-          )}
-
-          <TextArea
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            autoSize={{ minRows: 1, maxRows: 4 }}
-            placeholder="Nhập tin nhắn..."
-            disabled={loading}
-            onPressEnter={(e) => {
-              if (!e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-          />
-
-          <Upload
-            showUploadList={false}
-            beforeUpload={handleImageUpload}
-            accept="image/*"
-          >
-            <Button icon={<PictureOutlined />} />
-          </Upload>
-
-          <Button
-            type="primary"
-            icon={<SendOutlined />}
-            onClick={handleSend}
-            loading={loading}
-            style={{ background: "#ff6600", borderRadius: 25 }}
-          />
+          </div>
         </div>
       </div>
     </div>

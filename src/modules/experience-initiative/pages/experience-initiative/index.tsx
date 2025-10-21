@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Input, Button, Typography, Spin, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Sidebar from "@/shared/components/Sidebar";
 
 const { Title } = Typography;
 const API_URL = "http://localhost:5001/api/v1/plan/initiatives";
@@ -30,13 +31,12 @@ const Initiative: React.FC = () => {
   };
 
   return (
+    <div className='flex min-h-screen bg-gray-50'>
+      <Sidebar />
+      <div className=' w-full p-6 pb-48'>
+        <div className='mx-auto max-w-[1100px]'></div>
     <div style={{ padding: 40, background: "#f9f9f9", minHeight: "100vh" }}>
       <div style={{ marginBottom: 20, textAlign: "center" }}>
-        <img
-          src="https://img.icons8.com/ios-filled/50/000000/open-book.png"
-          alt="Book Icon"
-          style={{ verticalAlign: "middle", marginRight: 10 }}
-        />
         <Title level={2} style={{ color: "#ff6600", display: "inline" }}>
           Sáng kiến kinh nghiệm
         </Title>
@@ -102,6 +102,8 @@ const Initiative: React.FC = () => {
       <p style={{ textAlign: "center", color: "#666", marginTop: 10 }}>
         Khi đã tạo hồ sơ, bạn đồng ý với Điều khoản và Chính sách quyền riêng tư.
       </p>
+    </div>
+    </div>
     </div>
   );
 };

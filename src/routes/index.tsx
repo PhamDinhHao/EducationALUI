@@ -1,4 +1,3 @@
-import { lazy } from 'react'
 import { createBrowserRouter, RouteObject, RouterProvider } from 'react-router-dom'
 import RootLayout from '@/shared/layouts/RootLayout'
 import PrivateRoute from '@/routes/PrivateRoute'
@@ -12,10 +11,22 @@ import {
   challengeCapRoute,
   aiRoute,
   studentRoute,
-  homeRoute
+  homeRoute,
+  buildStructureRoute,
+  buildLessonRoute,
+  assistantAiRoute
 } from '@/routes/modules'
 import AILayout from '@shared/layouts/AILayout.tsx'
 import coursePageRoute from '@/routes/modules/courseRouter.tsx'
+import { expreAndSucceRoute } from '@/routes/modules/expreAndSucce'
+import { stemLessonRoute } from '@/routes/modules/stemLesson'
+import { promptLessonRoute } from '@/routes/modules/promptLesson'
+import { planResultRoute } from '@/routes/modules/planresult'
+import { initiativeResultRoute } from '@/routes/modules/initiativeResult'
+import { successionPlanRoute } from '@/routes/modules/successionPlan'
+import { lessonFormRoute } from '@/routes/modules/lessonForm'
+import { lessonResultRoute } from '@/routes/modules/lessonResult'
+import { experienceInitiativeRoute } from '@/routes/modules/experienceInitiative'
 
 // const NavigateComponent = lazy(() => import('@/shared/components/Navigate/Navigate'))
 
@@ -42,7 +53,19 @@ const configRoutes: RouteObject[] = [
       ...learnCapRoute,
       ...lifeCapRoute,
       ...challengeCapRoute,
-      ...studentRoute
+      ...studentRoute,
+      ...buildStructureRoute,
+      ...buildLessonRoute,
+      ...expreAndSucceRoute,
+      ...assistantAiRoute,
+      ...stemLessonRoute,
+      ...promptLessonRoute,
+      ...planResultRoute,
+      ...initiativeResultRoute,
+      ...successionPlanRoute,
+      ...lessonFormRoute,
+      ...lessonResultRoute,
+      ...experienceInitiativeRoute,
     ]
   },
   {

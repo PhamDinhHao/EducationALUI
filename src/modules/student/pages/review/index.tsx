@@ -231,7 +231,7 @@ const ReviewPage = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
-      <div className="ml-[200px] w-full p-6 pb-24">
+      <div className=" w-full p-6 pb-24">
         <div className="max-w-[1100px] mx-auto">
           <ReviewHeader />
           

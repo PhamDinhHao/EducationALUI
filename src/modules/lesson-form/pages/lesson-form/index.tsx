@@ -4,6 +4,7 @@ import { BookOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { LessonResponse } from "../../../../shared/core/types";
+import Sidebar from "@/shared/components/Sidebar";
 
 const { Title, Text } = Typography;
 const API_URL = "http://localhost:5001/api/v1/lessons/generate";
@@ -84,6 +85,8 @@ const LessonForm: React.FC = () => {
   
 
   return (
+    <div className="flex min-h-screen bg-gray-50">
+      <Sidebar />
     <div
       style={{
         width: "100%",
@@ -186,6 +189,7 @@ const LessonForm: React.FC = () => {
       <Text style={{ display: "block", textAlign: "center", marginTop: 24, color: "gray" }}>
         Khi đặt câu hỏi, bạn đồng ý với <a href="#">Điều khoản</a> và <a href="#">Chính sách quyền riêng tư</a>.
       </Text>
+    </div>
     </div>
   );
 };

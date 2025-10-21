@@ -108,9 +108,10 @@ const ExercisePage: React.FC = () => {
   
 
   return (
-    <div className="flex min-h-screen mr-40">
+    <div className="flex min-h-screen">
       <Sidebar />
-      <div className="ml-[200px] w-full p-6 pb-48 max-w-[1100px] mx-auto">
+      <div className="w-full p-6 pb-48">
+        <div className="max-w-[1100px] mx-auto">
         <div className="text-center mb-8">
           <Title level={2} style={{ color: "#E8612A" }}>Trợ lý AI</Title>
           <Text className="text-lg text-gray-700">
@@ -151,6 +152,7 @@ const ExercisePage: React.FC = () => {
             </div>
           ))}
           {loading && <Spin tip="AI đang suy nghĩ..." />}
+        </div>
         </div>
 
         {/* Input */}

@@ -22,6 +22,7 @@ import {
   PictureOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
+import Sidebar from "@/shared/components/Sidebar";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -104,6 +105,10 @@ const LessonBuilder: React.FC = () => {
   };
 
   return (
+    <div className='flex min-h-screen bg-gray-50'>
+      <Sidebar />
+      <div className=' w-full'>
+        <div className='mx-auto max-w-[1100px]'></div>
     <div
       style={{
         width: "100%",
@@ -325,6 +330,8 @@ const LessonBuilder: React.FC = () => {
         Khi đặt câu hỏi, bạn đồng ý với <a href="#">Điều khoản</a> và{" "}
         <a href="#">Chính sách quyền riêng tư</a>.
       </Text>
+    </div>
+    </div>
     </div>
   );
 };

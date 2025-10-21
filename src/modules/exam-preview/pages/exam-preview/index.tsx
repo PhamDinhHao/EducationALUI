@@ -8,6 +8,7 @@ import "pdfmake/build/vfs_fonts";
 
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import { saveAs } from "file-saver";
+import Sidebar from "@/shared/components/Sidebar";
 
 
 const EXAM_STORAGE_KEY = "exam_data";
@@ -171,6 +172,10 @@ const ExamPreview = () => {
   }
 
   return (
+    <div className='flex min-h-screen bg-gray-50'>
+      <Sidebar />
+      <div className=' w-full p-6 pb-48'>
+        <div className='mx-auto max-w-[1100px]'></div>
     <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
       <div className="w-full max-w-5xl bg-white p-6 rounded-xl shadow">
         <h1 className="text-2xl font-bold text-orange-600 text-center mb-4">
@@ -244,6 +249,8 @@ const ExamPreview = () => {
           </button>
         </div>
       </div>
+    </div>
+    </div>
     </div>
   );
 };

@@ -78,10 +78,10 @@ export enum PagePath {
   ASSISTANTAI = "/ai/assistant-ai",
 
   // Student pages
-  STUDENT_EXERCISE = "/student/exercise",
-  STUDENT_REVIEW = "/student/review",
-  STUDENT_MINDMAP = "/student/mindmap",
-  STUDENT_PLAN = "/student/plan",
+  STUDENT_EXERCISE = "/ai/student/exercise",
+  STUDENT_REVIEW = "/ai/student/review",
+  STUDENT_MINDMAP = "/ai/student/mindmap",
+  STUDENT_PLAN = "/ai/student/plan",
   BUILD_TOPIC = "/ai/build-topic",
   BUILD_LESSON = "/ai/build-lesson",
   PERSONAL_PLAN = "/ai/personal-plan",

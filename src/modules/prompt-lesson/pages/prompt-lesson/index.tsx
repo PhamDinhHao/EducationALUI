@@ -4,6 +4,7 @@ import { BookOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { LessonResponse } from "../../../../shared/core/types";
+import Sidebar from "@/shared/components/Sidebar";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -97,8 +98,11 @@ const LessonPrompt: React.FC = () => {
   
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 p-4">
-      <Card className="w-full max-w-3xl shadow-lg rounded-2xl p-6">
+    <div className="flex min-h-screen bg-gray-50">
+      <Sidebar />
+      <div className="w-full p-[3rem]">
+        <div className="max-w-[1100px] mx-auto">
+      <Card className="w-full max-w-3xl shadow-lg rounded-2xl p-6 mx-auto">
         <div className="text-center mb-6">
           <BookOutlined style={{ fontSize: 32, color: "#E8612A" }} />
           <Title level={2} style={{ color: "#E8612A" }}>
@@ -165,6 +169,8 @@ const LessonPrompt: React.FC = () => {
           </Form.Item>
         </Form>
       </Card>
+    </div>
+    </div>
     </div>
   );
 };

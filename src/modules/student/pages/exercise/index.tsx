@@ -493,7 +493,7 @@ const ExercisePage = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
-      <div className="ml-[200px] w-full p-6 pb-48">
+      <div className=" w-full p-6 pb-48">
         <div className="max-w-[1100px] mx-auto">
           <ExerciseHeader />
           <SubjectGrid activeKey={active} onSelect={setActive} />

@@ -5,9 +5,10 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { LessonResponse } from "../../../../shared/core/types";
 import Sidebar from "@/shared/components/Sidebar";
+import env from "@/shared/core/constants/env";
 
 const { Title, Text } = Typography;
-const API_URL = "http://localhost:5000/api/v1/lessons/generate";
+const API_URL = `${env.VITE_HOST_API}/lessons/generate`;
 
 const subjectTopics: Record<string, string[]> = {
   toan: ["Hàm số", "Hình học", "Tổ hợp xác suất", "Giải tích"],

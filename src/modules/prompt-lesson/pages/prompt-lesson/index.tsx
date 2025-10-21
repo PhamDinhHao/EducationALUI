@@ -5,11 +5,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { LessonResponse } from "../../../../shared/core/types";
 import Sidebar from "@/shared/components/Sidebar";
+import env from "@/shared/core/constants/env";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
-const API_URL = "http://localhost:5000/api/v1/lessons/generate";
+const API_URL = `${env.VITE_HOST_API}/lessons/generate`;
 
 // 4 prompt mẫu
 const promptTemplates = [

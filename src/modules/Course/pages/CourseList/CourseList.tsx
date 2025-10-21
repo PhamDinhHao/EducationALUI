@@ -4,6 +4,7 @@ import { Spin, message } from 'antd'
 import axios from 'axios'
 import { Course } from '../../types/Course'
 import CourseTypeSection from './CourseTypeSection'
+import env from '@/shared/core/constants/env'
 
 const CourseList = () => {
   const [courses, setCourses] = useState<Course[]>([])
@@ -13,7 +14,7 @@ const CourseList = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await axios.get<Course[]>('http://localhost:5000/api/v1/courses')
+        const res = await axios.get<Course[]>(`${env.VITE_HOST_API}/courses`)
         setCourses(res.data)
       } catch (error: any) {
         console.error(error)

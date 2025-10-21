@@ -3,6 +3,7 @@ import { Button, Card, Col, Image, Input, Row, Spin, Typography, message, Upload
 import { PictureOutlined, SendOutlined } from '@ant-design/icons'
 import axios from 'axios'
 import Sidebar from '@/shared/components/Sidebar'
+import env from '@/shared/core/constants/env'
 
 const { Title, Text } = Typography
 const { TextArea } = Input
@@ -27,7 +28,7 @@ const FUNCTIONS = [
   { key: 'flashcards', label: 'Tạo bộ ghi nhớ ảo', prompt: 'Tạo bộ ghi nhớ ảo (flashcards) :Môn học : (Ví dụ: Toán),Tên bài học : (Ví dụ: Phép cộng),Flashcards: (Ví dụ: số thẻ)' },
 ]
 
-const API_URL = 'http://localhost:5000/api/v1/exercise/chat'
+const API_URL = `${env.VITE_HOST_API}/exercise/chat`
 
 interface ChatMessage {
   content: string

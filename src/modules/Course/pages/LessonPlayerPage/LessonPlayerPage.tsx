@@ -5,6 +5,7 @@ import LessonVideo from "./LessonVideo";
 import CommentList, { CommentItem } from "./CommentList";
 import { Lesson } from "../../types/Course";
 import { useBoundStore } from "@/shared/stores";
+import env from "@/shared/core/constants/env";
 
 const LessonPlayerPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,7 +22,7 @@ const LessonPlayerPage = () => {
   const fetchComments = async () => {
     if (!id) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/v1/comment/lessons/${id}/comments`);
+      const res = await fetch(`${env.VITE_HOST_API}/comment/lessons/${id}/comments`);
       if (!res.ok) throw new Error("Lỗi khi tải bình luận");
       const data: CommentItem[] = await res.json();
       setComments(data);
@@ -35,7 +36,7 @@ const LessonPlayerPage = () => {
       setLoading(true);
       setError("");
       try {
-        const lessonRes = await fetch(`http://localhost:5000/api/v1/lesson/${id}`);
+        const lessonRes = await fetch(`${env.VITE_HOST_API}/lesson/${id}`);
         if (!lessonRes.ok) throw new Error("Lỗi khi tải bài học");
         const lessonData = await lessonRes.json();
         setLesson(lessonData);
@@ -58,7 +59,7 @@ const LessonPlayerPage = () => {
     const authorName = user?.name || "Bạn";
 
     try {
-      const res = await fetch(`http://localhost:5000/api/v1/comment/lessons/${id}/comments`, {
+      const res = await fetch(`${env.VITE_HOST_API}/comment/lessons/${id}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

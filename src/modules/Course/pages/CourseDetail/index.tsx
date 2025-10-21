@@ -6,6 +6,7 @@ import { Course, Lesson } from '../../types/Course'
 import CourseInfo from './CourseInfo'
 import LessonList from './LessonList'
 import CourseSidebar from './CourseSidebar'
+import env from '@/shared/core/constants/env'
 
 export default function CourseDetail() {
   const { id } = useParams<{ id: string }>()
@@ -20,7 +21,7 @@ export default function CourseDetail() {
       setLoading(true)
       setError('')
       try {
-        const res = await axios.get(`http://localhost:5000/api/v1/courses/${id}`)
+        const res = await axios.get(`${env.VITE_HOST_API}/courses/${id}`)
         console.log('Response data:', res.data)
         const data = res.data
 

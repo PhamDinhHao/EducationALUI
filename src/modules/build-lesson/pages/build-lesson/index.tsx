@@ -23,11 +23,12 @@ import {
 } from "@ant-design/icons";
 import axios from "axios";
 import Sidebar from "@/shared/components/Sidebar";
+import env from "@/shared/core/constants/env";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
-const API_URL = "http://localhost:5000/api/v1/exercise/chat";
+const API_URL = `${env.VITE_HOST_API}/exercise/chat`;
 
 interface ChatMessage {
   role: "user" | "ai";

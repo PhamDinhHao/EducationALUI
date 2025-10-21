@@ -3,9 +3,10 @@ import { Form, Input, Button, Typography, Radio, Spin, message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Sidebar from '@/shared/components/Sidebar'
+import env from '@/shared/core/constants/env'
 
 const { Title } = Typography
-const API_URL = 'http://localhost:5000/api/v1/plan/plans'
+const API_URL = `${env.VITE_HOST_API}/plan/plans`
 
 const PersonalPlan: React.FC = () => {
   const [form] = Form.useForm()

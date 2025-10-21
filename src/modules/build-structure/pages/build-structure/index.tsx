@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useBoundStore } from '@shared/stores'
 import { Upload } from 'antd'
 import Sidebar from '@/shared/components/Sidebar'
+import env from '@/shared/core/constants/env'
 
 const levels = ['Nhận biết', 'Thông hiểu', 'Vận dụng', 'Vận dụng cao']
 const types = ['Nhiều phương án lựa chọn', 'Trắc nghiệm đúng sai', 'Trả lời ngắn']
@@ -52,7 +53,7 @@ const BuildStructure = () => {
       formData.append('file', file)
       formData.append('matrix', JSON.stringify(matrix))
 
-      const res = await axios.post('http://localhost:5000/api/v1/gemini/generate', formData, {
+      const res = await axios.post(`${env.VITE_HOST_API}/gemini/generate`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
 

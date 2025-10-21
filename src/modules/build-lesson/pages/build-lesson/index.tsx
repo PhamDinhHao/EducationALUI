@@ -27,7 +27,7 @@ import Sidebar from "@/shared/components/Sidebar";
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
-const API_URL = "http://localhost:5001/api/v1/exercise/chat";
+const API_URL = "http://localhost:5000/api/v1/exercise/chat";
 
 interface ChatMessage {
   role: "user" | "ai";

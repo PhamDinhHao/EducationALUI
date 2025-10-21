@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Typography, Button, Divider, Input, Space } from "antd";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import { saveAs } from "file-saver";
+import Sidebar from "@/shared/components/Sidebar";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -67,6 +68,10 @@ const InitiativeResultEditable: React.FC = () => {
   };
 
   return (
+    <div className="flex min-h-screen bg-gray-50">
+      <Sidebar />
+      <div className="w-full p-6 pb-48">
+        <div className="max-w-[1100px] mx-auto">
     <div style={{ padding: 40, background: "#f9f9f9", minHeight: "100vh" }}>
       <div
         style={{
@@ -79,11 +84,6 @@ const InitiativeResultEditable: React.FC = () => {
         }}
       >
         <div style={{ textAlign: "center", marginBottom: 20 }}>
-          <img
-            src="https://img.icons8.com/ios-filled/50/000000/open-book.png"
-            alt="Logo"
-            style={{ verticalAlign: "middle", marginRight: 10 }}
-          />
           <Title level={2} style={{ color: "#ff6600", display: "inline" }}>
             SÁNG KIẾN KINH NGHIỆM
           </Title>
@@ -111,6 +111,9 @@ const InitiativeResultEditable: React.FC = () => {
           </Space>
         </div>
       </div>
+    </div>
+    </div>
+    </div>
     </div>
   );
 };

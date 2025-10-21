@@ -7,7 +7,7 @@ import { LessonResponse } from "../../../../shared/core/types";
 import Sidebar from "@/shared/components/Sidebar";
 
 const { Title, Text } = Typography;
-const API_URL = "http://localhost:5001/api/v1/lessons/generate";
+const API_URL = "http://localhost:5000/api/v1/lessons/generate";
 
 const subjectTopics: Record<string, string[]> = {
   toan: ["Hàm số", "Hình học", "Tổ hợp xác suất", "Giải tích"],

@@ -5,7 +5,7 @@ import axios from 'axios'
 import Sidebar from '@/shared/components/Sidebar'
 
 const { Title } = Typography
-const API_URL = 'http://localhost:5001/api/v1/plan/plans'
+const API_URL = 'http://localhost:5000/api/v1/plan/plans'
 
 const PersonalPlan: React.FC = () => {
   const [form] = Form.useForm()

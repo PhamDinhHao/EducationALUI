@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { saveAs } from "file-saver";
 import { Document, Packer, Paragraph, TextRun } from "docx";
+import Sidebar from "@/shared/components/Sidebar";
 
 type Activity = {
   step: string;
@@ -157,7 +158,11 @@ const LessonResult: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center">
+    <div className="flex min-h-screen bg-gray-50">
+      <Sidebar />
+      <div className="w-full p-6 pb-48">
+        <div className="max-w-[1100px] mx-auto">
+    <div className="min-h-screen p-6 flex flex-col items-center">
       <div className="w-full max-w-5xl bg-white p-6 rounded-2xl shadow-lg">
         <h1 className="text-3xl font-bold text-orange-600 text-center mb-8">
           📘 Xem & Chỉnh sửa Giáo án
@@ -278,6 +283,9 @@ const LessonResult: React.FC = () => {
           </button>
         </div>
       </div>
+    </div>
+    </div>
+    </div>
     </div>
   );
 };

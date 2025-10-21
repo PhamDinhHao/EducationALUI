@@ -9,7 +9,7 @@ import Sidebar from "@/shared/components/Sidebar";
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
-const API_URL = "http://localhost:5001/api/v1/lessons/generate";
+const API_URL = "http://localhost:5000/api/v1/lessons/generate";
 
 // 4 prompt mẫu
 const promptTemplates = [

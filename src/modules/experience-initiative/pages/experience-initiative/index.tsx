@@ -5,7 +5,7 @@ import axios from "axios";
 import Sidebar from "@/shared/components/Sidebar";
 
 const { Title } = Typography;
-const API_URL = "http://localhost:5001/api/v1/plan/initiatives";
+const API_URL = "http://localhost:5000/api/v1/plan/initiatives";
 
 const Initiative: React.FC = () => {
   const [form] = Form.useForm();

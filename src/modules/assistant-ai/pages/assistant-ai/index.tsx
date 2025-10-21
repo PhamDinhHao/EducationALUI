@@ -27,7 +27,7 @@ const FUNCTIONS = [
   { key: 'flashcards', label: 'Tạo bộ ghi nhớ ảo', prompt: 'Tạo bộ ghi nhớ ảo (flashcards) :Môn học : (Ví dụ: Toán),Tên bài học : (Ví dụ: Phép cộng),Flashcards: (Ví dụ: số thẻ)' },
 ]
 
-const API_URL = 'http://localhost:5001/api/v1/exercise/chat'
+const API_URL = 'http://localhost:5000/api/v1/exercise/chat'
 
 interface ChatMessage {
   content: string
@@ -38,6 +38,7 @@ const ExercisePage: React.FC = () => {
   const [activeFunction, setActiveFunction] = useState<string>('method')
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputValue, setInputValue] = useState(FUNCTIONS[0].prompt)
+  const [input, setInput] = useState('')
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string>('')
   const [loading, setLoading] = useState(false)
@@ -165,8 +166,9 @@ const ExercisePage: React.FC = () => {
               </div>
             )}
             <TextArea
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              placeholder={inputValue}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
               autoSize={{ minRows: 1, maxRows: 4 }}
               className="flex-1"
             />

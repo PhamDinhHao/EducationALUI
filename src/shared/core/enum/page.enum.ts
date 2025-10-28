@@ -58,7 +58,7 @@ export enum PagePath {
   NOT_FOUND = "/not-found",
   LOGIN = "/login",
   REGISTER = "/register",
-  HOME = "/home",
+  HOME = "/",
   GROWCAP = "/grow-cap",
   LEARNCAP = "/learn-cap",
   LIFECAP = "/life-cap",

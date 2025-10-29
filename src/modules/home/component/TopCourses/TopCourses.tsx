@@ -17,7 +17,7 @@ const TopCourses = () => {
 
   return (
     <div>
-      <TitleHeaderHome heading='Featured courses' description='Explore our Popular Courses' buttonLabel='All Courses' />
+      <TitleHeaderHome heading='Khóa học nổi bật' description='Explore our Popular Courses' buttonLabel='All Courses' />
       <ResponsiveGrid<ICourse>
         data={categories}
         cols={4}

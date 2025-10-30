@@ -26,9 +26,7 @@ export default function LessonPlayerPage() {
         const data = await res.json()
         if (res.ok) {
           setLesson(data)
-          // lưu resume
           localStorage.setItem(`course:${data.courseId}:lastLessonId`, String(data.id))
-          // lấy tất cả bài học của khoá
           const resList = await fetch(`${env.VITE_HOST_API}/lessons/course/${data.courseId}`)
           const list = await resList.json()
           if (resList.ok) setLessons(list)

@@ -60,7 +60,7 @@ export default function CourseDetail() {
     const handleJoin = () => {
         if (!lessons?.length) return
         const lastId = localStorage.getItem(`course:${course?.id}:lastLessonId`)
-        const fallbackId = [...lessons].sort((a,b)=> (a.order||0)-(b.order||0))[0]?.id
+        const fallbackId = [...lessons].sort((a, b) => (a.order || 0) - (b.order || 0))[0]?.id
         openLesson(Number(lastId) || fallbackId)
     }
 
@@ -75,7 +75,7 @@ export default function CourseDetail() {
                 <LessonList lessons={lessons} onOpenLesson={openLesson} />
             </div>
             <div style={{ flex: 1 }}>
-                <Sidebar course={course} onJoin={handleJoin} />
+                <Sidebar isLesson={lessons && lessons.length > 0} course={course} onJoin={handleJoin} />
             </div>
         </div>
     )

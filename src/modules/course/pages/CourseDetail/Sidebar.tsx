@@ -1,24 +1,38 @@
+import images from '@/assets/images'
 import { Button, Image } from 'antd'
 
 export type CourseSidebarProps = {
+    isLesson: boolean
     course: {
         id: number
         title: string
         description: string
         img?: string
+        url?: string
     }
     onJoin?: () => void
 }
 
-export default function Sidebar({ course, onJoin }: CourseSidebarProps) {
+export default function Sidebar({ isLesson = false, course, onJoin }: CourseSidebarProps) {
     return (
-        <div style={{ position: 'sticky', top: 24 }}>
+        <div className='sticky top-6 flex flex-col justify-center items-center gap-4'>
             <Image
+                preview={{
+                    destroyOnHidden: true,
+                    imageRender: () => (
+                        <video
+                            muted
+                            width="60%"
+                            controls
+                            src={course?.url}
+                        />
+                    ),
+                    toolbarRender: () => null,
+                }}
                 src={course?.img}
-                fallback="https://via.placeholder.com/600x400?text=Course"
-                style={{ width: '100%', borderRadius: 8, marginBottom: 16, objectFit: 'cover' }}
-              />
-            <Button type='primary' size='large' block onClick={onJoin}>Tham gia</Button>
+                fallback={images.imgeNotFond}
+            />
+            <Button className='lg:!w-[400px]' disabled={!isLesson} type='primary' size='large' block onClick={onJoin}>{isLesson ? 'Tham gia' : 'Không có bài học'}</Button>
         </div>
     )
 }

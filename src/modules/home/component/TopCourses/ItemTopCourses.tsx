@@ -3,6 +3,7 @@ import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons'
 import { Card, Image } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { ICourse } from '@/modules/home/cores/interfaces'
+import images from '@/assets/images'
 
 const { Meta } = Card
 
@@ -12,9 +13,10 @@ const ItemTopCourses: React.FC<ICourse> = (course) => {
     <Card
       cover={
         <Image
+          preview={false}
           src={course?.img}
           alt={`Khoá học ${course.title}`}
-          fallback="https://via.placeholder.com/600x400?text=Course"
+          fallback={images.imgeNotFond}
           style={{ width: '100%', borderRadius: 8, marginBottom: 16, objectFit: 'cover' }}
         />
       }

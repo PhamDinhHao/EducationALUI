@@ -1,7 +1,7 @@
 export enum ModuleName {
   AUTH = "auth",
   HOME = "home",
-  COURSE = "Course",
+  COURSE = "course",
   GROWCAP = "growCap",
   LEARNCAP = "learnCap",
   LIFECAP = "lifeCap",

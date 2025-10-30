@@ -1,6 +1,6 @@
 import React from 'react'
 import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons'
-import { Card } from 'antd'
+import { Card, Image } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { ICourse } from '@/modules/home/cores/interfaces'
 
@@ -8,27 +8,21 @@ const { Meta } = Card
 
 const ItemTopCourses: React.FC<ICourse> = (course) => {
   const navigate = useNavigate()
-  const fallbackImg = '/vite.svg'
   return (
     <Card
       cover={
-        <img
-          draggable={false}
+        <Image
+          src={course?.img}
           alt={`Khoá học ${course.title}`}
-          src={course?.img || fallbackImg}
-          onError={(e) => {
-            const target = e.currentTarget as HTMLImageElement
-            if (target.src !== window.location.origin + fallbackImg && !target.src.endsWith(fallbackImg)) {
-              target.src = fallbackImg
-            }
-          }}
+          fallback="https://via.placeholder.com/600x400?text=Course"
+          style={{ width: '100%', borderRadius: 8, marginBottom: 16, objectFit: 'cover' }}
         />
       }
       hoverable
       className="group text-center rounded-2xl p-4 border border-gray-200"
       style={{ borderRadius: 16, padding: 16, border: '1px solid #f0f0f0' }}
       onClick={() => {
-        navigate(`/learncap/courses/${course.id}`)
+        navigate(`/courses/${course.id}`)
       }}
       actions={[
         <span

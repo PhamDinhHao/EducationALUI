@@ -6,7 +6,6 @@ import { ModuleName, PageName, PagePath } from '@/shared/core/enum/page.enum'
 import { lazyLoadModuleRoute, lazyLoadRoute } from '@/routes/LazyLoadRoutes'
 import {
   growCapRoute,
-  learnCapRoute,
   lifeCapRoute,
   challengeCapRoute,
   aiRoute,
@@ -51,7 +50,6 @@ const configRoutes: RouteObject[] = [
       ...homeRoute,
       ...coursePageRoute,
       ...growCapRoute,
-      ...learnCapRoute,
       ...lifeCapRoute,
       ...challengeCapRoute,
       ...studentRoute,

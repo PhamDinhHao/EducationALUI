@@ -1,6 +1,5 @@
 export * from './growCap'
 export * from './home'
-export * from './learnCap'
 export * from './lifeCap'
 export * from './slopeCap'
 export * from './ai'

@@ -1,8 +1,22 @@
 import { ReactNode } from 'react'
 
+
+export interface ICourseType {
+  id: number
+  name: string
+}
+
 export interface ICourse {
+  id: number
   title: string
-  courses: number
+  description: string
+  img: string
+  url?: string
+  teacher: string
+  students?: number
+  duration?: string
+  courseType?: ICourseType
+  enrollCount?: number
 }
 
 

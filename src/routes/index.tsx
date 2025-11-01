@@ -27,6 +27,7 @@ import { lessonFormRoute } from '@/routes/modules/lessonForm'
 import { lessonResultRoute } from '@/routes/modules/lessonResult'
 import { experienceInitiativeRoute } from '@/routes/modules/experienceInitiative'
 import { examPreviewRoute } from '@/routes/modules/examPreview'
+import { profileRoute } from '@/routes/modules/profile'
 
 // const NavigateComponent = lazy(() => import('@/shared/components/Navigate/Navigate'))
 
@@ -66,6 +67,7 @@ const configRoutes: RouteObject[] = [
       ...lessonResultRoute,
       ...experienceInitiativeRoute,
       ...examPreviewRoute,
+      ...profileRoute,
     ]
   },
   {

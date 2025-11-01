@@ -22,7 +22,8 @@ export enum ModuleName {
   PERSONAL_PLAN = "personal-plan",
   TEACHER_ASSISTANT = "teacher-assistant",
   BUILD_STRUCTURE = "build-structure",
-  EXAM_PREVIEW = "exam-preview"
+  EXAM_PREVIEW = "exam-preview",
+  PROFILE = "profile"
 }
 
 export enum PageName {
@@ -32,6 +33,8 @@ export enum PageName {
   COURSE_DETAIL = "CourseDetail",
   COURSE_LIST = "CourseList",
   CATEGORY_COURSES = "CategoryCourses",
+  PROFILE = "Profile",
+  MY_COURSES = "MyCourses",
   LESSON_PLAYER = "LessonPlayerPage",
   GROWCAP = "growCap",
   LEARNCAP = "learnCap",
@@ -74,6 +77,8 @@ export enum PagePath {
   COURSE_DETAIL = "courses/:id",
   COURSE_LIST = "courses",
   CATEGORY_COURSES = "categories/:categoryId/courses",
+  PROFILE = "/profile",
+  MY_COURSES = "/my-courses",
   LESSON_DETAIL = "lesson/:id",
   LESSON_FORM = "/ai/lesson-form",
   LESSON_RESULT = "/ai/lesson-result",

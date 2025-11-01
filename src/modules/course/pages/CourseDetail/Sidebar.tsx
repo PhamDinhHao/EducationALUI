@@ -1,4 +1,5 @@
 import images from '@/assets/images'
+import { VideoPlayer } from '@/shared/components/VideoPlayer'
 import { Button, Image } from 'antd'
 
 export type CourseSidebarProps = {
@@ -20,12 +21,12 @@ export default function Sidebar({ isLesson = false, course, onJoin }: CourseSide
                 preview={{
                     destroyOnHidden: true,
                     imageRender: () => (
-                        <video
-                            muted
-                            width="60%"
-                            controls
-                            src={course?.url}
+                        <VideoPlayer
+                            src={course?.url || ''}
+                            title={course?.title || ''}
+                            aspectRatio="16/9"
                         />
+
                     ),
                     toolbarRender: () => null,
                 }}

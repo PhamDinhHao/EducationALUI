@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Alert, Button, Layout, List, Spin, Typography } from 'antd'
+import { Alert, Breadcrumb, Button, Layout, List, Spin, Typography } from 'antd'
+import { VideoPlayer } from '@/shared/components/VideoPlayer'
 import env from '@/shared/core/constants/env'
-
 const { Sider, Content } = Layout
 const { Title, Text } = Typography
 
-type Lesson = { id: number; title: string; src?: string; duration?: number; order?: number; courseId?: number }
+type Lesson = { id: number; title: string; src?: string; duration?: number; description?: string; order?: number; courseId?: number }
 
 export default function LessonPlayerPage() {
   const { id } = useParams<{ id: string }>()
@@ -49,18 +49,31 @@ export default function LessonPlayerPage() {
   if (!lesson) return <p>Không tìm thấy bài học.</p>
 
   return (
-    <Layout style={{ background: '#fff' }}>
-      <Content style={{ padding: 16 }}>
-        <div style={{ background: '#000', aspectRatio: '16/9', borderRadius: 8, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {lesson.src ? (
-            <video src={lesson.src} controls style={{ width: '100%', height: '100%' }} />
-          ) : (
-            <Title level={3} style={{ color: '#fff' }}>Không có video</Title>
-          )}
-        </div>
-        <Title level={3} style={{ marginTop: 16 }}>{lesson.title}</Title>
+    <Layout style={{ background: '#fff', height: '100vh', overflow: 'hidden' }}>
+      <Content style={{ padding: 16, overflowY: 'auto', height: '100%' }}>
+        <Breadcrumb style={{ marginBottom: 16 }}>
+          <Breadcrumb.Item>
+            <a onClick={() => navigate(-1)}> Quay lại</a>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>
+            {lesson?.title || ''}
+          </Breadcrumb.Item>
+        </Breadcrumb>
+        <VideoPlayer
+          src={lesson.src}
+          title={lesson.title}
+          aspectRatio="16/9"
+          emptyMessage="Không có video"
+          className='mb-4'
+          style={{ marginBottom: 16, width: '100%', height: '80%' }}
+        // youtubeOptions={{
+        //   autoplay: true,
+        // }}
+        />
+        <Title level={3} style={{ marginTop: 16, marginBottom: 0 }}>{lesson.title}</Title>
+        <Text type='secondary'>{lesson?.description || ''}</Text>
       </Content>
-      <Sider width={360} theme='light' style={{ padding: 16, borderLeft: '1px solid #f0f0f0' }}>
+      <Sider width={360} theme='light' style={{ padding: 16, borderLeft: '1px solid #f0f0f0', overflowY: 'auto', height: '100%' }}>
         <Title level={4} style={{ marginBottom: 12 }}>Nội dung khóa học</Title>
         <List
           dataSource={sortedLessons}

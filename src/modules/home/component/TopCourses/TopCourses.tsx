@@ -4,8 +4,12 @@ import ResponsiveGrid from '@shared/ResponsiveGrid/ResponsiveGrid.tsx'
 import TitleHeaderHome from '@shared/components/TitleHeaderHome/TitleHeaderHome.tsx'
 import ItemTopCourses from '@/modules/home/component/TopCourses/ItemTopCourses.tsx'
 import { fetchTopEnrolledCourses } from '@/shared/server-action/courses.server'
+import { useNavigate } from 'react-router-dom'
 
 const TopCourses = () => {
+
+  const naviagte = useNavigate();
+
   const [courses, setCourses] = useState<ICourse[]>([])
 
   useEffect(() => {
@@ -18,10 +22,14 @@ const TopCourses = () => {
     fetchTopEnrolledCourse()
   }, [])
 
+  const handleNavigate = () => {
+    naviagte('/courses')
+  }
+
 
   return (
     <div>
-      <TitleHeaderHome heading='Khóa học nổi bật' description='Explore our Popular Courses' buttonLabel='All Courses' />
+      <TitleHeaderHome onAction={handleNavigate} heading='Khóa học nổi bật' description='Explore our Popular Courses' buttonLabel='Tất cả khóa học' />
       <ResponsiveGrid<ICourse>
         data={courses}
         cols={4}

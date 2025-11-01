@@ -41,6 +41,7 @@ const TopCategories = () => {
         heading='Top Categories'
         description='Explore our Popular Categories'
         buttonLabel='All categories'
+        isButtonHeading={false}
       />
       <ResponsiveGrid<ITopCategory>
         data={categories}

@@ -1,62 +1,38 @@
+import { useEffect, useState } from 'react'
 import { ITopCategory } from '@/modules/home/cores/interfaces'
 import ResponsiveGrid from '@shared/ResponsiveGrid/ResponsiveGrid.tsx'
 import TitleHeaderHome from '@shared/components/TitleHeaderHome/TitleHeaderHome.tsx'
 import ItemTopCategory from '@/modules/home/component/TopCategories/ItemTopCategory.tsx'
-import { TeamOutlined } from '@ant-design/icons'
+import { fetchTopCategories } from '@/shared/server-action/courseTypes.server'
+import { getCategoryIcon } from '@/modules/home/component/TopCategories/utils/categoryIconMapper'
+
+interface ApiCategoryResponse {
+  id: number
+  name: string
+  description: string | null
+  createdAt: string
+  updatedAt: string
+  courseCount: number
+}
 
 const TopCategories = () => {
-  const categories: ITopCategory[] = [
-    {
-      title: 'Art & Design',
-      courses: 38,
-      icon: <TeamOutlined />
-    },
-    {
-      title: 'Development',
-      courses: 38,
-      icon: <TeamOutlined />
-    },
-    {
-      title: 'Communication',
-      courses: 38,
-      icon: <TeamOutlined />
-    },
-    {
-      title: 'Videography',
-      courses: 38,
-      icon: <TeamOutlined />
-    },
-    {
-      title: 'Photography',
-      courses: 38,
-      icon: <TeamOutlined />
-    },
-    {
-      title: 'Marketing',
-      courses: 38,
-      icon: <TeamOutlined />
-    },
-    {
-      title: 'Content Writing',
-      courses: 38,
-      icon: <TeamOutlined />
-    },
-    {
-      title: 'Finance',
-      courses: 38,
-      icon: <TeamOutlined />
-    },
-    {
-      title: 'Science',
-      courses: 38,
-      icon: <TeamOutlined />
-    },
-    {
-      title: 'Network',
-      courses: 38,
-      icon: <TeamOutlined />
+  const [categories, setCategories] = useState<ITopCategory[]>([])
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const data = await fetchTopCategories(8)
+      if (data && Array.isArray(data)) {
+        const mappedCategories: ITopCategory[] = data.map((item: ApiCategoryResponse) => ({
+          title: item.name,
+          courses: item.courseCount || 0,
+          icon: getCategoryIcon(item.name)
+        }))
+        setCategories(mappedCategories)
+      }
     }
-  ]
+
+    fetchCategories()
+  }, [])
 
   return (
     <div>

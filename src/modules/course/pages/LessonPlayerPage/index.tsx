@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Alert, Breadcrumb, Button, Layout, List, Spin, Typography } from 'antd'
 import { VideoPlayer } from '@/shared/components/VideoPlayer'
+import { CommentSection } from '@/modules/course/components/CommentSection'
 import env from '@/shared/core/constants/env'
 const { Sider, Content } = Layout
 const { Title, Text } = Typography
@@ -70,8 +71,11 @@ export default function LessonPlayerPage() {
         //   autoplay: true,
         // }}
         />
-        <Title level={3} style={{ marginTop: 16, marginBottom: 0 }}>{lesson.title}</Title>
-        <Text type='secondary'>{lesson?.description || ''}</Text>
+        <Title level={3} style={{ marginTop: 16, marginBottom: 8 }}>{lesson.title}</Title>
+        <Text type='secondary' style={{ display: 'block', marginBottom: 24 }}>
+          {lesson?.description || ''}
+        </Text>
+        <CommentSection lessonId={lesson.id} />
       </Content>
       <Sider width={360} theme='light' style={{ padding: 16, borderLeft: '1px solid #f0f0f0', overflowY: 'auto', height: '100%' }}>
         <Title level={4} style={{ marginBottom: 12 }}>Nội dung khóa học</Title>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Alert, Breadcrumb, Button, Layout, List, Spin, Typography } from 'antd'
 import { VideoPlayer } from '@/shared/components/VideoPlayer'
 import { CommentSection } from '@/modules/course/components/CommentSection'
@@ -55,7 +55,11 @@ export default function LessonPlayerPage() {
       <Content style={{ padding: 16, overflowY: 'auto', height: '100%' }}>
         <Breadcrumb style={{ marginBottom: 16 }}>
           <Breadcrumb.Item>
-            <a onClick={() => navigate(-1)}> Quay lại</a>
+            <Link
+              to={`${window.location.origin}/courses/${lesson.courseId}`}
+            >
+              Quay lại khóa học
+            </Link>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
             {lesson?.title || ''}
@@ -68,9 +72,9 @@ export default function LessonPlayerPage() {
           emptyMessage="Không có video"
           className='mb-4'
           style={{ marginBottom: 16, width: '100%', height: '80%' }}
-        // youtubeOptions={{
-        //   autoplay: true,
-        // }}
+          youtubeOptions={{
+            autoplay: true,
+          }}
         />
         <Title level={3} style={{ marginTop: 16, marginBottom: 8 }}>{lesson.title}</Title>
         <Text type='secondary' style={{ display: 'block', marginBottom: 24 }}>

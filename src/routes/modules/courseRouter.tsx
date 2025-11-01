@@ -9,6 +9,10 @@ const coursePageRoute = [
         element: lazyLoadModuleRoute(ModuleName.COURSE, PageName.COURSE_DETAIL)
       },
       {
+        path: PagePath.CATEGORY_COURSES,
+        element: lazyLoadModuleRoute(ModuleName.COURSE, PageName.CATEGORY_COURSES)
+      },
+      {
         path: PagePath.LESSON_DETAIL,
         element: lazyLoadModuleRoute(ModuleName.COURSE, PageName.LESSON_PLAYER)
       }

@@ -1,4 +1,4 @@
-import { getCourseDetail, getTopEnrolledCourses } from "@/shared/services/courses.service";
+import { getCourseDetail, getTopEnrolledCourses, getCoursesByCategoryId } from "@/shared/services/courses.service";
 
 
 export const fetchTopEnrolledCourses = async (limit: number = 8) => {
@@ -17,5 +17,14 @@ export const fetchCourseDetail = async (id: number | string) => {
         return res.data;
     } catch (err) {
         return null;
+    }
+}
+
+export const fetchCoursesByCategoryId = async (categoryId: number | string) => {
+    try {
+        const res = await getCoursesByCategoryId(categoryId);
+        return res.data?.data || res.data || [];
+    } catch (err) {
+        return [];
     }
 }

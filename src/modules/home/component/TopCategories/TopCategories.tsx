@@ -23,6 +23,7 @@ const TopCategories = () => {
       const data = await fetchTopCategories(8)
       if (data && Array.isArray(data)) {
         const mappedCategories: ITopCategory[] = data.map((item: ApiCategoryResponse) => ({
+          id: item.id,
           title: item.name,
           courses: item.courseCount || 0,
           icon: getCategoryIcon(item.name)

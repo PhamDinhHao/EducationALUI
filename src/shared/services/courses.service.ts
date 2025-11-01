@@ -10,3 +10,7 @@ export function getTopEnrolledCourses(limit: number = 8) {
 export function getCourseDetail(id: number | string) {
     return ApiService.get(`${BaseUrl}/${id}`).then((resp) => resp);
 }
+
+export function getCoursesByCategoryId(categoryId: number | string) {
+    return ApiService.get(`${BaseUrl}/category/${categoryId}`).then((resp) => resp);
+}

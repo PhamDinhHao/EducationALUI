@@ -24,4 +24,5 @@ export interface ITopCategory {
   icon: ReactNode
   title: string
   courses: number
+  id?: number
 }

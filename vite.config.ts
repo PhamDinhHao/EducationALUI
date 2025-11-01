@@ -21,6 +21,9 @@ export default defineConfig(({ mode }) => {
         '@group': path.resolve(__dirname, './src/modules/group')
       }
     },
+    optimizeDeps: {
+      include: ['react-window']
+    },
     server: {
       port: Number(env.VITE_PORT) || 5175, // fallback nếu biến không có
       host: true // cho phép truy cập từ mạng LAN nếu cần

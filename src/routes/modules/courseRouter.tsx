@@ -5,6 +5,10 @@ const coursePageRoute = [
   {
     children: [
       {
+        path: PagePath.COURSE_LIST,
+        element: lazyLoadModuleRoute(ModuleName.COURSE, PageName.COURSE_LIST)
+      },
+      {
         path: PagePath.COURSE_DETAIL,
         element: lazyLoadModuleRoute(ModuleName.COURSE, PageName.COURSE_DETAIL)
       },

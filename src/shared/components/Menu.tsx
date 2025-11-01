@@ -14,7 +14,7 @@ const MENU_ITEMS: MenuItem[] = [
   },
   {
     key: 'Khóa học',
-    label: <Link to='/'>Khóa học</Link>
+    label: <Link to='/courses'>Khóa học</Link>
   },
   {
     key: 'Bài viết',

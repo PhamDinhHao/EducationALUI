@@ -65,7 +65,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ lessonId }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          author: user?.name || 'Người ẩn danh',
+          author: user?.name || user?.email || 'Người ẩn danh',
           content: values.content,
           userId: user?.id || undefined,
           parentId: null
@@ -99,7 +99,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ lessonId }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          author: user?.name || 'Người dùng',
+          author: user?.name || user?.email || 'Người ẩn danh',
           content: content,
           parentId: parentId
         })

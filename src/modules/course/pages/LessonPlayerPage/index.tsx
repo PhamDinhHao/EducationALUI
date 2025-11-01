@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Alert, Breadcrumb, Button, Layout, List, Spin, Typography } from 'antd'
 import { VideoPlayer } from '@/shared/components/VideoPlayer'
 import { CommentSection } from '@/modules/course/components/CommentSection'
+import { CourseProgressCard } from '@/modules/course/components/CourseProgressCard'
 import env from '@/shared/core/constants/env'
 const { Sider, Content } = Layout
 const { Title, Text } = Typography
@@ -79,6 +80,11 @@ export default function LessonPlayerPage() {
       </Content>
       <Sider width={360} theme='light' style={{ padding: 16, borderLeft: '1px solid #f0f0f0', overflowY: 'auto', height: '100%' }}>
         <Title level={4} style={{ marginBottom: 12 }}>Nội dung khóa học</Title>
+
+        {lesson?.courseId && sortedLessons.length > 0 && (
+          <CourseProgressCard courseId={lesson.courseId} totalLessons={sortedLessons.length} />
+        )}
+
         <List
           dataSource={sortedLessons}
           renderItem={(item, index) => (

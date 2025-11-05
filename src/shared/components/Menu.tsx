@@ -4,9 +4,10 @@ import { MenuOutlined, RightOutlined, LogoutOutlined, LoginOutlined, UserOutline
 import type { MenuProps } from 'antd'
 import { MenuItem, User } from '@/shared/core/types'
 import { PagePath } from '@/shared/core/enum/page.enum'
-import { memo } from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useBoundStore } from '@/shared/stores'
 import { useMenu } from '@/shared/hooks/useMenu'
+import { getProfile } from '@/shared/services/auth.service'
 
 const MENU_ITEMS: MenuItem[] = [
   {
@@ -58,7 +59,11 @@ const DesktopMenu = memo<{
   onLogin: () => void
   user: User | null
   onNavigate: (path: string) => void
-}>(({ selectedKeys, openKeys, onOpenChange, onMenuClick, onLogout, onLogin, user, onNavigate }) => {
+  isLoadingUser?: boolean
+}>(({ selectedKeys, openKeys, onOpenChange, onMenuClick, onLogout, onLogin, user, onNavigate, isLoadingUser = false }) => {
+  console.log('DesktopMenu - user:', user)
+  console.log('DesktopMenu - user.name:', user?.name)
+  console.log('DesktopMenu - user.email:', user?.email)
   const userMenuItems: MenuProps['items'] = user
     ? [
       {
@@ -106,14 +111,15 @@ const DesktopMenu = memo<{
             <div className='flex items-center gap-2 cursor-pointer px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors'>
               <Avatar
                 size="small"
-                icon={<UserOutlined />}
                 style={{ backgroundColor: '#1890ff' }}
               >
-                {user?.name || user?.email || 'Người ẩn danh'}
+                {(() => {
+                  const displayName = user.name?.trim() || user.email?.trim() || ''
+                  return displayName ? displayName.charAt(0).toUpperCase() : <UserOutlined />
+                })()}
               </Avatar>
               <span className='hidden md:block text-sm font-medium'>
-                {/* .split('@') */}
-                {user?.name || user?.email || 'Người ẩn danh'}
+                {user.name?.trim() || user.email?.trim() || (isLoadingUser)}
               </span>
             </div>
           </Dropdown>
@@ -125,6 +131,16 @@ const DesktopMenu = memo<{
       </div>
     </div>
   )
+}, (prevProps, nextProps) => {
+  const userChanged = prevProps.user?.id !== nextProps.user?.id ||
+    prevProps.user?.email !== nextProps.user?.email ||
+    (prevProps.user === null && nextProps.user !== null) ||
+    (prevProps.user !== null && nextProps.user === null)
+  const selectedKeysChanged = prevProps.selectedKeys[0] !== nextProps.selectedKeys[0]
+  const openKeysChanged = prevProps.openKeys[0] !== nextProps.openKeys[0]
+  const isLoadingChanged = prevProps.isLoadingUser !== nextProps.isLoadingUser
+
+  return !userChanged && !selectedKeysChanged && !openKeysChanged && !isLoadingChanged
 })
 
 const MobileMenu = memo<{
@@ -137,11 +153,13 @@ const MobileMenu = memo<{
   user: User | null
   onNavigate: (path: string) => void
   onCloseDrawer: () => void
-}>(({ selectedKeys, openKeys, onOpenChange, onMenuClick, onLogout, onLogin, user, onNavigate, onCloseDrawer }) => {
+  isLoadingUser?: boolean
+}>(({ selectedKeys, openKeys, onOpenChange, onMenuClick, onLogout, onLogin, user, onNavigate, onCloseDrawer, isLoadingUser = false }) => {
   const handleMenuClick = (path: string) => {
     onNavigate(path)
     onCloseDrawer()
   }
+
 
   return (
     <>
@@ -171,14 +189,18 @@ const MobileMenu = memo<{
             <div className='flex items-center gap-3 mb-3 pb-3 border-b border-gray-200'>
               <Avatar
                 size="default"
-                icon={<UserOutlined />}
                 style={{ backgroundColor: '#1890ff' }}
               >
-                {user?.name || user?.email || 'Người ẩn danh'}
+                {(() => {
+                  const displayName = user.name?.trim() || user.email?.trim() || ''
+                  return displayName ? displayName.charAt(0).toUpperCase() : <UserOutlined />
+                })()}
               </Avatar>
               <div className='flex-1 min-w-0'>
-                <div className='text-sm font-medium truncate'>{user?.name || 'Người ẩn danh'}</div>
-                <div className='text-xs text-gray-500 truncate'>{user?.email}</div>
+                <div className='text-sm font-medium truncate'>
+                  {user.name?.trim() || user.email?.trim() || (isLoadingUser)}
+                </div>
+                <div className='text-xs text-gray-500 truncate'>{user.email?.trim() || ''}</div>
               </div>
             </div>
             <Button
@@ -215,6 +237,16 @@ const MobileMenu = memo<{
       </div>
     </>
   )
+}, (prevProps, nextProps) => {
+  const userChanged = prevProps.user?.id !== nextProps.user?.id ||
+    prevProps.user?.email !== nextProps.user?.email ||
+    (prevProps.user === null && nextProps.user !== null) ||
+    (prevProps.user !== null && nextProps.user === null)
+  const selectedKeysChanged = prevProps.selectedKeys[0] !== nextProps.selectedKeys[0]
+  const openKeysChanged = prevProps.openKeys[0] !== nextProps.openKeys[0]
+  const isLoadingChanged = prevProps.isLoadingUser !== nextProps.isLoadingUser
+
+  return !userChanged && !selectedKeysChanged && !openKeysChanged && !isLoadingChanged
 })
 
 const MobileMenuButton = memo<{
@@ -231,8 +263,10 @@ const MobileMenuButton = memo<{
 ))
 
 const Menu: React.FC = () => {
-  const { user } = useBoundStore((state) => state)
+  const { user, userProfile } = useBoundStore((state) => state)
   const navigate = useNavigate()
+  const hasFetchedRef = useRef(false)
+  const [isLoadingUser, setIsLoadingUser] = useState(false)
   const {
     openKeys,
     selectedKeys,
@@ -245,9 +279,44 @@ const Menu: React.FC = () => {
     handleLogin
   } = useMenu()
 
-  const handleNavigate = (path: string) => {
+  const handleNavigate = useCallback((path: string) => {
     navigate(path)
-  }
+  }, [navigate])
+
+  useEffect(() => {
+    const fetchUserIfNeeded = async () => {
+      if (!hasFetchedRef.current && user && (!user.email || !user.name)) {
+        setIsLoadingUser(true)
+        try {
+          const profileResponse = await getProfile()
+          const profileData = profileResponse?.data?.data?.user ||
+            profileResponse?.data?.data ||
+            profileResponse?.data?.user ||
+            profileResponse?.data || {}
+          if (profileData && (profileData.email || profileData.name)) {
+            userProfile(profileData)
+          }
+          hasFetchedRef.current = true
+        } catch (error) {
+          hasFetchedRef.current = true
+        } finally {
+          setIsLoadingUser(false)
+        }
+      }
+    }
+
+    fetchUserIfNeeded()
+  }, [user, userProfile])
+
+  useEffect(() => {
+    if (!user) {
+      hasFetchedRef.current = false
+      setIsLoadingUser(false)
+    } else if (user.email && user.name) {
+      hasFetchedRef.current = true
+      setIsLoadingUser(false)
+    }
+  }, [user])
 
   return (
     <>
@@ -260,6 +329,7 @@ const Menu: React.FC = () => {
         onLogin={handleLogin}
         user={user}
         onNavigate={handleNavigate}
+        isLoadingUser={isLoadingUser}
       />
       <MobileMenuButton onClick={toggleMobileMenu} />
       <Drawer
@@ -271,9 +341,11 @@ const Menu: React.FC = () => {
         placement='right'
         onClose={closeMobileMenu}
         open={mobileMenuOpen}
-        bodyStyle={menuStyles.drawer.body}
+        styles={{
+          body: menuStyles.drawer.body,
+          header: menuStyles.drawer.header
+        }}
         width={280}
-        headerStyle={menuStyles.drawer.header}
       >
         <MobileMenu
           selectedKeys={selectedKeys}
@@ -285,6 +357,7 @@ const Menu: React.FC = () => {
           user={user}
           onNavigate={handleNavigate}
           onCloseDrawer={closeMobileMenu}
+          isLoadingUser={isLoadingUser}
         />
       </Drawer>
     </>

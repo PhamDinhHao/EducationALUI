@@ -19,7 +19,7 @@ const MENU_ITEMS: MenuItem[] = [
   },
   {
     key: 'Bài viết',
-    label: <Link to='/'>Bài viết</Link>
+    label: <Link to='/blog'>Bài viết</Link>
   },
   {
     key: PagePath.AI,

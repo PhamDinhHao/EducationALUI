@@ -336,18 +336,15 @@ export async function exampleUsage() {
 
   // Lấy context để gọi Gemini API
   const context = manager.getContext(sessionId, 'Toán học')
-  console.log('Context:', context)
 
   // Tạo summary mới
   await manager.summarizeHistory(sessionId, 'Toán học')
 
   // Lấy context sau khi summarize
   const optimizedContext = manager.getContext(sessionId, 'Toán học')
-  console.log('Optimized Context:', optimizedContext)
 
   // Thống kê session
   const stats = manager.getSessionStats(sessionId)
-  console.log('Session Stats:', stats)
 
   // Dọn dẹp
   manager.deleteSession(sessionId)

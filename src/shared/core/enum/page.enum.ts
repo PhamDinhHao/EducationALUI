@@ -23,7 +23,10 @@ export enum ModuleName {
   TEACHER_ASSISTANT = "teacher-assistant",
   BUILD_STRUCTURE = "build-structure",
   EXAM_PREVIEW = "exam-preview",
-  PROFILE = "profile"
+  PROFILE = "profile",
+  BLOG = "blog",
+  BLOG_DETAIL = "blog-detail",
+  BLOG_ADD = "blog-add",
 }
 
 export enum PageName {
@@ -56,7 +59,10 @@ export enum PageName {
   PERSONAL_PLAN = "personal-plan",
   TEACHER_ASSISTANT = "teacher-assistant",
   BUILD_STRUCTURE = "build-structure",
-  EXAM_PREVIEW = "exam-preview"
+  EXAM_PREVIEW = "exam-preview",
+  BLOG = "blog",
+  BLOG_DETAIL = "blog-detail",
+  BLOG_ADD = "blog-add",
 }
 
 export enum PagePath {
@@ -85,7 +91,9 @@ export enum PagePath {
   PROMPT_LESSON = "/ai/prompt-lesson",
   STEM_LESSON = "/ai/stem-lesson",
   ASSISTANTAI = "/ai/assistant-ai",
-
+  BLOG = "/blog",
+  BLOG_DETAIL = "/blog/:id",
+  BLOG_ADD = "/blog/add",
   // Student pages
   STUDENT_EXERCISE = "/ai/student/exercise",
   STUDENT_REVIEW = "/ai/student/review",

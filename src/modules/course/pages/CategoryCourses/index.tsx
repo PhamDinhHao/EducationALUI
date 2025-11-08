@@ -99,7 +99,7 @@ export default function CategoryCourses() {
                 <div style={{ marginTop: 12, fontSize: 14, color: '#666' }}>
                   <div style={{ marginBottom: 8 }}>
                     <UserOutlined style={{ marginRight: 4 }} />
-                    <span>{course?.students || 0} học viên</span>
+                    <span>{course?.enrollCount ?? course?.students ?? 0} học viên</span>
                     {course?.duration && (
                       <>
                         <span style={{ margin: '0 8px' }}>•</span>

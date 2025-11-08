@@ -29,7 +29,7 @@ export const fetchCoursesByCategoryId = async (categoryId: number | string) => {
     }
 }
 
-export const fetchQueryCourses = async (params: { page?: number; limit?: number; sortBy?: string; sortType?: 'asc' | 'desc' }) => {
+export const fetchQueryCourses = async (params: { page?: number; limit?: number; sortBy?: string; sortType?: 'asc' | 'desc'; search?: string; courseTypeId?: number }) => {
     try {
         const res = await queryCourses(params);
         return res.data?.data || res.data || { data: [], pagination: null };

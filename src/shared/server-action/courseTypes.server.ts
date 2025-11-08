@@ -1,4 +1,4 @@
-import { getTopCategories, getCourseTypeById } from "@/shared/services/courseTypes.service";
+import { getTopCategories, getCourseTypeById, getCourseTypes } from "@/shared/services/courseTypes.service";
 
 export const fetchTopCategories = async (limit: number = 8) => {
     try {
@@ -15,5 +15,14 @@ export const fetchCourseTypeById = async (id: number | string) => {
         return res.data?.data || res.data || null;
     } catch (err) {
         return null;
+    }
+}
+
+export const fetchCourseTypes = async () => {
+    try {
+        const res = await getCourseTypes();
+        return res.data?.data || res.data || [];
+    } catch (err) {
+        return [];
     }
 }

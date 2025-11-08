@@ -4,13 +4,16 @@
 
 html,
 body,
-#root,
-#root > div {
+#root {
   height: 100%;
 }
 
 body {
-  overflow-y: hidden;
+  overflow-y: auto;
+}
+
+#root > div {
+  min-height: 100%;
 }
 /* Khi item được chọn */
 .menu-multiline .ant-menu-item-selected {

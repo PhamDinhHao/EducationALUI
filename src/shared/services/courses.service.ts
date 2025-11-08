@@ -15,6 +15,6 @@ export function getCoursesByCategoryId(categoryId: number | string) {
     return ApiService.get(`${BaseUrl}/category/${categoryId}`).then((resp) => resp);
 }
 
-export function queryCourses(params: { page?: number; limit?: number; sortBy?: string; sortType?: 'asc' | 'desc' }) {
+export function queryCourses(params: { page?: number; limit?: number; sortBy?: string; sortType?: 'asc' | 'desc'; search?: string; courseTypeId?: number }) {
     return ApiService.get(`${BaseUrl}/query`, params).then((resp) => resp);
 }

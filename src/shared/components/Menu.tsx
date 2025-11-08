@@ -108,9 +108,11 @@ const DesktopMenu = memo<{
             <div className='flex items-center gap-2 cursor-pointer px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors'>
               <Avatar
                 size="small"
-                style={{ backgroundColor: '#1890ff' }}
+                src={user.avatar}
+                style={{ backgroundColor: user.avatar ? 'transparent' : '#1890ff' }}
+                icon={!user.avatar ? <UserOutlined /> : undefined}
               >
-                {(() => {
+                {!user.avatar && (() => {
                   const displayName = user.name?.trim() || user.email?.trim() || ''
                   return displayName ? displayName.charAt(0).toUpperCase() : <UserOutlined />
                 })()}
@@ -186,9 +188,11 @@ const MobileMenu = memo<{
             <div className='flex items-center gap-3 mb-3 pb-3 border-b border-gray-200'>
               <Avatar
                 size="default"
-                style={{ backgroundColor: '#1890ff' }}
+                src={user.avatar}
+                style={{ backgroundColor: user.avatar ? 'transparent' : '#1890ff' }}
+                icon={!user.avatar ? <UserOutlined /> : undefined}
               >
-                {(() => {
+                {!user.avatar && (() => {
                   const displayName = user.name?.trim() || user.email?.trim() || ''
                   return displayName ? displayName.charAt(0).toUpperCase() : <UserOutlined />
                 })()}

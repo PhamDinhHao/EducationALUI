@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Card, Form, Input, Button, Avatar, Typography, message, Spin, Tabs, Space, Divider } from 'antd'
-import { UserOutlined, LockOutlined, SaveOutlined } from '@ant-design/icons'
+import { Card, Form, Input, Button, Typography, message, Spin, Tabs, Divider, Upload } from 'antd'
+import { UserOutlined, LockOutlined, SaveOutlined, CameraOutlined, LoadingOutlined } from '@ant-design/icons'
+import type { RcFile, UploadFile } from 'antd/es/upload/interface'
 import { useBoundStore } from '@/shared/stores'
-import { getProfile, updateProfile, changePassword } from '@/shared/services/auth.service'
+import { getProfile, updateProfile, changePassword, uploadAvatar } from '@/shared/services/auth.service'
 import { User } from '@/shared/core/types'
+import { beforeUpload } from '@/shared/utils/image-utils'
 
 const { Title, Text } = Typography
 const { TabPane } = Tabs
@@ -13,7 +15,9 @@ export default function Profile() {
   const [profileForm] = Form.useForm()
   const [passwordForm] = Form.useForm()
   const [loading, setLoading] = useState(false)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [userData, setUserData] = useState<User | null>(user)
+  const [imageUrl, setImageUrl] = useState<string | null>(user?.avatar || null)
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -23,6 +27,7 @@ export default function Profile() {
         const profileUser = res.data?.data?.user || res.data?.user
         if (profileUser) {
           setUserData(profileUser)
+          setImageUrl(profileUser.avatar || null)
           profileForm.setFieldsValue({
             name: profileUser.name || '',
             email: profileUser.email || ''
@@ -46,6 +51,7 @@ export default function Profile() {
       const updatedUser = res.data?.data?.user || res.data?.user
       if (updatedUser) {
         setUserData(updatedUser)
+        setImageUrl(updatedUser.avatar || null)
         userProfile(updatedUser)
         message.success('Cập nhật thông tin thành công')
       }
@@ -77,6 +83,31 @@ export default function Profile() {
     }
   }
 
+  const handleAvatarUpload = async (file: RcFile) => {
+    try {
+      setUploadingAvatar(true)
+      const res = await uploadAvatar(file)
+      const updatedUser = res.data?.data?.user || res.data?.user
+      if (updatedUser) {
+        setUserData(updatedUser)
+        setImageUrl(updatedUser.avatar || null)
+        userProfile(updatedUser)
+        message.success('Cập nhật ảnh đại diện thành công')
+      }
+    } catch (err: any) {
+      message.error(err.message || 'Không thể tải lên ảnh đại diện')
+    } finally {
+      setUploadingAvatar(false)
+    }
+  }
+
+  const uploadButton = (
+    <div>
+      {uploadingAvatar ? <LoadingOutlined /> : <CameraOutlined />}
+      <div style={{ marginTop: 8 }}>Tải lên</div>
+    </div>
+  )
+
   if (loading && !userData) {
     return <Spin size="large" style={{ margin: 24, display: 'block', textAlign: 'center' }} />
   }
@@ -87,13 +118,26 @@ export default function Profile() {
 
       <Card>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-          <Avatar 
-            size={64} 
-            icon={<UserOutlined />}
-            style={{ backgroundColor: '#1890ff' }}
+          <Upload
+            name="avatar"
+            listType="picture-circle"
+            className="avatar-uploader"
+            showUploadList={false}
+            beforeUpload={(file) => {
+              const isValid = beforeUpload(file)
+              if (isValid) {
+                handleAvatarUpload(file as RcFile)
+              }
+              return false
+            }}
+            accept="image/*"
           >
-            {userData?.name?.[0]?.toUpperCase() || userData?.email?.[0]?.toUpperCase()}
-          </Avatar>
+            {imageUrl ? (
+              <img src={imageUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+            ) : (
+              uploadButton
+            )}
+          </Upload>
           <div>
             <Title level={4} style={{ margin: 0 }}>{userData?.name || 'Chưa có tên'}</Title>
             <Text type="secondary">{userData?.email}</Text>
@@ -194,4 +238,3 @@ export default function Profile() {
     </div>
   )
 }
-

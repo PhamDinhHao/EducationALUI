@@ -30,7 +30,6 @@ const CourseProgressCard: React.FC<CourseProgressCardProps> = ({ courseId, total
       setStats(calculatedStats)
     } catch (error) {
       console.error('Error loading course progress:', error)
-      // Set default stats if error
       setStats({
         totalLessons,
         completedLessons: 0,
@@ -51,19 +50,16 @@ const CourseProgressCard: React.FC<CourseProgressCardProps> = ({ courseId, total
     }
   }, [courseId, totalLessons, user?.id])
 
-  // Refresh progress when lesson progress is updated or window gets focus
   useEffect(() => {
     if (!user?.id || !courseId || !totalLessons) return
 
     const handleProgressUpdate = (event: CustomEvent) => {
-      // Refresh if the updated lesson belongs to this course
       if (event.detail?.courseId === courseId) {
         fetchProgress()
       }
     }
 
     const handleFocus = () => {
-      // Refresh progress when user comes back to the page (debounce to avoid too many calls)
       setTimeout(() => {
         fetchProgress()
       }, 500)
@@ -88,7 +84,6 @@ const CourseProgressCard: React.FC<CourseProgressCardProps> = ({ courseId, total
   }
 
   if (!stats && !loading) {
-    // Show empty state if no stats and not loading
     return (
       <Card style={{ marginBottom: 16 }}>
         <Text type="secondary">Chưa có dữ liệu tiến độ</Text>

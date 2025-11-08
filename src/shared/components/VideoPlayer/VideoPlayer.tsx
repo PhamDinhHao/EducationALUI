@@ -52,24 +52,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       const playerRef = React.useRef<any>(null)
       const timeUpdateIntervalRef = React.useRef<NodeJS.Timeout | null>(null)
       
-      // Load YouTube IFrame API for tracking progress
       React.useEffect(() => {
         if (!onVideoEnded && !onTimeUpdate) {
-          // If no callbacks needed, just render iframe without API
           return
         }
 
-        // Check if YouTube API is already loaded
         if ((window as any).YT && (window as any).YT.Player) {
           initializePlayer()
         } else {
-          // Load YouTube IFrame API
           const tag = document.createElement('script')
           tag.src = 'https://www.youtube.com/iframe_api'
           const firstScriptTag = document.getElementsByTagName('script')[0]
           firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag)
 
-          // Wait for API to load
           ;(window as any).onYouTubeIframeAPIReady = () => {
             initializePlayer()
           }
@@ -77,7 +72,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
         function initializePlayer() {
           try {
-            // Small delay to ensure container exists
             setTimeout(() => {
               try {
                 playerRef.current = new (window as any).YT.Player(containerId, {
@@ -86,19 +80,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                     autoplay: youtubeOptions?.autoplay ? 1 : 0,
                     controls: youtubeOptions?.controls !== false ? 1 : 0,
                     start: youtubeOptions?.start || 0,
-                    enablejsapi: 1, // Enable JS API for progress tracking
+                    enablejsapi: 1,
                   },
                   events: {
                     onStateChange: (event: any) => {
-                      // 0 = ended
                       if (event.data === 0 && onVideoEnded) {
                         onVideoEnded()
                       }
                     },
                     onReady: () => {
-                      // Start tracking time updates every 10 seconds
                       if (onTimeUpdate && playerRef.current) {
-                        // Initial check after 2 seconds
                         setTimeout(() => {
                           try {
                             if (playerRef.current && playerRef.current.getCurrentTime && playerRef.current.getDuration) {
@@ -113,7 +104,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                           }
                         }, 2000)
 
-                        // Set up interval for regular updates
                         timeUpdateIntervalRef.current = setInterval(() => {
                           try {
                             if (playerRef.current && playerRef.current.getCurrentTime && playerRef.current.getDuration) {
@@ -126,7 +116,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                           } catch (error) {
                             console.error('Error getting YouTube video time:', error)
                           }
-                        }, 10000) // Update every 10 seconds
+                        }, 10000)
                       }
                     },
                     onError: (error: any) => {
@@ -151,20 +141,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
             try {
               playerRef.current.destroy()
             } catch (error) {
-              // Ignore destroy errors
             }
           }
         }
       }, [videoId, onVideoEnded, onTimeUpdate])
 
-      // Render YouTube player container
       return (
         <div
           className={`relative bg-black rounded-lg overflow-hidden ${className}`}
           style={{ aspectRatio, ...style }}
         >
           <div id={containerId} style={{ width: '100%', height: '100%' }} />
-          {/* Fallback: if API fails, show regular iframe */}
           {!onVideoEnded && !onTimeUpdate && (
             <iframe
               width="100%"
@@ -183,7 +170,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     }
   }
 
-  // For regular video elements
   const videoRef = React.useRef<HTMLVideoElement>(null)
 
   React.useEffect(() => {
@@ -198,7 +184,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
     const handleTimeUpdate = () => {
       if (onTimeUpdate && video.duration && video.duration > 0) {
-        // Throttle timeupdate events - only call callback every 5 seconds
         const now = Date.now()
         const lastUpdate = (video as any).__lastUpdateTime || 0
         if (now - lastUpdate >= 5000) {

@@ -74,7 +74,6 @@ client.interceptors.response.use(
         'CSV download has started\n • Bulk processing of email delivery and reservation is pending\n • CSV download is available in the bulk processing status';
     }
 
-    // Don't show success notification for progress updates
     const isProgressUpdate = res?.config?.url?.includes('/progress') && res?.config?.method === 'put'
     
     if (!useBoundStore.getState().isLoading && res?.config?.method && !isProgressUpdate) {

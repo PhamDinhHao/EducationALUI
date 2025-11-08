@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Spin, Alert, Typography, Card } from 'antd'
+import { Spin, Alert, Typography, Card, message } from 'antd'
 import { fetchCourseDetail } from '@/shared/server-action/courses.server'
+import { fetchEnrollmentStatus } from '@/shared/server-action/enrollment.server'
+import { enroll } from '@/shared/services/enrollment.service'
 import { CourseProgressCard } from '@/modules/course/components/CourseProgressCard'
 import Sidebar from './Sidebar'
 import LessonList from './LessonList'
@@ -31,6 +33,8 @@ export default function CourseDetail() {
     const [lessons, setLessons] = useState<Lesson[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const [isEnrolled, setIsEnrolled] = useState(false)
+    const [enrollmentLoading, setEnrollmentLoading] = useState(false)
 
     useEffect(() => {
         const fetchCourseAndLessons = async () => {
@@ -42,6 +46,13 @@ export default function CourseDetail() {
                 if (res) {
                     setCourse({ id: res.id, title: res.title, description: res.description, img: res.img || '' })
                     setLessons(res.lessons || [])
+
+                    try {
+                        const enrollmentStatus = await fetchEnrollmentStatus(res.id);
+                        setIsEnrolled(enrollmentStatus.isEnrolled || false);
+                    } catch (enrollmentErr) {
+                        setIsEnrolled(false);
+                    }
                 }
             } catch (err: any) {
                 setError(err.response?.message || 'Lỗi khi tải dữ liệu khóa học')
@@ -58,11 +69,30 @@ export default function CourseDetail() {
         navigate(`/lesson/${lessonId}`)
     }
 
-    const handleJoin = () => {
-        if (!lessons?.length) return
-        const lastId = localStorage.getItem(`course:${course?.id}:lastLessonId`)
-        const fallbackId = [...lessons].sort((a, b) => (a.order || 0) - (b.order || 0))[0]?.id
-        openLesson(Number(lastId) || fallbackId)
+    const handleJoin = async () => {
+        if (!lessons?.length || !course?.id) return
+
+        if (isEnrolled) {
+            const lastId = localStorage.getItem(`course:${course.id}:lastLessonId`)
+            const fallbackId = [...lessons].sort((a, b) => (a.order || 0) - (b.order || 0))[0]?.id
+            openLesson(Number(lastId) || fallbackId)
+            return
+        }
+
+        setEnrollmentLoading(true)
+        try {
+            await enroll(course.id)
+            setIsEnrolled(true)
+            message.success('Đã tham gia khóa học thành công!')
+            const firstLessonId = [...lessons].sort((a, b) => (a.order || 0) - (b.order || 0))[0]?.id
+            if (firstLessonId) {
+                openLesson(firstLessonId)
+            }
+        } catch (err: any) {
+            message.error(err.response?.data?.message || 'Có lỗi xảy ra khi tham gia khóa học')
+        } finally {
+            setEnrollmentLoading(false)
+        }
     }
 
     if (loading) return <Spin size='large' style={{ margin: 24 }} />
@@ -100,7 +130,13 @@ export default function CourseDetail() {
                 <LessonList lessons={lessons} onOpenLesson={openLesson} />
             </div>
             <div style={{ flex: 1 }}>
-                <Sidebar isLesson={lessons && lessons.length > 0} course={course} onJoin={handleJoin} />
+                <Sidebar
+                    isLesson={lessons && lessons.length > 0}
+                    course={course}
+                    onJoin={handleJoin}
+                    isEnrolled={isEnrolled}
+                    loading={enrollmentLoading}
+                />
             </div>
         </div>
     )

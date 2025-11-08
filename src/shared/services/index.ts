@@ -13,8 +13,8 @@ export const ApiService = {
     return client.put(`${url}`, body, { params, withCredentials: true });
   },
 
-  delete(url: string, params = {}) {
-    return client.delete(`${url}`, { params, withCredentials: true });
+  delete(url: string, body: any = {}, params = {}) {
+    return client.delete(`${url}`, { data: body, params, withCredentials: true });
   },
   upload(url: string, body: any, params = {}) {
     return client.post(`${url}`, body, {

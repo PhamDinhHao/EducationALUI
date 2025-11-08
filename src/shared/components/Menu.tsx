@@ -61,9 +61,6 @@ const DesktopMenu = memo<{
   onNavigate: (path: string) => void
   isLoadingUser?: boolean
 }>(({ selectedKeys, openKeys, onOpenChange, onMenuClick, onLogout, onLogin, user, onNavigate, isLoadingUser = false }) => {
-  console.log('DesktopMenu - user:', user)
-  console.log('DesktopMenu - user.name:', user?.name)
-  console.log('DesktopMenu - user.email:', user?.email)
   const userMenuItems: MenuProps['items'] = user
     ? [
       {

@@ -12,9 +12,17 @@ export type CourseSidebarProps = {
         url?: string
     }
     onJoin?: () => void
+    isEnrolled?: boolean
+    loading?: boolean
 }
 
-export default function Sidebar({ isLesson = false, course, onJoin }: CourseSidebarProps) {
+export default function Sidebar({ isLesson = false, course, onJoin, isEnrolled = false, loading = false }: CourseSidebarProps) {
+    const getButtonText = () => {
+        if (!isLesson) return 'Không có bài học'
+        if (isEnrolled) return 'Tiếp tục khóa học'
+        return 'Tham gia'
+    }
+
     return (
         <div className='sticky top-6 flex flex-col justify-center items-center gap-4'>
             <Image
@@ -33,7 +41,17 @@ export default function Sidebar({ isLesson = false, course, onJoin }: CourseSide
                 src={course?.img}
                 fallback={images.imgeNotFond}
             />
-            <Button className='lg:!w-[400px]' disabled={!isLesson} type='primary' size='large' block onClick={onJoin}>{isLesson ? 'Tham gia' : 'Không có bài học'}</Button>
+            <Button 
+                className='lg:!w-[400px]' 
+                disabled={!isLesson} 
+                type='primary' 
+                size='large' 
+                block 
+                onClick={onJoin}
+                loading={loading}
+            >
+                {getButtonText()}
+            </Button>
         </div>
     )
 }

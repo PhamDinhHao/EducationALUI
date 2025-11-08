@@ -17,31 +17,81 @@ const CourseProgressCard: React.FC<CourseProgressCardProps> = ({ courseId, total
   const [stats, setStats] = useState<CourseProgressStats | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchProgress = async () => {
-      if (!user?.id) {
-        setLoading(false)
-        return
-      }
-
-      setLoading(true)
-      const progressItems = await getCourseProgress(courseId, user.id)
-      const calculatedStats = calculateCourseProgressStats(progressItems, totalLessons)
-      setStats(calculatedStats)
+  const fetchProgress = async () => {
+    if (!user?.id) {
       setLoading(false)
+      return
     }
 
-    if (courseId && totalLessons > 0) {
+    setLoading(true)
+    try {
+      const progressItems = await getCourseProgress(courseId)
+      const calculatedStats = calculateCourseProgressStats(progressItems, totalLessons)
+      setStats(calculatedStats)
+    } catch (error) {
+      console.error('Error loading course progress:', error)
+      // Set default stats if error
+      setStats({
+        totalLessons,
+        completedLessons: 0,
+        inProgressLessons: 0,
+        notStartedLessons: totalLessons,
+        completionPercentage: 0
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (courseId && totalLessons > 0 && user?.id) {
       fetchProgress()
     } else {
       setLoading(false)
     }
   }, [courseId, totalLessons, user?.id])
 
+  // Refresh progress when lesson progress is updated or window gets focus
+  useEffect(() => {
+    if (!user?.id || !courseId || !totalLessons) return
+
+    const handleProgressUpdate = (event: CustomEvent) => {
+      // Refresh if the updated lesson belongs to this course
+      if (event.detail?.courseId === courseId) {
+        fetchProgress()
+      }
+    }
+
+    const handleFocus = () => {
+      // Refresh progress when user comes back to the page (debounce to avoid too many calls)
+      setTimeout(() => {
+        fetchProgress()
+      }, 500)
+    }
+
+    window.addEventListener('lessonProgressUpdated', handleProgressUpdate as EventListener)
+    window.addEventListener('focus', handleFocus)
+    
+    return () => {
+      window.removeEventListener('lessonProgressUpdated', handleProgressUpdate as EventListener)
+      window.removeEventListener('focus', handleFocus)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, courseId, totalLessons])
+
   if (loading) {
     return (
       <Card style={{ marginBottom: 16 }}>
         <Text type="secondary">Đang tải tiến độ...</Text>
+      </Card>
+    )
+  }
+
+  if (!stats && !loading) {
+    // Show empty state if no stats and not loading
+    return (
+      <Card style={{ marginBottom: 16 }}>
+        <Text type="secondary">Chưa có dữ liệu tiến độ</Text>
       </Card>
     )
   }

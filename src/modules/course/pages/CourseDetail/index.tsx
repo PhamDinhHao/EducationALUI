@@ -134,7 +134,11 @@ export default function CourseDetail() {
                     <CourseProgressCard courseId={course.id} totalLessons={lessons.length} />
                 )}
 
-                <LessonList lessons={lessons} onOpenLesson={openLesson} />
+                <LessonList 
+                  lessons={lessons} 
+                  onOpenLesson={openLesson}
+                  courseId={course.id}
+                />
             </div>
             <div style={{ flex: 1 }}>
                 <Sidebar

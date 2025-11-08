@@ -23,26 +23,53 @@ export default function Sidebar({ isLesson = false, course, onJoin, isEnrolled =
         return 'Tham gia'
     }
 
-    return (
-        <div className='sticky top-6 flex flex-col justify-center items-center gap-4'>
-            <Image
-                preview={{
-                    destroyOnHidden: true,
-                    imageRender: () => (
-                        <VideoPlayer
-                            src={course?.url || ''}
-                            title={course?.title || ''}
-                            aspectRatio="16/9"
-                        />
+    const hasVideo = course?.url && course.url.trim() !== ''
+    const hasImage = course?.img && course.img.trim() !== ''
 
-                    ),
-                    toolbarRender: () => null,
-                }}
-                src={course?.img}
-                fallback={images.imgeNotFond}
-            />
+    return (
+        <div className='sticky top-6 flex flex-col justify-center items-center gap-4 w-full max-w-[400px]'>
+            {hasImage ? (
+                <div className='w-full' style={{ aspectRatio: '16/9', borderRadius: '8px', overflow: 'hidden' }}>
+                    <Image
+                        src={course.img}
+                        fallback={images.imgeNotFond}
+                        alt={course.title}
+                        className='w-full h-full'
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                        }}
+                        preview={{
+                            mask: hasVideo ? 'Xem video' : 'Xem ảnh',
+                            destroyOnHidden: true,
+                            imageRender: hasVideo ? () => (
+                                <div style={{ width: '100%', maxWidth: '40vw', aspectRatio: '16/9' }}>
+                                    <VideoPlayer
+                                        src={course.url || ''}
+                                        title={course.title || ''}
+                                        aspectRatio="16/9"
+                                        className="w-full"
+                                    />
+                                </div>
+                            ) : undefined,
+                            toolbarRender: () => null,
+                        }}
+                    />
+                </div>
+            ) : (
+                <div 
+                    className='w-full bg-gray-200 flex items-center justify-center rounded-lg'
+                    style={{ 
+                        aspectRatio: '16/9',
+                        minHeight: '200px'
+                    }}
+                >
+                    <span className='text-gray-400'>Không có ảnh/video</span>
+                </div>
+            )}
             <Button 
-                className='lg:!w-[400px]' 
+                className='lg:!w-[400px] w-full' 
                 disabled={!isLesson} 
                 type='primary' 
                 size='large' 

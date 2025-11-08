@@ -23,6 +23,7 @@ export type Course = {
     title: string
     description: string
     img?: string
+    url?: string
 }
 
 export default function CourseDetail() {
@@ -44,7 +45,13 @@ export default function CourseDetail() {
                 if (!id) return setLoading(false);
                 const res = await fetchCourseDetail(id);
                 if (res) {
-                    setCourse({ id: res.id, title: res.title, description: res.description, img: res.img || '' })
+                    setCourse({ 
+                        id: res.id, 
+                        title: res.title, 
+                        description: res.description, 
+                        img: res.img || '', 
+                        url: res.url || '' 
+                    })
                     setLessons(res.lessons || [])
 
                     try {

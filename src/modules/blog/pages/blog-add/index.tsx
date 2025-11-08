@@ -5,6 +5,7 @@ import type { UploadProps, UploadFile } from 'antd'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { useNavigate } from 'react-router-dom'
+import { createBlog, getBlogTags } from '@/modules/blog/services/blogService.service'
 
 const AddBlog = () => {
   const [form] = Form.useForm()
@@ -12,7 +13,7 @@ const AddBlog = () => {
   const [loading, setLoading] = useState(false)
   const [fileList, setFileList] = useState<UploadFile[]>([])
   const [tags, setTags] = useState<any[]>([])
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [selectedTags, setSelectedTags] = useState<{ label: string; value: number }[]>([])
   const quillRef = useRef<any>(null)
   const navigate = useNavigate()
 
@@ -21,8 +22,8 @@ const AddBlog = () => {
 
   const fetchTags = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/v1/blog-tags')
-      const data = await response.json()
+      const response = await getBlogTags()
+      const data = response.data || []
       setTags(data || [])
     } catch (error) {
       console.error('Error fetching tags:', error)
@@ -100,9 +101,20 @@ const AddBlog = () => {
         message.error('Ảnh phải nhỏ hơn 5MB!')
         return false
       }
-      setFileList([file])
+    
+      const preview = URL.createObjectURL(file)
+      const uploadFile: UploadFile = {
+        uid: file.uid || String(Date.now()),
+        name: file.name,
+        status: 'done',
+        url: preview,
+        originFileObj: file
+      }
+    
+      setFileList([uploadFile])
       return false
-    },
+    }
+    ,
     fileList,
     listType: 'picture-card',
     maxCount: 1
@@ -126,16 +138,14 @@ const AddBlog = () => {
       const formData = new FormData()
       formData.append('title', values.title)
       formData.append('content', content)
-      formData.append('image', fileList[0] as any)
-      formData.append('tags', selectedTags.join(','))
+      formData.append('image', fileList[0].originFileObj as any)
+      if (selectedTags.length > 0) {
+        formData.append('tags', selectedTags.join(','))
+      }
 
-      const response = await fetch('http://localhost:5000/api/v1/blogs', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include'
-      })
+      const response = await createBlog(formData)
 
-      if (!response.ok) {
+      if (response.status !== 201) {
         throw new Error('Network response was not ok')
       }
 
@@ -245,7 +255,11 @@ const AddBlog = () => {
                   placeholder='Chọn tags...'
                   className='rounded-xl'
                   value={selectedTags}
-                  onChange={setSelectedTags}
+                  onChange={(selected) => {
+                    const labels = tags.filter((tag) => selected.includes(tag.id)).map((item: any) => (item.name))
+                    console.log(labels)
+                    setSelectedTags(labels)
+                  }}
                   options={tags.map((tag) => ({
                     label: tag.name,
                     value: tag.id

@@ -17,6 +17,10 @@ export const blogRoute = [
       {
         path: PagePath.BLOG_ADD,
         element: lazyLoadModuleRoute(ModuleName.BLOG, PageName.BLOG_ADD)
+      },
+      {
+        path: PagePath.BLOG_UPDATE,
+        element: lazyLoadModuleRoute(ModuleName.BLOG, PageName.BLOG_UPDATE)
       }
     ]
   }

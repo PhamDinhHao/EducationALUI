@@ -3,8 +3,11 @@ import { CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { PagePath } from '@/shared/core/enum/page.enum'
 import { Button } from 'antd'
+import { getBlogList, getBlogTags, getRecentPosts } from '@/modules/blog/services/blogService.service'
+import { useBoundStore } from '@/shared/stores'
 
 const Blog = () => {
+  const { user } = useBoundStore((state) => state)
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
@@ -40,21 +43,14 @@ const Blog = () => {
         ...(tag && { tags: tag })
       }
 
-      const response = await fetch('http://localhost:5000/api/v1/blogs?' + new URLSearchParams(params as any))
-      const responseTags = await fetch('http://localhost:5000/api/v1/blog-tags')
-      const responseRecentPosts = await fetch('http://localhost:5000/api/v1/blogs/recent-posts')
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-      const data = await response.json()
-      const tagsData = await responseTags.json()
-      const recentPostsData = await responseRecentPosts.json()
-      console.log(recentPostsData);
-
-      setRecentPosts(recentPostsData || [])
-      setTags(tagsData || [])
-      setArticles(data.data || [])
-      setTotalArticles(data.pagination?.total || 0)
+      Promise.all([getBlogList(params), getBlogTags(), getRecentPosts()]).then(
+        ([response, responseTags, responseRecentPosts]) => {
+          setRecentPosts(responseRecentPosts.data || [])
+          setTags(responseTags.data || [])
+          setArticles(response.data.data || [])
+          setTotalArticles(response.data.pagination?.total || 0)
+        }
+      )
     } catch (error) {
       console.error('Error fetching blogs:', error)
       // Hiển thị thông báo lỗi đơn giản
@@ -326,10 +322,22 @@ const Blog = () => {
                 <div className='space-y-6'>
                   {articles.map((item: any, index: number) => (
                     <div
-                      onClick={() => navigate(`/blog/${item.id}`)}
                       key={item.id || index}
-                      className={`card-hover stagger-item overflow-hidden rounded-3xl bg-white shadow-lg`}
+                      className={`card-hover stagger-item relative overflow-hidden rounded-3xl bg-white shadow-lg`}
                     >
+                      {user?.id === item.userId && (
+                        <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (user?.id === item.userId) {
+                            navigate(`/blog/update/${item.id}`)
+                          }
+                        }}
+                        className='absolute right-4 top-4 flex items-center gap-2 rounded-full bg-indigo-600 px-3 py-1.5 text-center text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-indigo-700'
+                      >
+                        <span className='hidden sm:inline'>Edit</span>
+                      </button>
+                      )}
                       <div className='grid grid-cols-1 sm:grid-cols-5'>
                         <div className='relative overflow-hidden sm:col-span-2'>
                           <div
@@ -338,12 +346,16 @@ const Blog = () => {
                               backgroundImage: `url(${item.image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&h=400&fit=crop'})`
                             }}
                           />
+                          {/* Badge NEW */}
                           <div className='absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-indigo-600 backdrop-blur-sm'>
                             NEW
                           </div>
+
+                          {/* Nút Edit */}
                         </div>
-                        <div className='p-8 sm:col-span-3'>
-                          <h4 className='mb-4 line-clamp-2 cursor-pointer text-2xl font-bold text-gray-800 transition-colors duration-300 hover:text-indigo-600'>
+
+                        <div className='cursor-pointer p-8 sm:col-span-3' onClick={() => navigate(`/blog/${item.id}`)}>
+                          <h4 className='mb-4 line-clamp-2 text-2xl font-bold text-gray-800 transition-colors duration-300 hover:text-indigo-600'>
                             {item.title}
                           </h4>
                           <div className='mb-5 flex items-center gap-4 text-sm text-gray-500'>
@@ -352,9 +364,13 @@ const Blog = () => {
                               <span className='font-medium'>{formatDate(item.createdAt)}</span>
                             </div>
                           </div>
-                          <p className='mb-5 line-clamp-3 leading-relaxed text-gray-600'>
-                            {item.description || item.content?.substring(0, 150) + '...'}
-                          </p>
+                          <p
+                            className='mb-5 line-clamp-3 leading-relaxed text-gray-600'
+                            dangerouslySetInnerHTML={{
+                              __html:
+                                item.content?.toString().substring(0, 150) + '...' || '<p>No content available</p>'
+                            }}
+                          ></p>
                           {item.tags && item.tags.length > 0 && (
                             <div className='flex flex-wrap gap-2'>
                               {item.tags.map((tag: any, idx: number) => (
@@ -398,7 +414,9 @@ const Blog = () => {
             {/* Sidebar */}
             <div className='lg:col-span-1'>
               {/* Category Section */}
-              <Button className='mb-8 rounded-3xl bg-white p-6 shadow-xl' onClick={() => navigate(PagePath.BLOG_ADD)}>Add Blog</Button>
+              <Button className='mb-8 rounded-3xl bg-white p-6 shadow-xl' onClick={() => navigate(PagePath.BLOG_ADD)}>
+                Add Blog
+              </Button>
               <div
                 className={`mb-8 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
                 style={{ animationDelay: '0.3s' }}
@@ -430,7 +448,11 @@ const Blog = () => {
                 <h4 className='mb-6 text-2xl font-bold text-gray-800'>Recent Posts</h4>
                 <div className='space-y-4'>
                   {recentPosts?.map((item: any) => (
-                    <div key={item.id} className='group flex cursor-pointer gap-4'>
+                    <div
+                      key={item.id}
+                      className='group flex cursor-pointer gap-4'
+                      onClick={() => navigate(`/blog/${item.id}`)}
+                    >
                       <div className='flex-shrink-0 overflow-hidden rounded-2xl shadow-md'>
                         <img
                           src={item.image}

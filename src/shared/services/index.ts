@@ -22,6 +22,16 @@ export const ApiService = {
       headers: {
         "Content-Type": "multipart/form-data",
       },
+      withCredentials: true,
+    });
+  },
+  putUpload(url: string, body: any, params = {}) {
+    return client.put(`${url}`, body, {
+      params,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      withCredentials: true,
     });
   },
 };

@@ -11,6 +11,7 @@ import {
 } from '@ant-design/icons'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
+import { createComment, getBlogDetail, getComments, getRelatedPosts } from '@/modules/blog/services/blogService.service'
 
 const BlogDetail = () => {
   const [blog, setBlog] = useState<any>(null)
@@ -38,8 +39,7 @@ const BlogDetail = () => {
     const fetchBlogDetail = async () => {
       setLoading(true)
       try {
-        const res = await axios.get(`http://localhost:5000/api/v1/blogs/${id}`)
-        const relatedRes = await axios.get(`http://localhost:5000/api/v1/blogs/related-posts/${id}`)
+        const [res, relatedRes] = await Promise.all([getBlogDetail(id as string), getRelatedPosts(id as string)])
 
         const blogData = res.data.data || res.data
         setBlog(blogData)
@@ -64,13 +64,7 @@ const BlogDetail = () => {
   const fetchComments = async () => {
     setCommentLoading(true)
     try {
-      const res = await axios.get(`http://localhost:5000/api/v1/blog-comments/blogs/${id}/comments`, {
-        params: {
-          page: commentPage,
-          limit: 10,
-          sortBy: 'createdAt:desc'
-        }
-      })
+      const res = await getComments(id as string)
 
       const data = res.data
       const parentComments = data.data.filter((c: any) => !c.parentId)
@@ -96,7 +90,7 @@ const BlogDetail = () => {
 
     setSubmitting(true)
     try {
-      await axios.post(`http://localhost:5000/api/v1/blog-comments/blogs/${id}/comments`, {
+      await createComment(id as string, {
         userId: currentUser.id,
         content: newComment
       })
@@ -117,7 +111,7 @@ const BlogDetail = () => {
 
     setSubmitting(true)
     try {
-      await axios.post(`http://localhost:5000/api/v1/blog-comments/blogs/${id}/comments`, {
+      await createComment(id as string, {
         userId: currentUser.id,
         content: replyContent,
         parentId
@@ -204,7 +198,6 @@ const BlogDetail = () => {
       </div>
     )
   }
-
   return (
     <>
       <style>{`
@@ -416,7 +409,7 @@ const BlogDetail = () => {
               >
                 <div
                   className='content-style'
-                  dangerouslySetInnerHTML={{ __html: blog.content || '<p>No content available</p>' }}
+                  dangerouslySetInnerHTML={{ __html: blog.content?.toString() || '<p>No content available</p>' }}
                 />
               </div>
 

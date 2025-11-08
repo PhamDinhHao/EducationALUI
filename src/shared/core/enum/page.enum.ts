@@ -27,6 +27,7 @@ export enum ModuleName {
   BLOG = "blog",
   BLOG_DETAIL = "blog-detail",
   BLOG_ADD = "blog-add",
+  BLOG_UPDATE = "blog-update",
 }
 
 export enum PageName {
@@ -63,6 +64,7 @@ export enum PageName {
   BLOG = "blog",
   BLOG_DETAIL = "blog-detail",
   BLOG_ADD = "blog-add",
+  BLOG_UPDATE = "blog-update",
 }
 
 export enum PagePath {
@@ -94,6 +96,7 @@ export enum PagePath {
   BLOG = "/blog",
   BLOG_DETAIL = "/blog/:id",
   BLOG_ADD = "/blog/add",
+  BLOG_UPDATE = "/blog/update/:id",
   // Student pages
   STUDENT_EXERCISE = "/ai/student/exercise",
   STUDENT_REVIEW = "/ai/student/review",

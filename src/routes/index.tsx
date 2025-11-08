@@ -73,13 +73,18 @@ const configRoutes: RouteObject[] = [
     ]
   },
   {
-    path: '/',
+    path: '/ai',
     element: (
       <PrivateRoute>
         <AILayout />
       </PrivateRoute>
     ),
-    children: [...aiRoute]
+    children: [
+      {
+        ...aiRoute,
+        children: aiRoute.children
+      }
+    ]
   },
   {
     path: '*',

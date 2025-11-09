@@ -30,7 +30,7 @@ const TopArticles = () => {
       <ResponsiveGrid<any>
         data={blog}
         cols={4}
-        colSpans={{ xs: 24, sm: 12, md: 8, lg: 8, xl: 8 }}
+        colSpans={{ xs: 24, sm: 12, md: 8, lg: 6, xl: 6 }}
         renderCell={ItemTopArticles}
       />
     </div>

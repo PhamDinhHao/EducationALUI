@@ -29,7 +29,7 @@ const TopArticles = () => {
       <TitleHeaderHome onAction={handleNavigate} heading='Latest articles' description='Explore our Free Acticles' buttonLabel='All articles' />
       <ResponsiveGrid<any>
         data={blog}
-        cols={3}
+        cols={4}
         colSpans={{ xs: 24, sm: 12, md: 8, lg: 8, xl: 8 }}
         renderCell={ItemTopArticles}
       />

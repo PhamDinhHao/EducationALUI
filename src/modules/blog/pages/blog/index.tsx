@@ -43,7 +43,7 @@ const Blog = () => {
         ...(tag && { tags: tag })
       }
 
-      Promise.all([getBlogList(params), getBlogTags(), getRecentPosts()]).then(
+      Promise.all([getBlogList(params), getBlogTags(), getRecentPosts({limit: 3})]).then(
         ([response, responseTags, responseRecentPosts]) => {
           setRecentPosts(responseRecentPosts.data || [])
           setTags(responseTags.data || [])

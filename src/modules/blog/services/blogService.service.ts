@@ -10,8 +10,8 @@ export function getBlogTags() {
   return ApiService.get(`${BaseUrlTags}`).then((resp) => resp)
 }
 
-export function getRecentPosts() {
-  return ApiService.get(`${BaseUrl}/recent-posts`).then((resp) => resp)
+export function getRecentPosts(params?: { [key: string]: any }) {
+  return ApiService.get(`${BaseUrl}/recent-posts`,params).then((resp) => resp)
 }
 
 export function getBlogDetail(id: number | string) {

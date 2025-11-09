@@ -12,6 +12,7 @@ import {
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { createComment, getBlogDetail, getComments, getRelatedPosts } from '@/modules/blog/services/blogService.service'
+import { useBoundStore } from '@/shared/stores'
 
 const BlogDetail = () => {
   const [blog, setBlog] = useState<any>(null)
@@ -27,13 +28,8 @@ const BlogDetail = () => {
   const [replyContent, setReplyContent] = useState('')
   const [submitting, setSubmitting] = useState<boolean>(false)
   const { id } = useParams()
-
+  const { user: currentUser } = useBoundStore((state) => state)
   // Mock user - trong thực tế lấy từ auth context
-  const currentUser = {
-    id: 1,
-    name: 'Current User',
-    avatar: 'https://via.placeholder.com/56'
-  }
 
   useEffect(() => {
     const fetchBlogDetail = async () => {
@@ -91,7 +87,7 @@ const BlogDetail = () => {
     setSubmitting(true)
     try {
       await createComment(id as string, {
-        userId: currentUser.id,
+        userId: currentUser?.id,
         content: newComment
       })
 
@@ -112,7 +108,7 @@ const BlogDetail = () => {
     setSubmitting(true)
     try {
       await createComment(id as string, {
-        userId: currentUser.id,
+        userId: currentUser?.id,
         content: replyContent,
         parentId
       })
@@ -451,8 +447,8 @@ const BlogDetail = () => {
                 {/* New Comment Input */}
                 <div className='mb-8 flex gap-4'>
                   <img
-                    src={currentUser.avatar}
-                    alt={currentUser.name}
+                    src={currentUser?.avatar}
+                    alt={currentUser?.name}
                     className='h-12 w-12 rounded-full border-2 border-indigo-100'
                   />
                   <div className='flex-1'>
@@ -517,8 +513,8 @@ const BlogDetail = () => {
                             {replyTo === comment.id && (
                               <div className='mt-4 flex gap-3 pl-4'>
                                 <img
-                                  src={currentUser.avatar}
-                                  alt={currentUser.name}
+                                  src={currentUser?.avatar}
+                                  alt={currentUser?.name}
                                   className='h-10 w-10 rounded-full border-2 border-indigo-100'
                                 />
                                 <div className='flex-1'>

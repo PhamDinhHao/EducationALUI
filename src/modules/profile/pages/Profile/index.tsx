@@ -11,7 +11,7 @@ const { Title, Text } = Typography
 const { TabPane } = Tabs
 
 export default function Profile() {
-  const { user, userProfile } = useBoundStore((state) => state)
+  const { user, userProfile, userLogin } = useBoundStore((state) => state)
   const [profileForm] = Form.useForm()
   const [passwordForm] = Form.useForm()
   const [loading, setLoading] = useState(false)
@@ -53,6 +53,7 @@ export default function Profile() {
         setUserData(updatedUser)
         setImageUrl(updatedUser.avatar || null)
         userProfile(updatedUser)
+        userLogin(updatedUser)
         message.success('Cập nhật thông tin thành công')
       }
     } catch (err: any) {

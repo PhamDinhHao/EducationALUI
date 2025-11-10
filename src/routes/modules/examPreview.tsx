@@ -11,7 +11,7 @@ export const examPreviewRoute = [
         element: (
           <>
             {/* <Suspense fallback={<Spin size="large" />}> */}
-              {lazyLoadModuleRoute(ModuleName.EXAM_PREVIEW, PageName.EXAM_PREVIEW)}
+            {lazyLoadModuleRoute(ModuleName.EXAM_PREVIEW, PageName.EXAM_PREVIEW)}
             {/* </Suspense> */}
           </>
         )

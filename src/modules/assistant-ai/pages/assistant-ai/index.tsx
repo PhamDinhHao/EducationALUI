@@ -3,6 +3,7 @@ import { Button, Card, Col, Image, Input, Row, Spin, Typography, message, Upload
 import { PictureOutlined, SendOutlined } from '@ant-design/icons'
 import axios from 'axios'
 import Sidebar from '@/shared/components/Sidebar'
+import env from '@/shared/core/constants/env'
 
 const { Title, Text } = Typography
 const { TextArea } = Input
@@ -11,8 +12,8 @@ const { TextArea } = Input
 const formatMarkdown = (text: string) => {
   if (!text) return "";
   return text
-    .replace(/\*\*(.*?)\*\*/g, "$1")  
-    .replace(/^\* (.*)$/gm, "- $1")  
+    .replace(/\*\*(.*?)\*\*/g, "$1")  // bỏ bold
+    .replace(/^\* (.*)$/gm, "- $1")   // đổi * -> -
     .replace(/\\n/g, "\n")
     .trim();
 };
@@ -27,7 +28,7 @@ const FUNCTIONS = [
   { key: 'flashcards', label: 'Tạo bộ ghi nhớ ảo', prompt: 'Tạo bộ ghi nhớ ảo (flashcards) :Môn học : (Ví dụ: Toán),Tên bài học : (Ví dụ: Phép cộng),Flashcards: (Ví dụ: số thẻ)' },
 ]
 
-const API_URL = 'http://localhost:5001/api/v1/exercise/chat'
+const API_URL = `${env.VITE_HOST_API}/exercise/chat`
 
 interface ChatMessage {
   content: string
@@ -38,20 +39,15 @@ const ExercisePage: React.FC = () => {
   const [activeFunction, setActiveFunction] = useState<string>('method')
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputValue, setInputValue] = useState(FUNCTIONS[0].prompt)
+  const [input, setInput] = useState('')
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string>('')
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const selectedFunc = FUNCTIONS.find(f => f.key === activeFunction)
-    if (selectedFunc) {
-      setInputValue(selectedFunc.prompt)   // reset input
-      setMessages([])                      // clear chat history
-      setSelectedImage(null)               // clear file
-      setImagePreview('')                  // clear preview
-    }
+    if (selectedFunc) setInputValue(selectedFunc.prompt)
   }, [activeFunction])
-  
 
   const handleImageUpload = (file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -114,9 +110,10 @@ const ExercisePage: React.FC = () => {
   
 
   return (
-    <div className="flex min-h-screen mr-40">
+    <div className="flex min-h-screen">
       <Sidebar />
-      <div className="ml-[200px] w-full p-6 pb-48 max-w-[1100px] mx-auto">
+      <div className="w-full p-6 pb-48">
+        <div className="max-w-[1100px] mx-auto">
         <div className="text-center mb-8">
           <Title level={2} style={{ color: "#E8612A" }}>Trợ lý AI</Title>
           <Text className="text-lg text-gray-700">
@@ -158,6 +155,7 @@ const ExercisePage: React.FC = () => {
           ))}
           {loading && <Spin tip="AI đang suy nghĩ..." />}
         </div>
+        </div>
 
         {/* Input */}
         <div className="fixed bottom-0 left-[200px] right-0 bg-white p-4 border-t border-gray-200">
@@ -169,8 +167,9 @@ const ExercisePage: React.FC = () => {
               </div>
             )}
             <TextArea
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              placeholder={inputValue}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
               autoSize={{ minRows: 1, maxRows: 4 }}
               className="flex-1"
             />

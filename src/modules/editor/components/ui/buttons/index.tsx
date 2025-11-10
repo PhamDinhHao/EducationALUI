@@ -1,8 +1,0 @@
-export { default as ButtonApplicable } from './ButtonApplicable'
-export { ButtonSaveTemplateHtml, ButtonSaveTemplate } from './ButtonSaveTemplate'
-export { default as ButtonEditName } from './ButtonEditName'
-export { default as ButtonDeleteTemplate } from './ButtonDeleteTemplate'
-export { default as ButtonEditSentence } from './ButtonEditSentence'
-export { default as ButtonGoBack } from './ButtonGoBack'
-export { default as ButtonEdit } from './ButtonEdit'
-export { default as ButtonCopy } from './ButtonCopy'

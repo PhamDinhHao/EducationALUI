@@ -4,6 +4,7 @@ export type User = {
   id: number;
   email: string;
   name: string;
+  avatar?: string;
   lineChannelAccessToken?: string;
   role: Role;
   updatedAt: Date;

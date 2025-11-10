@@ -39,7 +39,6 @@ export class ConversationManager {
   private sessions: Map<string, ConversationMessage[]> = new Map()
   private summaries: Map<string, string> = new Map()
   private config: SessionConfig
-  private geminiService: GeminiService
 
   constructor(config?: Partial<SessionConfig>) {
     this.config = {
@@ -48,7 +47,6 @@ export class ConversationManager {
       autoSummarizeThreshold: 15,  // Tự động summarize khi có >15 tin nhắn
       ...config
     }
-    this.geminiService = new GeminiService()
   }
 
   /**
@@ -337,19 +335,16 @@ export async function exampleUsage() {
   manager.addMessage(sessionId, 'model', 'Tôi hiểu rồi. Đây là hệ phương trình bậc nhất hai ẩn...')
 
   // Lấy context để gọi Gemini API
-  const context = manager.getContext(sessionId, 'Toán học')
-  console.log('Context:', context)
+  // const context = manager.getContext(sessionId, 'Toán học')
 
   // Tạo summary mới
   await manager.summarizeHistory(sessionId, 'Toán học')
 
   // Lấy context sau khi summarize
-  const optimizedContext = manager.getContext(sessionId, 'Toán học')
-  console.log('Optimized Context:', optimizedContext)
+  // const optimizedContext = manager.getContext(sessionId, 'Toán học')
 
   // Thống kê session
-  const stats = manager.getSessionStats(sessionId)
-  console.log('Session Stats:', stats)
+  // const stats = manager.getSessionStats(sessionId)
 
   // Dọn dẹp
   manager.deleteSession(sessionId)

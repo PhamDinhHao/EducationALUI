@@ -8,6 +8,14 @@ export function getProfile() {
 export function updateProfile(body: { [key: string]: any }) {
   return ApiService.put(`${BaseUrl}/me`, body).then((resp) => resp);
 }
+export function changePassword(body: { oldPassword: string; newPassword: string }) {
+  return ApiService.put(`${BaseUrl}/change-password`, body).then((resp) => resp);
+}
+export function uploadAvatar(file: File) {
+  const formData = new FormData();
+  formData.append('avatar', file);
+  return ApiService.upload(`${BaseUrl}/me/avatar`, formData).then((resp) => resp);
+}
 export function logout() {
   return ApiService.post(`${BaseUrl}/logout`, {}).then((resp) => resp);
 }

@@ -335,16 +335,16 @@ export async function exampleUsage() {
   manager.addMessage(sessionId, 'model', 'Tôi hiểu rồi. Đây là hệ phương trình bậc nhất hai ẩn...')
 
   // Lấy context để gọi Gemini API
-  const context = manager.getContext(sessionId, 'Toán học')
+  // const context = manager.getContext(sessionId, 'Toán học')
 
   // Tạo summary mới
   await manager.summarizeHistory(sessionId, 'Toán học')
 
   // Lấy context sau khi summarize
-  const optimizedContext = manager.getContext(sessionId, 'Toán học')
+  // const optimizedContext = manager.getContext(sessionId, 'Toán học')
 
   // Thống kê session
-  const stats = manager.getSessionStats(sessionId)
+  // const stats = manager.getSessionStats(sessionId)
 
   // Dọn dẹp
   manager.deleteSession(sessionId)

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Card, Form, Input, Button, Typography, message, Spin, Tabs, Divider, Upload } from 'antd'
 import { UserOutlined, LockOutlined, SaveOutlined, CameraOutlined, LoadingOutlined } from '@ant-design/icons'
-import type { RcFile, UploadFile } from 'antd/es/upload/interface'
+import type { RcFile } from 'antd/es/upload/interface'
 import { useBoundStore } from '@/shared/stores'
 import { getProfile, updateProfile, changePassword, uploadAvatar } from '@/shared/services/auth.service'
 import { User } from '@/shared/core/types'

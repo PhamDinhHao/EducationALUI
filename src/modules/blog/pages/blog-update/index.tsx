@@ -91,7 +91,7 @@ const BlogUpdate = () => {
 
   // --- Upload Props ---
   const uploadProps: UploadProps = {
-    onRemove: (file) => {
+    onRemove: () => {
       setFileList([])
     },
     beforeUpload: (file) => {

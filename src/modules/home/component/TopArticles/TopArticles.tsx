@@ -1,4 +1,3 @@
-import { ICourse } from '@/modules/home/cores/interfaces'
 import ResponsiveGrid from '@shared/ResponsiveGrid/ResponsiveGrid.tsx'
 import TitleHeaderHome from '@shared/components/TitleHeaderHome/TitleHeaderHome.tsx'
 import ItemTopArticles from '@/modules/home/component/TopArticles/ItemTopArticles.tsx'

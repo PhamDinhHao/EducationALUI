@@ -10,7 +10,6 @@ import {
   SendOutlined
 } from '@ant-design/icons'
 import { useParams } from 'react-router-dom'
-import axios from 'axios'
 import { createComment, getBlogDetail, getComments, getRelatedPosts } from '@/modules/blog/services/blogService.service'
 import { useBoundStore } from '@/shared/stores'
 

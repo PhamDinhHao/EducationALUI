@@ -4,12 +4,10 @@ import {
   ClockCircleOutlined,
   EyeOutlined,
   ArrowLeftOutlined,
-  ShareAltOutlined,
-  HeartOutlined,
   MessageOutlined,
   SendOutlined
 } from '@ant-design/icons'
-import { useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { createComment, getBlogDetail, getComments, getRelatedPosts } from '@/modules/blog/services/blogService.service'
 import { useBoundStore } from '@/shared/stores'
 
@@ -28,13 +26,14 @@ const BlogDetail = () => {
   const [submitting, setSubmitting] = useState<boolean>(false)
   const { id } = useParams()
   const { user: currentUser } = useBoundStore((state) => state)
+  const { state } = useLocation()
   // Mock user - trong thực tế lấy từ auth context
 
   useEffect(() => {
     const fetchBlogDetail = async () => {
       setLoading(true)
       try {
-        const [res, relatedRes] = await Promise.all([getBlogDetail(id as string), getRelatedPosts(id as string)])
+        const [res, relatedRes] = await Promise.all([getBlogDetail(id as string), getRelatedPosts(id as string, { type: state?.type === 'CONTESTS' ? 'CONTESTS' : 'BLOG' })])
 
         const blogData = res.data.data || res.data
         setBlog(blogData)
@@ -415,19 +414,11 @@ const BlogDetail = () => {
               >
                 <div className='flex flex-wrap items-center justify-between gap-4'>
                   <div className='flex items-center gap-4'>
-                    <button className='action-button flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-50 to-pink-50 px-6 py-3 font-semibold text-red-600 transition-all hover:from-red-100 hover:to-pink-100'>
-                      <HeartOutlined />
-                      <span>{blog.likes || 0}</span>
-                    </button>
                     <button className='action-button flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-3 font-semibold text-blue-600 transition-all hover:from-blue-100 hover:to-indigo-100'>
                       <MessageOutlined />
                       <span>{comments.length}</span>
                     </button>
                   </div>
-                  <button className='action-button flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 font-semibold text-white transition-all hover:shadow-lg'>
-                    <ShareAltOutlined />
-                    <span>Share</span>
-                  </button>
                 </div>
               </div>
 
@@ -636,10 +627,6 @@ const BlogDetail = () => {
                       }}
                     />
                     <h4 className='mb-2 text-lg font-bold text-gray-900'>{blog.user.name || 'Anonymous'}</h4>
-                    <p className='mb-4 text-sm text-gray-600'>{blog.user.bio || 'No bio available'}</p>
-                    <button className='w-full rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 font-semibold text-white transition-all hover:shadow-lg'>
-                      Follow
-                    </button>
                   </div>
                 </div>
               )}

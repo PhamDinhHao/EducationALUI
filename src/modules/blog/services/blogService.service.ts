@@ -10,6 +10,9 @@ export function getBlogTags() {
   return ApiService.get(`${BaseUrlTags}`).then((resp) => resp)
 }
 
+export function createBlogTag(body: { [key: string]: any }) {
+  return ApiService.post(`${BaseUrlTags}`, body).then((resp) => resp)
+}
 export function getRecentPosts(params?: { [key: string]: any }) {
   return ApiService.get(`${BaseUrl}/recent-posts`,params).then((resp) => resp)
 }
@@ -30,8 +33,8 @@ export function deleteBlog(id: string) {
   return ApiService.delete(`${BaseUrl}/${id}`).then((resp) => resp)
 }
 const BaseUrlRelatedPosts = 'related-posts'
-export function getRelatedPosts(id: number | string) {
-  return ApiService.get(`${BaseUrl}/${BaseUrlRelatedPosts}/${id}`).then((resp) => resp)
+export function getRelatedPosts(id: number | string, params: { [key: string]: any }) {
+  return ApiService.get(`${BaseUrl}/${BaseUrlRelatedPosts}/${id}`, params).then((resp) => resp)
 }
 
 const BaseUrlComments = 'comments'

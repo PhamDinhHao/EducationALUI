@@ -1,11 +1,11 @@
 import { useState, useRef, useMemo } from 'react'
-import { Upload, Button, Input, Select, message, Card, Form } from 'antd'
-import { PlusOutlined, SaveOutlined } from '@ant-design/icons'
+import { Upload, Button, Input, Select, message, Card, Form, Space, Modal } from 'antd'
+import { PlusOutlined, SaveOutlined, TagsOutlined } from '@ant-design/icons'
 import type { UploadProps, UploadFile } from 'antd'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useNavigate } from 'react-router-dom'
-import { createBlog, getBlogTags } from '@/modules/blog/services/blogService.service'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { createBlog, createBlogTag, getBlogTags } from '@/modules/blog/services/blogService.service'
 
 const AddBlog = () => {
   const [form] = Form.useForm()
@@ -16,10 +16,12 @@ const AddBlog = () => {
   const [selectedTags, setSelectedTags] = useState<{ label: string; value: number }[]>([])
   const quillRef = useRef<any>(null)
   const navigate = useNavigate()
-
+  const { state } = useLocation()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [newTagName, setNewTagName] = useState('')
   // Fetch tags khi component mount
-  
-
+  console.log(state)
+  const [addingTag, setAddingTag] = useState(false)
   const fetchTags = async () => {
     try {
       const response = await getBlogTags()
@@ -101,7 +103,7 @@ const AddBlog = () => {
         message.error('Ảnh phải nhỏ hơn 5MB!')
         return false
       }
-    
+
       const preview = URL.createObjectURL(file)
       const uploadFile: UploadFile = {
         uid: file.uid || String(Date.now()),
@@ -110,14 +112,44 @@ const AddBlog = () => {
         url: preview,
         originFileObj: file
       }
-    
+
       setFileList([uploadFile])
       return false
-    }
-    ,
+    },
     fileList,
     listType: 'picture-card',
     maxCount: 1
+  }
+  const handleAddTag = async () => {
+    if (!newTagName.trim()) {
+      message.error('Vui lòng nhập tên tag!')
+      return
+    }
+
+    // Kiểm tra tag đã tồn tại
+    const existingTag = tags.find((tag) => tag.name.toLowerCase() === newTagName.trim().toLowerCase())
+    if (existingTag) {
+      message.warning('Tag này đã tồn tại!')
+      return
+    }
+
+    setAddingTag(true)
+    try {
+      // TODO: Gọi API tạo tag mới
+      const response = await createBlogTag({ name: newTagName.trim() })
+      console.log(response)
+      // Mock: Giả lập thêm tag mới
+
+      setTags([...tags, { label: response.data.name, value: response.data.id }])
+      message.success('Thêm tag thành công!')
+      setNewTagName('')
+      setIsModalOpen(false)
+    } catch (error) {
+      console.error('Error creating tag:', error)
+      message.error('Có lỗi xảy ra khi thêm tag!')
+    } finally {
+      setAddingTag(false)
+    }
   }
 
   // Xử lý submit form
@@ -142,7 +174,7 @@ const AddBlog = () => {
       if (selectedTags.length > 0) {
         formData.append('tags', selectedTags.join(','))
       }
-
+      formData.append('type', state?.type === 'contests' ? 'CONTESTS' : 'BLOG')
       const response = await createBlog(formData)
 
       if (response.status !== 201) {
@@ -222,7 +254,7 @@ const AddBlog = () => {
         }
       `}</style>
 
-      <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-10 mb-16'>
+      <div className='mb-16 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-10'>
         <div className='mx-auto max-w-5xl'>
           {/* Header */}
           <div className='animate-fadeInUp mb-10 text-center'>
@@ -256,7 +288,7 @@ const AddBlog = () => {
                   className='rounded-xl'
                   value={selectedTags}
                   onChange={(selected) => {
-                    const labels = tags.filter((tag) => selected.includes(tag.id)).map((item: any) => (item.name))
+                    const labels = tags.filter((tag) => selected.includes(tag.id)).map((item: any) => item.name)
                     console.log(labels)
                     setSelectedTags(labels)
                   }}
@@ -266,6 +298,21 @@ const AddBlog = () => {
                   }))}
                 />
               </Form.Item>
+              <Button
+                type='dashed'
+                icon={<TagsOutlined />}
+                onClick={() => setIsModalOpen(true)}
+                className='add-tag-btn'
+                size='large'
+                style={{
+                  width: '100%',
+                  height: '48px',
+                  borderRadius: '12px',
+                  fontWeight: '500'
+                }}
+              >
+                Tạo tag mới
+              </Button>
 
               {/* Cover Image */}
               <Form.Item label={<span className='text-lg font-semibold text-gray-700'>Ảnh cover</span>} required>
@@ -327,6 +374,56 @@ const AddBlog = () => {
           </Card>
         </div>
       </div>
+      <Modal
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <TagsOutlined />
+            <span>Tạo Tag Mới</span>
+          </div>
+        }
+        open={isModalOpen}
+        onOk={handleAddTag}
+        onCancel={() => {
+          setIsModalOpen(false)
+          setNewTagName('')
+        }}
+        confirmLoading={addingTag}
+        okText='Tạo Tag'
+        cancelText='Hủy'
+        okButtonProps={{
+          style: {
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            border: 'none',
+            borderRadius: '8px',
+            height: '40px',
+            fontWeight: '500'
+          }
+        }}
+        cancelButtonProps={{
+          style: {
+            borderRadius: '8px',
+            height: '40px'
+          }
+        }}
+      >
+        <div style={{ padding: '20px 0' }}>
+          <Input
+            size='large'
+            placeholder='Nhập tên tag...'
+            value={newTagName}
+            onChange={(e) => setNewTagName(e.target.value)}
+            onPressEnter={handleAddTag}
+            prefix={<TagsOutlined style={{ color: '#667eea' }} />}
+            style={{
+              borderRadius: '12px',
+              fontSize: '16px'
+            }}
+          />
+          <p style={{ marginTop: '12px', fontSize: '14px', color: '#666' }}>
+            Tag sẽ được thêm vào danh sách và có thể sử dụng ngay
+          </p>
+        </div>
+      </Modal>
     </>
   )
 }

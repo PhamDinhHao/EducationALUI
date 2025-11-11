@@ -17,7 +17,40 @@ const Blog = () => {
   const [isVisible, setIsVisible] = useState(false)
   const [tags, setTags] = useState<any[]>([])
   const [recentPosts, setRecentPosts] = useState<any[]>([])
+  const [activeTab, setActiveTab] = useState('articles') // 'articles' or 'contests'
+  const [currentSlide, setCurrentSlide] = useState(0)
   const navigate = useNavigate()
+
+  // Banner slides data
+  const bannerSlides = [
+    {
+      id: 1,
+      image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&h=400&fit=crop',
+      title: 'Discover Amazing Stories',
+      subtitle: 'Explore our collection of insightful articles and tutorials'
+    },
+    {
+      id: 2,
+      image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&h=400&fit=crop',
+      title: 'Join Creative Community',
+      subtitle: 'Share your knowledge and learn from experts'
+    },
+    {
+      id: 3,
+      image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=400&fit=crop',
+      title: 'Inspire and Be Inspired',
+      subtitle: 'Read stories that matter and make an impact'
+    }
+  ]
+
+  // Auto slide effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % bannerSlides.length)
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [])
+
   const categories = [
     { name: 'Commercial', count: 15, icon: '🏢' },
     { name: 'Office', count: 15, icon: '💼' },
@@ -31,7 +64,6 @@ const Blog = () => {
     setIsVisible(true)
   }, [])
 
-  // Fetch blogs from API - Giống code cũ
   const fetchBlogs = async (page = 1, title = '', tag = '') => {
     setLoading(true)
     try {
@@ -40,20 +72,22 @@ const Blog = () => {
         limit: 6,
         sortBy: 'createdAt:desc',
         ...(title && { title }),
-        ...(tag && { tags: tag })
+        ...(tag && { tags: tag }),
+        ...(activeTab === 'contests' ? { type: 'CONTESTS' } : { type: 'BLOG' })
       }
 
-      Promise.all([getBlogList(params), getBlogTags(), getRecentPosts({limit: 3})]).then(
-        ([response, responseTags, responseRecentPosts]) => {
-          setRecentPosts(responseRecentPosts.data || [])
-          setTags(responseTags.data || [])
-          setArticles(response.data.data || [])
-          setTotalArticles(response.data.pagination?.total || 0)
-        }
-      )
+      Promise.all([
+        getBlogList(params),
+        getBlogTags(),
+        getRecentPosts({ limit: 3, type: activeTab === 'contests' ? 'CONTESTS' : 'BLOG' })
+      ]).then(([response, responseTags, responseRecentPosts]) => {
+        setRecentPosts(responseRecentPosts.data || [])
+        setTags(responseTags.data || [])
+        setArticles(response.data.data || [])
+        setTotalArticles(response.data.pagination?.total || 0)
+      })
     } catch (error) {
       console.error('Error fetching blogs:', error)
-      // Hiển thị thông báo lỗi đơn giản
       alert('Không thể tải dữ liệu blog')
     } finally {
       setLoading(false)
@@ -62,7 +96,7 @@ const Blog = () => {
 
   useEffect(() => {
     fetchBlogs(currentPage, searchQuery, selectedTag)
-  }, [currentPage, searchQuery, selectedTag])
+  }, [currentPage, searchQuery, selectedTag, activeTab])
 
   const handleSearch = (value: string) => {
     setSearchQuery(value)
@@ -86,6 +120,32 @@ const Blog = () => {
       month: 'short',
       day: 'numeric'
     })
+  }
+
+  // Function to strip HTML tags and get plain text
+  const getPlainTextFromHTML = (html: string, maxLength: number = 150) => {
+    if (!html) return 'No content available'
+
+    // Create a temporary div to parse HTML
+    const temp = document.createElement('div')
+    temp.innerHTML = html
+
+    // Remove all img tags
+    const images = temp.getElementsByTagName('img')
+    while (images.length > 0) {
+      images[0].parentNode?.removeChild(images[0])
+    }
+
+    // Get text content only
+    const text = temp.textContent || temp.innerText || ''
+
+    // Trim and limit length
+    const trimmedText = text.trim()
+    if (trimmedText.length > maxLength) {
+      return trimmedText.substring(0, maxLength) + '...'
+    }
+
+    return trimmedText || 'No content available'
   }
 
   return (
@@ -272,16 +332,226 @@ const Blog = () => {
         .sidebar-item:hover .category-icon {
           transform: scale(1.3) rotate(10deg);
         }
+
+        .banner-slider {
+          position: relative;
+          overflow: hidden;
+          border-radius: 24px;
+          height: 400px;
+        }
+
+        .banner-slide {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          transition: opacity 1s ease-in-out;
+          background-size: cover;
+          background-position: center;
+        }
+
+        .banner-slide.active {
+          opacity: 1;
+        }
+
+        .banner-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          padding: 2rem;
+          text-align: center;
+        }
+
+        .banner-title {
+          color: white;
+          font-size: 3.5rem;
+          font-weight: 800;
+          margin-bottom: 1rem;
+          text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+          animation: fadeInUp 0.8s ease-out;
+        }
+
+        .banner-subtitle {
+          color: rgba(255,255,255,0.95);
+          font-size: 1.25rem;
+          max-width: 600px;
+          text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+          animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .slider-dots {
+          position: absolute;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 10px;
+          z-index: 10;
+        }
+
+        .slider-dot {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.5);
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .slider-dot.active {
+          width: 32px;
+          border-radius: 6px;
+          background: white;
+        }
+
+        .slider-nav {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          background: rgba(255,255,255,0.2);
+          backdrop-filter: blur(10px);
+          border: none;
+          color: white;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+        }
+
+        .slider-nav:hover {
+          background: rgba(255,255,255,0.3);
+          transform: translateY(-50%) scale(1.1);
+        }
+
+        .slider-nav.prev {
+          left: 20px;
+        }
+
+        .slider-nav.next {
+          right: 20px;
+        }
+
+        @media (max-width: 768px) {
+          .banner-slider {
+            height: 300px;
+          }
+          
+          .banner-title {
+            font-size: 2rem;
+          }
+          
+          .banner-subtitle {
+            font-size: 1rem;
+          }
+        }
+
+        .tab-button {
+          position: relative;
+          transition: all 0.3s ease;
+        }
+
+        .tab-button::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #667eea, #764ba2);
+          transition: width 0.3s ease;
+        }
+
+        .tab-button.active::after {
+          width: 100%;
+        }
+
+        .tab-button:hover {
+          transform: translateY(-2px);
+        }
       `}</style>
 
       <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-10'>
         <div className='mx-auto max-w-7xl'>
-          {/* Hero Section */}
-          <div className={`mb-16 text-center ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}>
-            <h1 className='gradient-text mb-6 text-6xl font-extrabold leading-tight'>Discover Amazing Stories</h1>
-            <p className='mx-auto max-w-2xl text-xl text-gray-600'>
-              Explore our collection of insightful articles, tutorials, and creative resources
-            </p>
+          {/* Banner Slider */}
+          <div className={`mb-16 ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}>
+            <div className='banner-slider shadow-2xl'>
+              {bannerSlides.map((slide, index) => (
+                <div
+                  key={slide.id}
+                  className={`banner-slide ${index === currentSlide ? 'active' : ''}`}
+                  style={{ backgroundImage: `url(${slide.image})` }}
+                >
+                  <div className='banner-overlay'>
+                    <h1 className='banner-title'>{slide.title}</h1>
+                    <p className='banner-subtitle'>{slide.subtitle}</p>
+                  </div>
+                </div>
+              ))}
+
+              {/* Navigation Buttons */}
+              <button
+                className='slider-nav prev'
+                onClick={() => setCurrentSlide((prev) => (prev - 1 + bannerSlides.length) % bannerSlides.length)}
+              >
+                ‹
+              </button>
+              <button
+                className='slider-nav next'
+                onClick={() => setCurrentSlide((prev) => (prev + 1) % bannerSlides.length)}
+              >
+                ›
+              </button>
+
+              {/* Dots Indicator */}
+              <div className='slider-dots'>
+                {bannerSlides.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`slider-dot ${index === currentSlide ? 'active' : ''}`}
+                    onClick={() => setCurrentSlide(index)}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div className={`mb-10 ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`} style={{ animationDelay: '0.1s' }}>
+            <div className='flex justify-center gap-4'>
+              <button
+                onClick={() => setActiveTab('articles')}
+                className={`tab-button rounded-2xl px-8 py-4 text-lg font-bold transition-all ${
+                  activeTab === 'articles'
+                    ? 'active bg-white text-indigo-600 shadow-xl'
+                    : 'bg-white/50 text-gray-600 hover:bg-white/80'
+                }`}
+              >
+                📝 Bài Viết
+              </button>
+              <button
+                onClick={() => setActiveTab('contests')}
+                className={`tab-button rounded-2xl px-8 py-4 text-lg font-bold transition-all ${
+                  activeTab === 'contests'
+                    ? 'active bg-white text-indigo-600 shadow-xl'
+                    : 'bg-white/50 text-gray-600 hover:bg-white/80'
+                }`}
+              >
+                🏆 Cuộc Thi
+              </button>
+            </div>
           </div>
 
           <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
@@ -291,11 +561,13 @@ const Blog = () => {
                 className={`mb-10 ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
                 style={{ animationDelay: '0.2s' }}
               >
-                <h2 className='mb-6 text-4xl font-bold text-gray-800'>All Articles</h2>
+                <h2 className='mb-6 text-4xl font-bold text-gray-800'>
+                  {activeTab === 'articles' ? 'All Articles' : 'All Contests'}
+                </h2>
                 <div className='search-input'>
                   <input
                     type='text'
-                    placeholder='🔍 Search for articles...'
+                    placeholder={activeTab === 'articles' ? '🔍 Search for articles...' : '🔍 Search for contests...'}
                     className='w-full rounded-2xl border-2 border-gray-200 bg-white px-6 py-4 text-lg shadow-md transition-all focus:border-indigo-400 focus:outline-none'
                     onKeyPress={(e: any) => {
                       if (e.key === 'Enter') handleSearch(e.target.value)
@@ -314,8 +586,10 @@ const Blog = () => {
                 </div>
               ) : articles.length === 0 ? (
                 <div className='animate-fadeIn rounded-3xl bg-white py-24 text-center shadow-xl'>
-                  <div className='mb-6 text-8xl'>📚</div>
-                  <p className='text-2xl font-semibold text-gray-500'>Không tìm thấy bài viết nào</p>
+                  <div className='mb-6 text-8xl'>{activeTab === 'articles' ? '📚' : '🏆'}</div>
+                  <p className='text-2xl font-semibold text-gray-500'>
+                    {activeTab === 'articles' ? 'Không tìm thấy bài viết nào' : 'Không tìm thấy cuộc thi nào'}
+                  </p>
                   <p className='mt-2 text-gray-400'>Try adjusting your search or filters</p>
                 </div>
               ) : (
@@ -327,16 +601,16 @@ const Blog = () => {
                     >
                       {user?.id === item.userId && (
                         <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (user?.id === item.userId) {
-                            navigate(`/blog/update/${item.id}`)
-                          }
-                        }}
-                        className='absolute right-4 top-4 flex items-center gap-2 rounded-full bg-indigo-600 px-3 py-1.5 text-center text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-indigo-700'
-                      >
-                        <span className='hidden sm:inline'>Edit</span>
-                      </button>
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (user?.id === item.userId) {
+                              navigate(`/blog/update/${item.id}`)
+                            }
+                          }}
+                          className='absolute right-4 top-4 flex items-center gap-2 rounded-full bg-indigo-600 px-3 py-1.5 text-center text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-indigo-700'
+                        >
+                          <span className='hidden sm:inline'>Edit</span>
+                        </button>
                       )}
                       <div className='grid grid-cols-1 sm:grid-cols-5'>
                         <div className='relative overflow-hidden sm:col-span-2'>
@@ -346,15 +620,12 @@ const Blog = () => {
                               backgroundImage: `url(${item.image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&h=400&fit=crop'})`
                             }}
                           />
-                          {/* Badge NEW */}
                           <div className='absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-indigo-600 backdrop-blur-sm'>
                             NEW
                           </div>
-
-                          {/* Nút Edit */}
                         </div>
 
-                        <div className='cursor-pointer p-8 sm:col-span-3' onClick={() => navigate(`/blog/${item.id}`)}>
+                        <div className='cursor-pointer p-8 sm:col-span-3' onClick={() => navigate(`/blog/${item.id}`, { state: { type: activeTab } })}>
                           <h4 className='mb-4 line-clamp-2 text-2xl font-bold text-gray-800 transition-colors duration-300 hover:text-indigo-600'>
                             {item.title}
                           </h4>
@@ -368,7 +639,7 @@ const Blog = () => {
                             className='mb-5 line-clamp-3 leading-relaxed text-gray-600'
                             dangerouslySetInnerHTML={{
                               __html:
-                                item.content?.toString().substring(0, 150) + '...' || '<p>No content available</p>'
+                                getPlainTextFromHTML(item.content?.toString() || '') || '<p>No content available</p>'
                             }}
                           ></p>
                           {item.tags && item.tags.length > 0 && (
@@ -413,10 +684,13 @@ const Blog = () => {
 
             {/* Sidebar */}
             <div className='lg:col-span-1'>
-              {/* Category Section */}
-              <Button className='mb-8 rounded-3xl bg-white p-6 shadow-xl' onClick={() => navigate(PagePath.BLOG_ADD)}>
-                Add Blog
+              <Button
+                className='mb-8 w-full rounded-3xl bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-lg font-bold text-white shadow-xl hover:shadow-2xl'
+                onClick={() => navigate(PagePath.BLOG_ADD, { state: { type: activeTab } })}
+              >
+                {activeTab === 'articles' ? '➕ Add Blog' : '➕ Add Contest'}
               </Button>
+
               <div
                 className={`mb-8 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
                 style={{ animationDelay: '0.3s' }}
@@ -440,7 +714,6 @@ const Blog = () => {
                 </div>
               </div>
 
-              {/* Recent Posts Section */}
               <div
                 className={`mb-8 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
                 style={{ animationDelay: '0.4s' }}
@@ -474,7 +747,6 @@ const Blog = () => {
                 </div>
               </div>
 
-              {/* Tags Section */}
               <div
                 className={`mb-16 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
                 style={{ animationDelay: '0.5s' }}

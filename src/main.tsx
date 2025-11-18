@@ -4,13 +4,14 @@ import { createRoot } from 'react-dom/client'
 
 import '@/index.css'
 import App from '@/App'
+import { HelmetProvider } from 'react-helmet-async'
 
 const root = createRoot(document.getElementById('root')!)
 root.render(
   <StrictMode>
-    <>
+    <HelmetProvider>
     <App />
     <Toaster />
-    </>
+    </HelmetProvider>
   </StrictMode>
 )

@@ -77,7 +77,7 @@ client.interceptors.response.use(
     const isProgressUpdate = res?.config?.url?.includes('/progress') && res?.config?.method === 'put'
     
     if (!useBoundStore.getState().isLoading && res?.config?.method && !isProgressUpdate) {
-      handleServerSuccess(res.config.method as 'post' | 'get' | 'put' | 'delete', message);
+      handleServerSuccess(res.config.method as 'post' | 'get' | 'put' | 'delete', message, res?.config?.isShowMessage);
     }
 
     return res;

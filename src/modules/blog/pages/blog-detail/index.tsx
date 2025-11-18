@@ -5,12 +5,15 @@ import {
   EyeOutlined,
   ArrowLeftOutlined,
   MessageOutlined,
-  SendOutlined
+  SendOutlined,
+  HeartOutlined,
+  ShareAltOutlined
 } from '@ant-design/icons'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { createComment, getBlogDetail, getComments, getRelatedPosts } from '@/modules/blog/services/blogService.service'
+import { useLocation, useParams } from 'react-router-dom'
+import { createComment, getBlogDetail, getComments, getRelatedPosts, likeBlog } from '@/modules/blog/services/blogService.service'
 import { useBoundStore } from '@/shared/stores'
-
+import { Helmet } from 'react-helmet-async'
+import 'react-quill/dist/quill.snow.css'
 const BlogDetail = () => {
   const [blog, setBlog] = useState<any>(null)
   const [loading, setLoading] = useState<boolean>(true)
@@ -28,7 +31,6 @@ const BlogDetail = () => {
   const { user: currentUser } = useBoundStore((state) => state)
   const { state } = useLocation()
   // Mock user - trong thực tế lấy từ auth context
-
   useEffect(() => {
     const fetchBlogDetail = async () => {
       setLoading(true)
@@ -121,6 +123,18 @@ const BlogDetail = () => {
       setSubmitting(false)
     }
   }
+  const handleShare = () => {
+    const url = window.location.href;
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+    window.open(shareUrl, "_blank");
+  };
+  const handleLike = async () => {
+    await likeBlog(id as string)
+    setBlog((prev: any) => ({
+      ...prev,
+      hearts: prev?.hearts + 1
+    }))
+  }
 
   const formatDate = (dateString: string) => {
     if (!dateString) return 'N/A'
@@ -192,8 +206,29 @@ const BlogDetail = () => {
       </div>
     )
   }
+  const shareUrl = window.location.href;
+  const shareImage = blog?.image || 'https://via.placeholder.com/1200x630?text=Blog+Image';
+  const shareDescription = blog?.excerpt || (blog?.content ? blog.content.replace(/<[^>]*>/g, '').substring(0, 150) : 'Read this amazing article');
+  console.log(shareDescription)
+  console.log(shareImage)
+  console.log(shareUrl)
+  console.log(blog?.title)
   return (
     <>
+    <Helmet>
+        {/* Basic Meta Tags */}
+        <title>{blog?.title || 'Blog Detail'}</title>
+        <meta name="description" content={shareDescription} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={shareUrl} />
+        <meta property="og:title" content={blog?.title} />
+        <meta property="og:description" content={shareDescription} />
+        <meta property="og:image" content={shareImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+      </Helmet>
       <style>{`
         @keyframes fadeInUp {
           from {
@@ -414,10 +449,18 @@ const BlogDetail = () => {
               >
                 <div className='flex flex-wrap items-center justify-between gap-4'>
                   <div className='flex items-center gap-4'>
+                  <button className='cursor-pointer action-button flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-50 to-pink-50 px-6 py-3 font-semibold text-red-600 transition-all hover:from-red-100 hover:to-pink-100' onClick={handleLike}>
+                      <HeartOutlined />
+                      <span>{blog?.hearts || 0}</span>
+                    </button>
                     <button className='action-button flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-3 font-semibold text-blue-600 transition-all hover:from-blue-100 hover:to-indigo-100'>
                       <MessageOutlined />
                       <span>{comments.length}</span>
                     </button>
+                    <button onClick={() => handleShare()} className='action-button flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 font-semibold text-white transition-all hover:shadow-lg'>
+                    <ShareAltOutlined />
+                    <span>Share</span>
+                  </button>
                   </div>
                 </div>
               </div>

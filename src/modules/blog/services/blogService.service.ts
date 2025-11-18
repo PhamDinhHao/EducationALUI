@@ -2,10 +2,13 @@ import { ApiService } from '@/shared/services'
 
 const BaseUrl = 'blogs'
 const BaseUrlTags = 'blog-tags'
+
 export function getBlogList(params: { [key: string]: any }) {
   return ApiService.get(`${BaseUrl}`, params).then((resp) => resp)
 }
-
+export function likeBlog(id: number | string) {
+  return ApiService.post(`${BaseUrl}/${id}/like`, {}, { isShowMessage: false }).then((resp) => resp)
+}
 export function getBlogTags() {
   return ApiService.get(`${BaseUrlTags}`).then((resp) => resp)
 }

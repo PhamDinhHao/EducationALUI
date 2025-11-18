@@ -13,7 +13,10 @@ export const handleServerError = (method: HttpMethod, message: string) => {
   }
 };
 
-export const handleServerSuccess = (method: HttpMethod, message?: string) => {
+export const handleServerSuccess = (method: HttpMethod, message?: string, isShowMessage?: boolean) => {
+  if (!isShowMessage) {
+    return;
+  }
   const messageLogin = window.location.pathname.includes("login")
     ? "Successfully logged in"
     : "";

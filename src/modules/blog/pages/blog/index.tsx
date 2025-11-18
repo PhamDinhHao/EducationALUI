@@ -607,7 +607,7 @@ const Blog = () => {
                               navigate(`/blog/update/${item.id}`)
                             }
                           }}
-                          className='absolute right-4 top-4 flex items-center gap-2 rounded-full bg-indigo-600 px-3 py-1.5 text-center text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-indigo-700'
+                          className='absolute right-4 bottom-4 flex items-center gap-2 rounded-full bg-indigo-600 px-3 py-1.5 text-center text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-indigo-700'
                         >
                           <span className='hidden sm:inline'>Edit</span>
                         </button>

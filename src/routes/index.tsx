@@ -29,6 +29,7 @@ import { experienceInitiativeRoute } from '@/routes/modules/experienceInitiative
 import { examPreviewRoute } from '@/routes/modules/examPreview'
 import { profileRoute } from '@/routes/modules/profile'
 import { blogRoute } from '@/routes/modules/blog'
+import { searchAIRoute } from '@/routes/modules/searchAI'
 
 // const NavigateComponent = lazy(() => import('@/shared/components/Navigate/Navigate'))
 
@@ -49,6 +50,7 @@ const configRoutes: RouteObject[] = [
       </PrivateRoute>
     ),
     children: [
+      ...searchAIRoute,
       ...homeRoute,
       ...coursePageRoute,
       ...growCapRoute,

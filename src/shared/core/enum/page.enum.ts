@@ -28,6 +28,7 @@ export enum ModuleName {
   BLOG_DETAIL = "blog-detail",
   BLOG_ADD = "blog-add",
   BLOG_UPDATE = "blog-update",
+  SEARCH_AI = "search-ai"
 }
 
 export enum PageName {
@@ -65,6 +66,7 @@ export enum PageName {
   BLOG_DETAIL = "blog-detail",
   BLOG_ADD = "blog-add",
   BLOG_UPDATE = "blog-update",
+  SEARCH_AI = "search-ai"
 }
 
 export enum PagePath {
@@ -107,5 +109,6 @@ export enum PagePath {
   PERSONAL_PLAN = "/ai/personal-plan",
   TEACHER_ASSISTANT = "/ai/teacher-assistant",
   BUILD_STRUCTURE = "/ai/build-structure",
-  EXAM_PREVIEW = "/ai/exam-preview"
+  EXAM_PREVIEW = "/ai/exam-preview",
+  SEARCH_AI = "/ai/search-ai"
 }

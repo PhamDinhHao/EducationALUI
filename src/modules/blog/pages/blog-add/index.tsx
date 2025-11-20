@@ -6,7 +6,7 @@ import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { createBlog, createBlogTag, getBlogTags } from '@/modules/blog/services/blogService.service'
-
+import { useEffect } from 'react'
 const AddBlog = () => {
   const [form] = Form.useForm()
   const [content, setContent] = useState('')
@@ -31,9 +31,9 @@ const AddBlog = () => {
       console.error('Error fetching tags:', error)
     }
   }
-  useState(() => {
+  useEffect(() => {
     fetchTags()
-  })
+  }, [])
   // Cấu hình Quill modules
   const modules = useMemo(
     () => ({
@@ -140,7 +140,7 @@ const AddBlog = () => {
       console.log(response)
       // Mock: Giả lập thêm tag mới
 
-      setTags([...tags, { label: response.data.name, value: response.data.id }])
+      setTags(pre => [...pre, response.data])
       message.success('Thêm tag thành công!')
       setNewTagName('')
       setIsModalOpen(false)

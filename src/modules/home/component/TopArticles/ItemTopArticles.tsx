@@ -11,7 +11,7 @@ interface IArticle {
   views?: number
 }
 
-const ItemTopArticles = (item: IArticle) => {
+const ItemTopArticles = ({ item }: { item: IArticle }) => {
   const navigate = useNavigate()
 
   const formatDate = (dateString: string) => {
@@ -29,45 +29,45 @@ const ItemTopArticles = (item: IArticle) => {
         .article-card {
           transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
-          overflow: hidden;
+              overflow: hidden;
         }
 
-        .article-card::before {
+            .article-card::before {
           content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+              position: absolute;
+              top: 0;
+              left: -100%;
+              width: 100%;
+          height: 100 %;
+          background: linear - gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
           transition: left 0.6s;
         }
 
-        .article-card:hover::before {
-          left: 100%;
-        }
+          .article - card: hover:: before {
+            left: 100 %;
+          }
 
-        .article-card:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.2);
-        }
+            .article - card: hover {
+              transform: translateY(-8px);
+              box- shadow: 0 20px 40px - 12px rgba(0, 0, 0, 0.2);
+      }
 
-        .article-image {
-          transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .article - image {
+  transition: transform 0.6s cubic - bezier(0.4, 0, 0.2, 1);
+}
 
-        .article-card:hover .article-image {
-          transform: scale(1.1);
-        }
+        .article - card: hover.article - image {
+  transform: scale(1.1);
+}
 
-        .article-tag {
-          transition: all 0.3s ease;
-        }
+        .article - tag {
+  transition: all 0.3s ease;
+}
 
-        .article-tag:hover {
-          transform: translateY(-2px);
-        }
-      `}</style>
+        .article - tag:hover {
+  transform: translateY(-2px);
+}
+`}</style>
 
       <div
         className='article-card cursor-pointer overflow-hidden rounded-2xl bg-white shadow-lg'

@@ -22,11 +22,11 @@ const ResponsiveGrid = <T,>({ data, cols, colSpans, colClass = '', renderCell }:
   return (
     <>
       {Array.from({ length: rows }).map((_, rowIdx) => (
-        <Row gutter={[24, 16]} key={rowIdx}>
+        <Row gutter={[16, 12]} key={rowIdx}>
           {Array.from({ length: cols }).map((_, colIdx) => {
             const idx = rowIdx * cols + colIdx
             return idx < data.length ? (
-              <Col {...colSpans} className={cn('m-auto p-2', ...colClass)} key={colIdx}>
+              <Col {...colSpans} className={cn('m-auto p-1', ...colClass)} key={colIdx}>
                 {renderCell(data[idx], idx)}
               </Col>
             ) : (

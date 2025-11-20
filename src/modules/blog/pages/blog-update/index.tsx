@@ -124,7 +124,7 @@ const BlogUpdate = () => {
 
       // Mock: Giả lập thêm tag mới
 
-      setTags([...tags, response])
+      setTags(pre => [...pre, response.data])
       message.success('Thêm tag thành công!')
       setNewTagName('')
       setIsModalOpen(false)

@@ -1,4 +1,3 @@
-import React from 'react'
 import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons'
 import { Card, Image } from 'antd'
 import { useNavigate } from 'react-router-dom'
@@ -7,7 +6,7 @@ import images from '@/assets/images'
 
 const { Meta } = Card
 
-const ItemTopCourses: React.FC<ICourse> = (course) => {
+const ItemTopCourses = ({ course }: { course: ICourse }) => {
   const navigate = useNavigate()
   return (
     <Card

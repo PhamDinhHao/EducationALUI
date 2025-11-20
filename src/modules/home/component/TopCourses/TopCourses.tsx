@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { ICourse } from '@/modules/home/cores/interfaces'
-import ResponsiveGrid from '@shared/ResponsiveGrid/ResponsiveGrid.tsx'
 import TitleHeaderHome from '@shared/components/TitleHeaderHome/TitleHeaderHome.tsx'
 import ItemTopCourses from '@/modules/home/component/TopCourses/ItemTopCourses.tsx'
 import { fetchTopEnrolledCourses } from '@/shared/server-action/courses.server'
 import { useNavigate } from 'react-router-dom'
+import CarouselSlider from '@shared/components/CarouselSlider/CarouselSlider.tsx'
 
 const TopCourses = () => {
 
@@ -30,11 +30,10 @@ const TopCourses = () => {
   return (
     <div>
       <TitleHeaderHome onAction={handleNavigate} heading='Khóa học nổi bật' description='Explore our Popular Courses' buttonLabel='Tất cả khóa học' />
-      <ResponsiveGrid<ICourse>
+      <CarouselSlider<ICourse>
         data={courses}
-        cols={4}
-        colSpans={{ xs: 24, sm: 12, md: 8, lg: 6, xl: 6 }}
-        renderCell={ItemTopCourses}
+        renderItem={(course) => <ItemTopCourses course={course} />}
+        itemsPerView={4}
       />
     </div>
   )

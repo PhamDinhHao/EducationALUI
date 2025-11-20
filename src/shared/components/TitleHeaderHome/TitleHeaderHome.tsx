@@ -12,12 +12,12 @@ const TitleHeaderHome = (props: TTitleHeaderHome) => {
   const { isButtonHeading = true, heading, description, buttonLabel, onAction } = props
 
   return (
-    <div className='m-4 flex items-center justify-between'>
+    <div className='mb-4 flex items-center justify-between'>
       <div className='flex flex-col justify-start'>
-        <h1 className='mb-2 text-2xl font-bold text-gray-800'>{heading}</h1>
-        <p className='text-gray-500'>{description}</p>
+        <h1 className='mb-1 text-xl font-bold text-gray-800'>{heading}</h1>
+        <p className='text-sm text-gray-500'>{description}</p>
       </div>
-      {isButtonHeading && <Button shape='round' onClick={onAction}>
+      {isButtonHeading && <Button shape='round' size='small' onClick={onAction}>
         {buttonLabel}
       </Button>}
 

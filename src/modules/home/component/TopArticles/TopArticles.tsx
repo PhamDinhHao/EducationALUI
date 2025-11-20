@@ -1,9 +1,9 @@
-import ResponsiveGrid from '@shared/ResponsiveGrid/ResponsiveGrid.tsx'
 import TitleHeaderHome from '@shared/components/TitleHeaderHome/TitleHeaderHome.tsx'
 import ItemTopArticles from '@/modules/home/component/TopArticles/ItemTopArticles.tsx'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { getRecentPosts } from '@/modules/blog/services/blogService.service'
+import CarouselSlider from '@shared/components/CarouselSlider/CarouselSlider.tsx'
 
 const TopArticles = () => {
   const naviagte = useNavigate();
@@ -13,7 +13,7 @@ const TopArticles = () => {
   useEffect(() => {
 
     const fetchTopEnrolledCourse = async () => {
-      const data = await getRecentPosts({limit: 8})
+      const data = await getRecentPosts({ limit: 8 })
       setBlogs(data.data)
     }
 
@@ -26,11 +26,10 @@ const TopArticles = () => {
   return (
     <div>
       <TitleHeaderHome onAction={handleNavigate} heading='Latest articles' description='Explore our Free Acticles' buttonLabel='All articles' />
-      <ResponsiveGrid<any>
+      <CarouselSlider<any>
         data={blog}
-        cols={4}
-        colSpans={{ xs: 24, sm: 12, md: 8, lg: 6, xl: 6 }}
-        renderCell={ItemTopArticles}
+        renderItem={(item) => <ItemTopArticles item={item} />}
+        itemsPerView={4}
       />
     </div>
   )

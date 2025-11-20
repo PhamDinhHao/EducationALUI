@@ -1,15 +1,19 @@
-import { Menu as MenuAntd, Button, Layout, Input } from 'antd'
+import { Menu as MenuAntd, Button, Layout } from 'antd'
 import { Link, useLocation } from 'react-router-dom'
-import { LogoutOutlined, ReadOutlined, UserOutlined } from '@ant-design/icons'
+import { LogoutOutlined, ReadOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons'
 import { MenuItem } from '@/shared/core/types'
 import { PagePath } from '@/shared/core/enum/page.enum'
 import { memo, useMemo, useState } from 'react'
 import { useMenu } from '@/shared/hooks/useMenu'
 
 const { Sider } = Layout
-const { Search } = Input
 
 const MENU_ITEMS: MenuItem[] = [
+  {
+    key: 'search',
+    icon: <SearchOutlined  />,
+    label: <Link to={PagePath.SEARCH_AI}>Tìm kiếm</Link>,
+  },
   {
     key: 'teacher',
     icon: <ReadOutlined />,
@@ -41,7 +45,7 @@ const Sidebar: React.FC = () => {
   const { onMenuClick } = useMenu()
   const location = useLocation()
 
-  const [searchText, setSearchText] = useState('')
+  const [searchText] = useState('')
 
   // Filter menu theo searchText
   // console.log(location.pathname)
@@ -87,13 +91,9 @@ const Sidebar: React.FC = () => {
         flexDirection: 'column',
       }}
     >
-      <div style={{ padding: '0 12px 12px' }}>
-        <Search placeholder='Search' allowClear onChange={(e) => setSearchText(e.target.value)} />
-      </div>
-
       <MenuAntd
         selectedKeys={[selectedKey]}
-        defaultOpenKeys={['teacher', 'student']}
+        defaultOpenKeys={[ 'search', 'teacher', 'student']}
         items={filteredItems}
         mode='inline'
         theme='light'

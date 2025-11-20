@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
-import { Upload, Button, Input, Select, message, Card, Form } from 'antd'
-import { PlusOutlined, SaveOutlined } from '@ant-design/icons'
+import { Upload, Button, Input, Select, message, Card, Form, Modal } from 'antd'
+import { PlusOutlined, SaveOutlined, TagsOutlined } from '@ant-design/icons'
 import type { UploadProps, UploadFile } from 'antd'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getBlogDetail, getBlogTags, updateBlog } from '@/modules/blog/services/blogService.service'
+import { createBlogTag, getBlogDetail, getBlogTags, updateBlog } from '@/modules/blog/services/blogService.service'
 
 const BlogUpdate = () => {
   const { id } = useParams()
@@ -17,7 +17,10 @@ const BlogUpdate = () => {
   const [selectedTags, setSelectedTags] = useState<number[]>([])
   const quillRef = useRef<any>(null)
   const navigate = useNavigate()
-
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [newTagName, setNewTagName] = useState('')
+  // Fetch tags khi component mount
+  const [addingTag, setAddingTag] = useState(false)
   // --- Fetch Tags ---
   const fetchTags = async () => {
     try {
@@ -85,9 +88,53 @@ const BlogUpdate = () => {
   )
 
   const formats = [
-    'header', 'font', 'size', 'bold', 'italic', 'underline', 'strike',
-    'color', 'background', 'list', 'bullet', 'align', 'link', 'image', 'video'
+    'header',
+    'font',
+    'size',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'color',
+    'background',
+    'list',
+    'bullet',
+    'align',
+    'link',
+    'image',
+    'video'
   ]
+  const handleAddTag = async () => {
+    if (!newTagName.trim()) {
+      message.error('Vui lòng nhập tên tag!')
+      return
+    }
+
+    // Kiểm tra tag đã tồn tại
+    const existingTag = tags.find((tag) => tag.name.toLowerCase() === newTagName.trim().toLowerCase())
+    if (existingTag) {
+      message.warning('Tag này đã tồn tại!')
+      return
+    }
+
+    setAddingTag(true)
+    try {
+      // TODO: Gọi API tạo tag mới
+      const response = await createBlogTag({ name: newTagName.trim() })
+
+      // Mock: Giả lập thêm tag mới
+
+      setTags([...tags, response])
+      message.success('Thêm tag thành công!')
+      setNewTagName('')
+      setIsModalOpen(false)
+    } catch (error) {
+      console.error('Error creating tag:', error)
+      message.error('Có lỗi xảy ra khi thêm tag!')
+    } finally {
+      setAddingTag(false)
+    }
+  }
 
   // --- Upload Props ---
   const uploadProps: UploadProps = {
@@ -158,103 +205,162 @@ const BlogUpdate = () => {
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-10 mb-16'>
-      <div className='mx-auto max-w-5xl'>
-        <div className='animate-fadeInUp mb-10 text-center'>
-          <h1 className='gradient-text mb-4 text-5xl font-extrabold'>Cập nhật bài viết</h1>
-          <p className='text-lg text-gray-600'>Chỉnh sửa nội dung bài viết của bạn</p>
-        </div>
+    <>
+      <div className='mb-16 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-10'>
+        <div className='mx-auto max-w-5xl'>
+          <div className='animate-fadeInUp mb-10 text-center'>
+            <h1 className='gradient-text mb-4 text-5xl font-extrabold'>Cập nhật bài viết</h1>
+            <p className='text-lg text-gray-600'>Chỉnh sửa nội dung bài viết của bạn</p>
+          </div>
 
-        <Card className='animate-fadeInUp shadow-2xl' style={{ borderRadius: '24px' }}>
-          <Form form={form} layout='vertical' onFinish={handleSubmit}>
-            {/* Title */}
-            <Form.Item
-              label={<span className='text-lg font-semibold text-gray-700'>Tiêu đề</span>}
-              name='title'
-              rules={[{ required: true, message: 'Vui lòng nhập tiêu đề!' }]}
-            >
-              <Input size='large' placeholder='Nhập tiêu đề...' className='rounded-xl' />
-            </Form.Item>
+          <Card className='animate-fadeInUp shadow-2xl' style={{ borderRadius: '24px' }}>
+            <Form form={form} layout='vertical' onFinish={handleSubmit}>
+              {/* Title */}
+              <Form.Item
+                label={<span className='text-lg font-semibold text-gray-700'>Tiêu đề</span>}
+                name='title'
+                rules={[{ required: true, message: 'Vui lòng nhập tiêu đề!' }]}
+              >
+                <Input size='large' placeholder='Nhập tiêu đề...' className='rounded-xl' />
+              </Form.Item>
 
-            {/* Tags */}
-            <Form.Item
-              label={<span className='text-lg font-semibold text-gray-700'>Tags</span>}
-              name='tags'
-            >
-              <Select
-                mode='multiple'
-                size='large'
-                placeholder='Chọn tags...'
-                value={selectedTags}
-                onChange={setSelectedTags}
-                options={tags.map((tag) => ({ label: tag.name, value: tag.id }))}
-                className='rounded-xl'
-              />
-            </Form.Item>
-
-            {/* Cover Image */}
-            <Form.Item
-              label={<span className='text-lg font-semibold text-gray-700'>Ảnh cover</span>}
-            >
-              <Upload {...uploadProps}>
-                {fileList.length === 0 && (
-                  <div className='flex flex-col items-center justify-center p-4'>
-                    <PlusOutlined className='mb-2 text-3xl text-gray-400' />
-                    <div className='text-gray-500'>Upload ảnh</div>
-                  </div>
-                )}
-              </Upload>
-            </Form.Item>
-
-            {/* Content */}
-            <Form.Item
-              label={<span className='text-lg font-semibold text-gray-700'>Nội dung</span>}
-            >
-              <div className='quill-editor'>
-                <ReactQuill
-                  ref={quillRef}
-                  theme='snow'
-                  value={content}
-                  onChange={setContent}
-                  modules={modules}
-                  formats={formats}
-                  placeholder='Bắt đầu chỉnh sửa nội dung...'
+              {/* Tags */}
+              <Form.Item label={<span className='text-lg font-semibold text-gray-700'>Tags</span>} name='tags'>
+                <Select
+                  mode='multiple'
+                  size='large'
+                  placeholder='Chọn tags...'
+                  value={selectedTags}
+                  onChange={setSelectedTags}
+                  options={tags.map((tag) => ({ label: tag.name, value: tag.id }))}
+                  className='rounded-xl'
                 />
-              </div>
-            </Form.Item>
+              </Form.Item>
+              <Button
+                type='dashed'
+                icon={<TagsOutlined />}
+                onClick={() => setIsModalOpen(true)}
+                className='add-tag-btn'
+                size='large'
+                style={{
+                  width: '100%',
+                  height: '48px',
+                  borderRadius: '12px',
+                  fontWeight: '500'
+                }}
+              >
+                Tạo tag mới
+              </Button>
+              {/* Cover Image */}
+              <Form.Item label={<span className='text-lg font-semibold text-gray-700'>Ảnh cover</span>}>
+                <Upload {...uploadProps}>
+                  {fileList.length === 0 && (
+                    <div className='flex flex-col items-center justify-center p-4'>
+                      <PlusOutlined className='mb-2 text-3xl text-gray-400' />
+                      <div className='text-gray-500'>Upload ảnh</div>
+                    </div>
+                  )}
+                </Upload>
+              </Form.Item>
 
-            {/* Submit */}
-            <Form.Item className='mb-0 mt-8'>
-              <div className='flex gap-4'>
-                <Button
-                  type='primary'
-                  size='large'
-                  htmlType='submit'
-                  loading={loading}
-                  icon={<SaveOutlined />}
-                  className='h-12 flex-1 text-base font-semibold'
-                  style={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    border: 'none',
-                    borderRadius: '12px'
-                  }}
-                >
-                  Lưu thay đổi
-                </Button>
-                <Button
-                  size='large'
-                  onClick={() => navigate('/blog')}
-                  className='h-12 text-base font-semibold'
-                  style={{ borderRadius: '12px' }}
-                >
-                  Hủy
-                </Button>
-              </div>
-            </Form.Item>
-          </Form>
-        </Card>
+              {/* Content */}
+              <Form.Item label={<span className='text-lg font-semibold text-gray-700'>Nội dung</span>}>
+                <div className='quill-editor'>
+                  <ReactQuill
+                    ref={quillRef}
+                    theme='snow'
+                    value={content}
+                    onChange={setContent}
+                    modules={modules}
+                    formats={formats}
+                    placeholder='Bắt đầu chỉnh sửa nội dung...'
+                  />
+                </div>
+              </Form.Item>
+
+              {/* Submit */}
+              <Form.Item className='mb-0 mt-8'>
+                <div className='flex gap-4'>
+                  <Button
+                    type='primary'
+                    size='large'
+                    htmlType='submit'
+                    loading={loading}
+                    icon={<SaveOutlined />}
+                    className='h-12 flex-1 text-base font-semibold'
+                    style={{
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      border: 'none',
+                      borderRadius: '12px'
+                    }}
+                  >
+                    Lưu thay đổi
+                  </Button>
+                  <Button
+                    size='large'
+                    onClick={() => navigate('/blog')}
+                    className='h-12 text-base font-semibold'
+                    style={{ borderRadius: '12px' }}
+                  >
+                    Hủy
+                  </Button>
+                </div>
+              </Form.Item>
+            </Form>
+          </Card>
+        </div>
       </div>
-    </div>
+      <Modal
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <TagsOutlined />
+            <span>Tạo Tag Mới</span>
+          </div>
+        }
+        open={isModalOpen}
+        onOk={handleAddTag}
+        onCancel={() => {
+          setIsModalOpen(false)
+          setNewTagName('')
+        }}
+        confirmLoading={addingTag}
+        okText='Tạo Tag'
+        cancelText='Hủy'
+        okButtonProps={{
+          style: {
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            border: 'none',
+            borderRadius: '8px',
+            height: '40px',
+            fontWeight: '500'
+          }
+        }}
+        cancelButtonProps={{
+          style: {
+            borderRadius: '8px',
+            height: '40px'
+          }
+        }}
+      >
+        <div style={{ padding: '20px 0' }}>
+          <Input
+            size='large'
+            placeholder='Nhập tên tag...'
+            value={newTagName}
+            onChange={(e) => setNewTagName(e.target.value)}
+            onPressEnter={handleAddTag}
+            prefix={<TagsOutlined style={{ color: '#667eea' }} />}
+            style={{
+              borderRadius: '12px',
+              fontSize: '16px'
+            }}
+          />
+          <p style={{ marginTop: '12px', fontSize: '14px', color: '#666' }}>
+            Tag sẽ được thêm vào danh sách và có thể sử dụng ngay
+          </p>
+        </div>
+      </Modal>
+    </>
   )
 }
 

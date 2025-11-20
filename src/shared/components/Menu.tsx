@@ -24,7 +24,7 @@ const MENU_ITEMS: MenuItem[] = [
   },
   {
     key: PagePath.AI,
-    label: <Link to={PagePath.BUILD_STRUCTURE}>Gen AI</Link>
+    label: <Link to={PagePath.SEARCH_AI}>Gen AI</Link>
   }
 ]
 

@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Alert, Breadcrumb, Button, Layout, List, Spin, Typography, Modal, Tag } from 'antd'
-import { CheckCircleOutlined, PlayCircleOutlined, RocketOutlined, TrophyOutlined } from '@ant-design/icons'
+import { CheckCircleOutlined, PlayCircleOutlined, RocketOutlined, TrophyOutlined, FileTextOutlined } from '@ant-design/icons'
 import { VideoPlayer } from '@/shared/components/VideoPlayer'
 import { CommentSection } from '@/modules/course/components/CommentSection'
 import { updateLessonProgressIfHigher, getLessonProgress, getCourseProgress, calculateCourseProgressStats } from '@/modules/course/services/courseProgress.service'
+import { createCertificate } from '@/modules/course/services/certificate.service'
 import { useBoundStore } from '@/shared/stores'
 import env from '@/shared/core/constants/env'
 const { Sider, Content } = Layout
@@ -76,6 +77,13 @@ export default function LessonPlayerPage() {
         // Check if course is completed
         const stats = calculateCourseProgressStats(progressItems, sortedLessons.length)
         if (stats.completionPercentage === 100 && !hasShownCompletion) {
+          // Create certificate when course is completed
+          try {
+            await createCertificate(courseId)
+          } catch (error) {
+            console.error('Error creating certificate:', error)
+            // Continue even if certificate creation fails
+          }
           setShowCompletionModal(true)
           setHasShownCompletion(true)
         }
@@ -109,6 +117,13 @@ export default function LessonPlayerPage() {
           // Check if course is completed
           const stats = calculateCourseProgressStats(progressItems, sortedLessons.length)
           if (stats.completionPercentage === 100 && !hasShownCompletion) {
+            // Create certificate when course is completed
+            try {
+              await createCertificate(courseId)
+            } catch (error) {
+              console.error('Error creating certificate:', error)
+              // Continue even if certificate creation fails
+            }
             setShowCompletionModal(true)
             setHasShownCompletion(true)
           }
@@ -411,6 +426,17 @@ export default function LessonPlayerPage() {
         footer={[
           <Button key="back" onClick={() => setShowCompletionModal(false)}>
             Đóng
+          </Button>,
+          <Button 
+            key="certificate" 
+            type="default"
+            icon={<FileTextOutlined />}
+            onClick={() => {
+              setShowCompletionModal(false)
+              navigate('/profile?tab=certificates', { state: { courseId: lesson?.courseId } })
+            }}
+          >
+            Xem chứng chỉ
           </Button>,
           <Button 
             key="course" 

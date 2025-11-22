@@ -37,37 +37,56 @@ export default function CourseDetail() {
     const [isEnrolled, setIsEnrolled] = useState(false)
     const [enrollmentLoading, setEnrollmentLoading] = useState(false)
 
-    useEffect(() => {
-        const fetchCourseAndLessons = async () => {
-            setLoading(true)
-            setError('')
-            try {
-                if (!id) return setLoading(false);
-                const res = await fetchCourseDetail(id);
-                if (res) {
-                    setCourse({ 
-                        id: res.id, 
-                        title: res.title, 
-                        description: res.description, 
-                        img: res.img || '', 
-                        url: res.url || '' 
-                    })
-                    setLessons(res.lessons || [])
+    const fetchCourseAndLessons = async () => {
+        setLoading(true)
+        setError('')
+        try {
+            if (!id) return setLoading(false);
+            const res = await fetchCourseDetail(id);
+            if (res) {
+                setCourse({ 
+                    id: res.id, 
+                    title: res.title, 
+                    description: res.description, 
+                    img: res.img || '', 
+                    url: res.url || '' 
+                })
+                setLessons(res.lessons || [])
 
-                    try {
-                        const enrollmentStatus = await fetchEnrollmentStatus(res.id);
-                        setIsEnrolled(enrollmentStatus.isEnrolled || false);
-                    } catch (enrollmentErr) {
-                        setIsEnrolled(false);
-                    }
+                try {
+                    const enrollmentStatus = await fetchEnrollmentStatus(res.id);
+                    setIsEnrolled(enrollmentStatus.isEnrolled || false);
+                } catch (enrollmentErr) {
+                    setIsEnrolled(false);
                 }
-            } catch (err: any) {
-                setError(err.response?.message || 'Lỗi khi tải dữ liệu khóa học')
-            } finally {
-                setLoading(false)
+            }
+        } catch (err: any) {
+            setError(err.response?.message || 'Lỗi khi tải dữ liệu khóa học')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        if (id) fetchCourseAndLessons()
+    }, [id])
+
+    // Listen for refresh event
+    useEffect(() => {
+        if (!id) return
+
+        const handleRefresh = (event: Event) => {
+            const customEvent = event as CustomEvent
+            if (customEvent.detail?.courseId === Number(id)) {
+                fetchCourseAndLessons()
             }
         }
-        if (id) fetchCourseAndLessons()
+
+        window.addEventListener('courseDetailRefresh', handleRefresh)
+        
+        return () => {
+            window.removeEventListener('courseDetailRefresh', handleRefresh)
+        }
     }, [id])
 
     const openLesson = (lessonId: number) => {
@@ -147,6 +166,7 @@ export default function CourseDetail() {
                     onJoin={handleJoin}
                     isEnrolled={isEnrolled}
                     loading={enrollmentLoading}
+                    totalLessons={lessons.length}
                 />
             </div>
         </div>

@@ -8,7 +8,7 @@ import CarouselSlider from '@shared/components/CarouselSlider/CarouselSlider.tsx
 
 const TopCourses = () => {
 
-  const naviagte = useNavigate();
+  const navigate = useNavigate();
 
   const [courses, setCourses] = useState<ICourse[]>([])
 
@@ -23,7 +23,7 @@ const TopCourses = () => {
   }, [])
 
   const handleNavigate = () => {
-    naviagte('/courses')
+    navigate('/courses')
   }
 
 

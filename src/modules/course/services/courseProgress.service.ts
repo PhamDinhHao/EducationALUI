@@ -79,7 +79,7 @@ export const calculateCourseProgressStats = (
 
   const completedLessons = progressItems.filter((item) => item.progress >= 100).length
   const inProgressLessons = progressItems.filter((item) => item.progress > 0 && item.progress < 100).length
-  const notStartedLessons = totalLessons - progressItems.length
+  const notStartedLessons = totalLessons - completedLessons - inProgressLessons
 
   const totalProgress = progressItems.reduce((sum, item) => sum + (item.progress || 0), 0)
   const completionPercentage = totalLessons > 0 ? Math.round(totalProgress / totalLessons) : 0

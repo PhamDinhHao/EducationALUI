@@ -25,8 +25,15 @@ export const createYouTubeEmbedUrl = (videoId: string, options?: {
   if (options?.autoplay) params.append('autoplay', '1')
   if (options?.controls === false) params.append('controls', '0')
   if (options?.start) params.append('start', String(options.start))
+  // Hide related videos completely
+  params.append('rel', '0')
+  // Reduce YouTube branding
+  params.append('modestbranding', '1')
+  // Hide annotations
+  params.append('iv_load_policy', '3')
 
   const queryString = params.toString()
-  return `https://www.youtube.com/embed/${videoId}${queryString ? `?${queryString}` : ''}`
+  // Use youtube-nocookie.com which has better privacy and fewer suggestions
+  return `https://www.youtube-nocookie.com/embed/${videoId}${queryString ? `?${queryString}` : ''}`
 }
 

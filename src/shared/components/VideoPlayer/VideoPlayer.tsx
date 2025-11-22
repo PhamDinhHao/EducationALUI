@@ -81,6 +81,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                     controls: youtubeOptions?.controls !== false ? 1 : 0,
                     start: youtubeOptions?.start || 0,
                     enablejsapi: 1,
+                    rel: 0, // Hide related videos completely
+                    modestbranding: 1, // Reduce YouTube branding
+                    iv_load_policy: 3, // Hide annotations
+                    fs: 1, // Allow fullscreen
+                    playsinline: 1, // Play inline on mobile
                   },
                   events: {
                     onStateChange: (event: any) => {

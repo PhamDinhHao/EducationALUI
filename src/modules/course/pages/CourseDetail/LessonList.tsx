@@ -69,7 +69,7 @@ export default function LessonList({ lessons, onOpenLesson, currentLessonId, cou
   const getLessonProgress = (lessonId: number): LessonProgressItem | undefined => {
     return progressItems.find(item => item.lessonId === lessonId)
   }
-
+  
   const groups = [{ name: 'Nội dung khóa học', items: [...lessons].sort((a, b) => (a.order || 0) - (b.order || 0)) }]
   return (
     <Collapse defaultActiveKey={['0']} accordion>

@@ -6,14 +6,55 @@ html,
 body,
 #root {
   height: 100%;
+  overflow: hidden !important;
 }
 
 body {
-  overflow-y: hidden;
+  overflow-y: hidden !important;
+  overflow-x: hidden !important;
+}
+
+#root {
+  overflow: hidden !important;
 }
 
 #root > div {
   min-height: 100%;
+  overflow: hidden !important;
+}
+
+/* Ẩn scrollbar cho tất cả các element trừ .root-layout-content */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Chỉ hiển thị scrollbar cho .root-layout-content */
+.root-layout-content {
+  scrollbar-width: thin !important; /* Firefox */
+  -ms-overflow-style: auto !important; /* IE and Edge */
+}
+
+.root-layout-content::-webkit-scrollbar {
+  display: block !important; /* Chrome, Safari, Opera */
+  width: 8px !important;
+}
+
+.root-layout-content::-webkit-scrollbar-track {
+  background: #f1f5f9 !important;
+}
+
+.root-layout-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+  border-radius: 4px !important;
+}
+
+.root-layout-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8 !important;
 }
 /* Khi item được chọn */
 .menu-multiline .ant-menu-item-selected {

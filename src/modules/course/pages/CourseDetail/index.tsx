@@ -37,35 +37,35 @@ export default function CourseDetail() {
     const [isEnrolled, setIsEnrolled] = useState(false)
     const [enrollmentLoading, setEnrollmentLoading] = useState(false)
 
-    const fetchCourseAndLessons = async () => {
-        setLoading(true)
-        setError('')
-        try {
-            if (!id) return setLoading(false);
-            const res = await fetchCourseDetail(id);
-            if (res) {
-                setCourse({ 
-                    id: res.id, 
-                    title: res.title, 
-                    description: res.description, 
-                    img: res.img || '', 
-                    url: res.url || '' 
-                })
-                setLessons(res.lessons || [])
+        const fetchCourseAndLessons = async () => {
+            setLoading(true)
+            setError('')
+            try {
+                if (!id) return setLoading(false);
+                const res = await fetchCourseDetail(id);
+                if (res) {
+                    setCourse({ 
+                        id: res.id, 
+                        title: res.title, 
+                        description: res.description, 
+                        img: res.img || '', 
+                        url: res.url || '' 
+                    })
+                    setLessons(res.lessons || [])
 
-                try {
-                    const enrollmentStatus = await fetchEnrollmentStatus(res.id);
-                    setIsEnrolled(enrollmentStatus.isEnrolled || false);
-                } catch (enrollmentErr) {
-                    setIsEnrolled(false);
+                    try {
+                        const enrollmentStatus = await fetchEnrollmentStatus(res.id);
+                        setIsEnrolled(enrollmentStatus.isEnrolled || false);
+                    } catch (enrollmentErr) {
+                        setIsEnrolled(false);
+                    }
                 }
+            } catch (err: any) {
+                setError(err.response?.message || 'Lỗi khi tải dữ liệu khóa học')
+            } finally {
+                setLoading(false)
             }
-        } catch (err: any) {
-            setError(err.response?.message || 'Lỗi khi tải dữ liệu khóa học')
-        } finally {
-            setLoading(false)
         }
-    }
 
     useEffect(() => {
         if (id) fetchCourseAndLessons()

@@ -62,9 +62,9 @@ const Home = () => {
   }
 
   return (
-    <div className='h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth bg-white'>
+    <div className='w-full bg-white' style={{ minHeight: '100%', overflow: 'visible' }}>
       {/* Banner Section */}
-      <section className='relative h-screen w-full snap-start'>
+      <section className='relative w-full' style={{ minHeight: '100vh' }}>
         <motion.div
           className='relative h-full w-full overflow-hidden'
           style={{
@@ -256,7 +256,7 @@ const Home = () => {
       </section>
 
       {/* Top Courses Section */}
-      <section className='flex h-screen w-full snap-start items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50'>
+      <section className='flex w-full items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50' style={{ minHeight: '100vh', padding: '80px 0' }}>
         <motion.div
           className='w-full max-w-7xl px-8'
           initial="hidden"
@@ -269,7 +269,7 @@ const Home = () => {
       </section>
 
       {/* Explorer Course Section */}
-      <section className='flex h-screen w-full snap-start items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50 p-8'>
+      <section className='flex w-full items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50 p-8' style={{ minHeight: '100vh' }}>
         <motion.div
           className='w-full max-w-7xl'
           initial="hidden"
@@ -282,7 +282,7 @@ const Home = () => {
       </section>
 
       {/* Top Articles Section */}
-      <section className='flex h-screen w-full snap-start items-center justify-center bg-gradient-to-br from-green-50 to-teal-50'>
+      <section className='flex w-full items-center justify-center bg-gradient-to-br from-green-50 to-teal-50' style={{ minHeight: '100vh', padding: '80px 0' }}>
         <motion.div
           className='w-full max-w-7xl px-8'
           initial="hidden"
@@ -295,12 +295,12 @@ const Home = () => {
       </section>
 
       {/* Student Reviews Section */}
-      <section className='w-full snap-start'>
+      <section className='w-full'>
         <StudentReviews />
       </section>
 
       {/* Footer Section */}
-      <section className='w-full snap-start'>
+      <section className='w-full'>
         <Footer />
       </section>
     </div>

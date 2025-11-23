@@ -483,7 +483,7 @@ const Blog = () => {
         }
       `}</style>
 
-      <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-10'>
+      <div className='bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-10' style={{ minHeight: '100%', width: '100%', overflow: 'visible' }}>
         <div className='mx-auto max-w-7xl'>
           {/* Banner Slider */}
           <div className={`mb-16 ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}>

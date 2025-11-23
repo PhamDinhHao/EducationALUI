@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom'
 
 const BaseRoute = () => {
   return (
-    <div className='h-screen overflow-y-auto' style={{ backgroundColor: '#fff' }}>
+    <div style={{ backgroundColor: '#fff', minHeight: '100vh', overflowY: 'auto', height: '100vh' }}>
       <Outlet />
     </div>
   )

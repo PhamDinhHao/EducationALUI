@@ -17,6 +17,12 @@ export interface Comment {
   createdAt: string
   updatedAt: string
   replies?: Comment[]
+  user?: {
+    id: number
+    name: string | null
+    email: string
+    avatar: string | null
+  } | null
 }
 
 interface CommentSectionProps {
@@ -141,6 +147,30 @@ const CommentSection: React.FC<CommentSectionProps> = ({ lessonId }) => {
     return date.toLocaleDateString('vi-VN')
   }
 
+  const getAvatar = (comment: Comment) => {
+    // Priority: 1. comment.user?.avatar, 2. current user avatar if userId matches, 3. icon
+    if (comment.user?.avatar) {
+      return comment.user.avatar
+    }
+    if (comment.userId && user?.id === comment.userId && user?.avatar) {
+      return user.avatar
+    }
+    return undefined
+  }
+
+  const getAvatarDisplay = (comment: Comment) => {
+    const avatarUrl = getAvatar(comment)
+    if (avatarUrl) {
+      return <Avatar src={avatarUrl} icon={<UserOutlined />} />
+    }
+    // Show first letter of name if available
+    const displayName = comment.user?.name || comment.author || ''
+    if (displayName) {
+      return <Avatar style={{ backgroundColor: '#1890ff' }}>{displayName.charAt(0).toUpperCase()}</Avatar>
+    }
+    return <Avatar icon={<UserOutlined />} />
+  }
+
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: 24 }}>
@@ -173,12 +203,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({ lessonId }) => {
         <Empty description="Chưa có bình luận nào" />
       ) : (
         <List
+        className='pb-20' 
           dataSource={comments}
           renderItem={(comment) => (
             <AntdComment
               key={comment.id}
-              author={<span>{comment.author}</span>}
-              avatar={<Avatar icon={<UserOutlined />} />}
+              author={<span>{comment.user?.name || comment.author}</span>}
+              avatar={getAvatarDisplay(comment)}
               content={<p style={{ whiteSpace: 'pre-wrap' }}>{comment.content}</p>}
               datetime={<span>{formatDate(comment.createdAt)}</span>}
               actions={[
@@ -228,8 +259,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({ lessonId }) => {
                   renderItem={(reply) => (
                     <AntdComment
                       key={reply.id}
-                      author={<span>{reply.author}</span>}
-                      avatar={<Avatar icon={<UserOutlined />} />}
+                      author={<span>{reply.user?.name || reply.author}</span>}
+                      avatar={getAvatarDisplay(reply)}
                       content={<p style={{ whiteSpace: 'pre-wrap' }}>{reply.content}</p>}
                       datetime={<span>{formatDate(reply.createdAt)}</span>}
                     />

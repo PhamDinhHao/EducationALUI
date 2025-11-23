@@ -3,7 +3,7 @@ import type { CSSProperties } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Alert, Breadcrumb, Button, Layout, List, Spin, Typography, Modal, Tag } from 'antd'
 import { CheckCircleOutlined, PlayCircleOutlined, RocketOutlined, TrophyOutlined, FileTextOutlined } from '@ant-design/icons'
-import { VideoPlayer } from '@/shared/components/VideoPlayer'
+import { VideoPlayer, type VideoPlayerRef } from '@/shared/components/VideoPlayer'
 import { CommentSection } from '@/modules/course/components/CommentSection'
 import { updateLessonProgressIfHigher, getLessonProgress, getCourseProgress, calculateCourseProgressStats } from '@/modules/course/services/courseProgress.service'
 import { createCertificate } from '@/modules/course/services/certificate.service'
@@ -26,10 +26,13 @@ export default function LessonPlayerPage() {
   const [lessonProgresses, setLessonProgresses] = useState<Map<number, number>>(new Map())
   const [showCompletionModal, setShowCompletionModal] = useState(false)
   const [hasShownCompletion, setHasShownCompletion] = useState(false)
+  const [videoStartTime, setVideoStartTime] = useState<number | undefined>(undefined)
+  const [videoDuration, setVideoDuration] = useState<number | undefined>(undefined)
 
   const lastUpdateTimeRef = useRef<number>(0)
   const lastProgressRef = useRef<number>(0)
   const hasMarkedCompletedRef = useRef<boolean>(false)
+  const videoPlayerRef = useRef<VideoPlayerRef | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -219,6 +222,15 @@ export default function LessonPlayerPage() {
           hasMarkedCompletedRef.current = true
         }
 
+        // Calculate start time from progress percentage
+        // We'll update this when we get the video duration
+        if (currentProgress > 0 && currentProgress < 100 && lesson.duration) {
+          const calculatedStartTime = Math.floor((currentProgress / 100) * lesson.duration)
+          setVideoStartTime(calculatedStartTime)
+        } else {
+          setVideoStartTime(undefined)
+        }
+
         if (currentProgress === 0) {
           await updateLessonProgressIfHigher(lesson.id, 10, null)
           if (lesson.courseId) {
@@ -233,7 +245,7 @@ export default function LessonPlayerPage() {
     }
 
     checkAndUpdateProgress()
-  }, [lesson?.id, user?.id, lesson?.courseId])
+  }, [lesson?.id, lesson?.duration, user?.id, lesson?.courseId])
 
   const handleVideoEnded = async () => {
     if (!lesson?.id || !user?.id || hasMarkedCompletedRef.current) return
@@ -254,6 +266,16 @@ export default function LessonPlayerPage() {
           detail: { lessonId: lesson.id, courseId: lesson.courseId } 
         }))
       }
+
+      // Auto navigate to next lesson
+      const currentIndex = sortedLessons.findIndex(l => l.id === lesson.id)
+      if (currentIndex >= 0 && currentIndex < sortedLessons.length - 1) {
+        const nextLesson = sortedLessons[currentIndex + 1]
+        // Small delay to ensure progress is saved
+        setTimeout(() => {
+          navigate(`/lesson/${nextLesson.id}`)
+        }, 500)
+      }
     } catch (error) {
       console.error('Error marking lesson as completed:', error)
     }
@@ -262,6 +284,29 @@ export default function LessonPlayerPage() {
   const handleTimeUpdate = async (currentTime: number, duration: number) => {
     if (!lesson?.id || !user?.id || !duration || duration === 0) return
     if (hasMarkedCompletedRef.current) return
+
+    // Store duration for calculating start time
+    if (!videoDuration || Math.abs(videoDuration - duration) > 1) {
+      setVideoDuration(duration)
+      
+      // Recalculate start time if we have progress but no start time yet
+      if (!videoStartTime) {
+        try {
+          const progressData = await getLessonProgress(lesson.id)
+          const currentProgress = progressData?.progress || 0
+          if (currentProgress > 0 && currentProgress < 100) {
+            const calculatedStartTime = Math.floor((currentProgress / 100) * duration)
+            setVideoStartTime(calculatedStartTime)
+            // Set current time for HTML5 video
+            if (videoPlayerRef.current?.setCurrentTime) {
+              videoPlayerRef.current.setCurrentTime(calculatedStartTime)
+            }
+          }
+        } catch (error) {
+          console.error('Error calculating start time:', error)
+        }
+      }
+    }
 
     const now = Date.now()
     const progressPercent = Math.min(100, Math.round((currentTime / duration) * 100))
@@ -348,6 +393,7 @@ export default function LessonPlayerPage() {
           }}
         >
           <VideoPlayer
+            ref={videoPlayerRef}
             src={lesson.src}
             title={lesson.title}
             aspectRatio="16/9"
@@ -356,6 +402,7 @@ export default function LessonPlayerPage() {
             style={{ marginBottom: 16, width: '100%', height: '100%', position: 'relative', zIndex: 10 }}
             youtubeOptions={{
               autoplay: true,
+              start: videoStartTime ? Math.floor(videoStartTime) : undefined,
             }}
             onVideoEnded={handleVideoEnded}
             onTimeUpdate={handleTimeUpdate}

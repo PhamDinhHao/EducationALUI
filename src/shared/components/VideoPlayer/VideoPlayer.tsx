@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { forwardRef, useImperativeHandle } from 'react'
 import { Typography } from 'antd'
 import { getYouTubeVideoId, isYouTubeUrl, createYouTubeEmbedUrl } from '@/shared/utils/youtube'
 
@@ -20,7 +20,11 @@ export interface VideoPlayerProps {
   onTimeUpdate?: (currentTime: number, duration: number) => void
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({
+export interface VideoPlayerRef {
+  setCurrentTime?: (time: number) => void
+}
+
+const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(({
   src,
   title = 'Video player',
   youtubeOptions,
@@ -30,7 +34,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   aspectRatio = '16/9',
   onVideoEnded,
   onTimeUpdate
-}) => {
+}, ref) => {
   if (!src) {
     return (
       <div
@@ -177,9 +181,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   const videoRef = React.useRef<HTMLVideoElement>(null)
 
+  // Expose setCurrentTime method via ref
+  useImperativeHandle(ref, () => ({
+    setCurrentTime: (time: number) => {
+      if (videoRef.current) {
+        videoRef.current.currentTime = time
+      }
+    }
+  }))
+
   React.useEffect(() => {
     const video = videoRef.current
     if (!video) return
+
+    // Set initial currentTime if start time is provided (for HTML5 video)
+    if (youtubeOptions?.start && video.duration && video.duration > 0) {
+      const startTime = youtubeOptions.start
+      if (startTime > 0 && startTime < video.duration) {
+        video.currentTime = startTime
+      }
+    }
 
     const handleEnded = () => {
       if (onVideoEnded) {
@@ -198,14 +219,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       }
     }
 
+    const handleLoadedMetadata = () => {
+      // Set currentTime after metadata is loaded
+      if (youtubeOptions?.start && video.duration && video.duration > 0) {
+        const startTime = youtubeOptions.start
+        if (startTime > 0 && startTime < video.duration) {
+          video.currentTime = startTime
+        }
+      }
+    }
+
     video.addEventListener('ended', handleEnded)
     video.addEventListener('timeupdate', handleTimeUpdate)
+    video.addEventListener('loadedmetadata', handleLoadedMetadata)
 
     return () => {
       video.removeEventListener('ended', handleEnded)
       video.removeEventListener('timeupdate', handleTimeUpdate)
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata)
     }
-  }, [onVideoEnded, onTimeUpdate])
+  }, [onVideoEnded, onTimeUpdate, youtubeOptions?.start])
 
   return (
     <div
@@ -221,7 +254,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       />
     </div>
   )
-}
+})
+
+VideoPlayer.displayName = 'VideoPlayer'
 
 export default VideoPlayer
 

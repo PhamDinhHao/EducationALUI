@@ -519,13 +519,93 @@ export default function CourseList() {
                       />
                     ) : (
                       <>
-                        <Row gutter={[16, 16]} style={{ marginBottom: 32 }}>
-                          {courses.map((course) => (
-                            <Col xs={24} sm={12} lg={8} key={course.id}>
-                              <OptimizedCourseCard course={course} onCardClick={handleCardClick} />
-                            </Col>
-                          ))}
-                        </Row>
+                        {/* Chia 2 section khi chọn "Tất cả khóa học" */}
+                        {!courseTypeId ? (
+                          <>
+                            {/* Section: Khóa học cơ bản */}
+                            <div style={{ marginBottom: 48 }}>
+                              <h3 style={{ 
+                                fontSize: '28px', 
+                                fontWeight: 700, 
+                                color: '#222', 
+                                marginBottom: 24,
+                                paddingBottom: 12,
+                                borderBottom: '3px solid #52c41a'
+                              }}>
+                                Khóa học cơ bản
+                              </h3>
+                              <Row gutter={[16, 16]}>
+                                {courses
+                                  .filter(course => 
+                                    course.level === 'BASIC' || 
+                                    course.level === 'basic' || 
+                                    !course.level // Nếu không có level, mặc định là BASIC
+                                  )
+                                  .map((course) => (
+                                    <Col xs={24} sm={12} lg={8} key={course.id}>
+                                      <OptimizedCourseCard course={course} onCardClick={handleCardClick} />
+                                    </Col>
+                                  ))}
+                              </Row>
+                              {courses.filter(course => 
+                                course.level === 'BASIC' || 
+                                course.level === 'basic' || 
+                                !course.level
+                              ).length === 0 && (
+                                <Empty
+                                  description="Chưa có khóa học cơ bản"
+                                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                  style={{ padding: '40px 0' }}
+                                />
+                              )}
+                            </div>
+
+                            {/* Section: Khóa học ứng dụng */}
+                            <div style={{ marginBottom: 32 }}>
+                              <h3 style={{ 
+                                fontSize: '28px', 
+                                fontWeight: 700, 
+                                color: '#222', 
+                                marginBottom: 24,
+                                paddingBottom: 12,
+                                borderBottom: '3px solid #1890ff'
+                              }}>
+                                Khóa học ứng dụng
+                              </h3>
+                              <Row gutter={[16, 16]}>
+                                {courses
+                                  .filter(course => 
+                                    course.level === 'APPLICATION' || 
+                                    course.level === 'application'
+                                  )
+                                  .map((course) => (
+                                    <Col xs={24} sm={12} lg={8} key={course.id}>
+                                      <OptimizedCourseCard course={course} onCardClick={handleCardClick} />
+                                    </Col>
+                                  ))}
+                              </Row>
+                              {courses.filter(course => 
+                                course.level === 'APPLICATION' || 
+                                course.level === 'application'
+                              ).length === 0 && (
+                                <Empty
+                                  description="Chưa có khóa học ứng dụng"
+                                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                  style={{ padding: '40px 0' }}
+                                />
+                              )}
+                            </div>
+                          </>
+                        ) : (
+                          /* Hiển thị bình thường khi có filter */
+                          <Row gutter={[16, 16]} style={{ marginBottom: 32 }}>
+                            {courses.map((course) => (
+                              <Col xs={24} sm={12} lg={8} key={course.id}>
+                                <OptimizedCourseCard course={course} onCardClick={handleCardClick} />
+                              </Col>
+                            ))}
+                          </Row>
+                        )}
 
                         {total > 0 && (
                           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>

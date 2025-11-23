@@ -1,5 +1,5 @@
 import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons'
-import { Card, Image } from 'antd'
+import { Card, Image, Tag } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { ICourse } from '@/modules/home/cores/interfaces'
 import images from '@/assets/images'
@@ -8,21 +8,59 @@ const { Meta } = Card
 
 const ItemTopCourses = ({ course }: { course: ICourse }) => {
   const navigate = useNavigate()
+  
+  // Lấy tag từ backend
+  const getCourseTag = () => {
+    if (!course?.level) return null
+    
+    // level từ backend là enum: "BASIC" hoặc "APPLICATION"
+    if (course.level === 'APPLICATION' || course.level === 'application') {
+      return { text: 'Ứng dụng', color: 'blue' }
+    }
+    if (course.level === 'BASIC' || course.level === 'basic') {
+      return { text: 'Cơ bản', color: 'green' }
+    }
+    return { text: course.level, color: 'default' }
+  }
+
+  const courseTag = getCourseTag()
+
   return (
     <Card
       cover={
-        <Image
-          preview={false}
-          src={course?.img}
-          alt={`Khoá học ${course.title}`}
-          fallback={images.imgeNotFond}
-          style={{ 
-            width: '100%', 
-            height: '200px',
-            objectFit: 'cover',
-            borderRadius: '16px 16px 0 0'
-          }}
-        />
+        <div style={{ position: 'relative' }}>
+          <Image
+            preview={false}
+            src={course?.img}
+            alt={`Khoá học ${course.title}`}
+            fallback={images.imgeNotFond}
+            style={{ 
+              width: '100%', 
+              height: '200px',
+              objectFit: 'cover',
+              borderRadius: '16px 16px 0 0'
+            }}
+          />
+          {courseTag && (
+            <Tag
+              color={courseTag.color}
+              style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                margin: 0,
+                borderRadius: '8px',
+                fontWeight: 600,
+                fontSize: '12px',
+                padding: '4px 12px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                zIndex: 2
+              }}
+            >
+              {courseTag.text}
+            </Tag>
+          )}
+        </div>
       }
       hoverable
       className="group text-center rounded-2xl bg-white transition-all duration-300"

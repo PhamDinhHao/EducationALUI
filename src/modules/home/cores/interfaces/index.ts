@@ -17,6 +17,7 @@ export interface ICourse {
   duration?: string
   courseType?: ICourseType
   enrollCount?: number
+  level?: string // "Cơ bản" hoặc "Ứng dụng"
 }
 
 

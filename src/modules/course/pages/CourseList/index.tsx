@@ -1,14 +1,11 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Pagination, Typography, Spin, Alert, Input, Row, Col, Card, Empty } from 'antd'
-import { SearchOutlined, ArrowUpOutlined } from '@ant-design/icons'
-import { fetchQueryCourses, fetchTopEnrolledCourses } from '@/shared/server-action/courses.server'
-import { fetchCourseTypes } from '@/shared/server-action/courseTypes.server'
+import { Pagination, Spin, Alert, Row, Col, Card, Empty } from 'antd'
+import { ArrowUpOutlined } from '@ant-design/icons'
+import { fetchQueryCourses } from '@/shared/server-action/courses.server'
+import { fetchCourseTypes, fetchTopCategories } from '@/shared/server-action/courseTypes.server'
 import { ICourse, ICourseType } from '@/modules/home/cores/interfaces'
 import { OptimizedCourseCard } from '@/modules/course/components/OptimizedCourseCard'
-
-const { Title, Text } = Typography
-const { Search } = Input
 
 export default function CourseList() {
   const navigate = useNavigate()
@@ -23,6 +20,7 @@ export default function CourseList() {
     searchParams.get('courseTypeId') ? parseInt(searchParams.get('courseTypeId') || '0') : undefined
   )
   const [courseTypes, setCourseTypes] = useState<ICourseType[]>([])
+  const [courseTypesWithCount, setCourseTypesWithCount] = useState<Array<ICourseType & { courseCount: number }>>([])
   const [isVisible, setIsVisible] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [showScrollTop, setShowScrollTop] = useState(false)
@@ -82,6 +80,10 @@ export default function CourseList() {
       try {
         const types = await fetchCourseTypes()
         setCourseTypes(types)
+        
+        // Fetch categories with course count
+        const categoriesWithCount = await fetchTopCategories(100) // Get all categories
+        setCourseTypesWithCount(categoriesWithCount || [])
       } catch (err) {
         console.error('Error loading course types:', err)
       }
@@ -393,85 +395,8 @@ export default function CourseList() {
 
           {/* Main Content */}
           <div className='grid grid-cols-1 gap-8 lg:grid-cols-4'>
-            {/* Sidebar Filter */}
-            <div className='lg:col-span-1'>
-              <div
-                className={`${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
-                style={{ animationDelay: '0.1s' }}
-              >
-                <Card
-                  title={
-                    <span style={{ fontSize: '18px', fontWeight: 700, color: '#222' }}>
-                      Categories
-                    </span>
-                  }
-                  style={{
-                    borderRadius: '16px',
-                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                    border: 'none'
-                  }}
-                >
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <div
-                      onClick={() => handleCourseTypeFilterChange(undefined)}
-                      className='sidebar-item'
-                      style={{
-                        padding: '12px 16px',
-                        borderRadius: 8,
-                        cursor: 'pointer',
-                        background: !courseTypeId ? '#e6f4ff' : 'transparent',
-                        border: !courseTypeId ? '1px solid #1890ff' : '1px solid #f0f0f0',
-                        transition: 'all 0.3s'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!courseTypeId) return
-                        e.currentTarget.style.background = '#f5f5f5'
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!courseTypeId) return
-                        e.currentTarget.style.background = 'transparent'
-                      }}
-                    >
-                      <Text strong={!courseTypeId} style={{ color: !courseTypeId ? '#1890ff' : '#333', fontSize: '15px' }}>
-                        Tất cả khóa học
-                      </Text>
-                    </div>
-                    {courseTypes.map((type) => (
-                      <div
-                        key={type.id}
-                        onClick={() => handleCourseTypeFilterChange(type.id)}
-                        className='sidebar-item'
-                        style={{
-                          padding: '12px 16px',
-                          borderRadius: 8,
-                          cursor: 'pointer',
-                          background: courseTypeId === type.id ? '#e6f4ff' : 'transparent',
-                          border: courseTypeId === type.id ? '1px solid #1890ff' : '1px solid #f0f0f0',
-                          transition: 'all 0.3s'
-                        }}
-                        onMouseEnter={(e) => {
-                          if (courseTypeId !== type.id) {
-                            e.currentTarget.style.background = '#f5f5f5'
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (courseTypeId !== type.id) {
-                            e.currentTarget.style.background = 'transparent'
-                          }
-                        }}
-                      >
-                        <Text strong={courseTypeId === type.id} style={{ color: courseTypeId === type.id ? '#1890ff' : '#333', fontSize: '15px' }}>
-                          {type.name}
-                        </Text>
-                      </div>
-                    ))}
-                  </div>
-                </Card>
-              </div>
-            </div>
-
             {/* Course List */}
-            <div className='lg:col-span-3'>
+            <div className='lg:col-span-3 lg:order-1 order-2'>
               <div
                 className={`${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
                 style={{ animationDelay: '0.2s' }}
@@ -624,6 +549,79 @@ export default function CourseList() {
                     )}
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Sidebar Filter */}
+            <div className='lg:col-span-1 lg:order-2 order-1 mt-16'>
+              <div
+                className={`${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
+                style={{ animationDelay: '0.1s' }}
+              >
+                <Card
+                  title={
+                    <span style={{ fontSize: '18px', fontWeight: 700, color: '#222' }}>
+                      Categories
+                    </span>
+                  }
+                  style={{
+                    borderRadius: '16px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                    border: 'none'
+                  }}
+                >
+                  <div className='space-y-1'>
+                    <div
+                      onClick={() => handleCourseTypeFilterChange(undefined)}
+                      className='sidebar-item group flex cursor-pointer items-center justify-between rounded-2xl px-4 py-4 transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50'
+                      style={{
+                        background: !courseTypeId ? 'linear-gradient(to right, #e6f4ff, #f0f5ff)' : 'transparent'
+                      }}
+                    >
+                      <span className={`font-semibold group-hover:text-indigo-600 ${!courseTypeId ? 'text-indigo-600' : 'text-gray-700'}`}>
+                        Tất cả khóa học
+                      </span>
+                      <span className='rounded-full bg-indigo-100 px-3 py-1 text-sm font-bold text-indigo-700'>
+                        {total}
+                      </span>
+                    </div>
+                    {courseTypesWithCount.map((type) => (
+                      <div
+                        key={type.id}
+                        onClick={() => handleCourseTypeFilterChange(type.id)}
+                        className='sidebar-item group flex cursor-pointer items-center justify-between rounded-2xl px-4 py-4 transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50'
+                        style={{
+                          background: courseTypeId === type.id ? 'linear-gradient(to right, #e6f4ff, #f0f5ff)' : 'transparent'
+                        }}
+                      >
+                        <span className={`font-semibold group-hover:text-indigo-600 ${courseTypeId === type.id ? 'text-indigo-600' : 'text-gray-700'}`}>
+                          {type.name}
+                        </span>
+                        <span className='rounded-full bg-indigo-100 px-3 py-1 text-sm font-bold text-indigo-700'>
+                          {type.courseCount || 0}
+                        </span>
+                      </div>
+                    ))}
+                    {/* Fallback: Show courseTypes without count if courseTypesWithCount is empty */}
+                    {courseTypesWithCount.length === 0 && courseTypes.map((type) => (
+                      <div
+                        key={type.id}
+                        onClick={() => handleCourseTypeFilterChange(type.id)}
+                        className='sidebar-item group flex cursor-pointer items-center justify-between rounded-2xl px-4 py-4 transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50'
+                        style={{
+                          background: courseTypeId === type.id ? 'linear-gradient(to right, #e6f4ff, #f0f5ff)' : 'transparent'
+                        }}
+                      >
+                        <span className={`font-semibold group-hover:text-indigo-600 ${courseTypeId === type.id ? 'text-indigo-600' : 'text-gray-700'}`}>
+                          {type.name}
+                        </span>
+                        <span className='rounded-full bg-indigo-100 px-3 py-1 text-sm font-bold text-indigo-700'>
+                          0
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
               </div>
             </div>
           </div>

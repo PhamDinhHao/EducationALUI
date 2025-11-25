@@ -253,26 +253,27 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
       const manager = conversationManagerRef.current
       if (!manager) throw new Error('ConversationManager not initialized')
       
-      const context = manager.getContext(sessionIdRef.current, subject?.label || 'môn học')
-      const allMessages = manager.getAllMessages(sessionIdRef.current)
-
-      let prompt = `Dựa trên context sau, hãy trả lời câu hỏi mới:\n\nContext: ${context.summary}\n\nTin nhắn gần đây:\n${context.recent.map(msg => `${msg.role}: ${msg.content}`).join('\n')}\n\nCâu hỏi mới: ${userMessage.content}`
+      // Lấy TOÀN BỘ lịch sử trò chuyện, không chỉ recent messages
+      const allMessages = manager.getAllMessages(sessionIdRef.current) || []
       
-      if (imageToSend) {
-        prompt += `\n\nLưu ý: Người dùng đã gửi kèm ảnh bài tập. Hãy phân tích ảnh và trả lời dựa trên nội dung ảnh.`
-      }
+      // Tạo messages array với TOÀN BỘ lịch sử trò chuyện
+      const messagesForGemini = allMessages.map(msg => ({
+        role: (msg.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+        content: msg.content,
+        timestamp: msg.timestamp
+      }))
 
-      // Handle special cases for rewriting problems
+      // Handle special cases for rewriting problems - tìm ảnh gốc trong toàn bộ lịch sử
       if (userMessage.content.toLowerCase().includes('viết lại đề') || 
           userMessage.content.toLowerCase().includes('đề bài') || 
           userMessage.content.toLowerCase().includes('đề toán') || 
           userMessage.content.toLowerCase().includes('câu b') || 
           userMessage.content.toLowerCase().includes('giải câu') || 
-          userMessage.content.toLowerCase().includes('toàn bộ đề')) {
+          userMessage.content.toLowerCase().includes('toàn bộ đề') ||
+          userMessage.content.toLowerCase().includes('giải lại')) {
         
-        prompt += `\n\nQUAN TRỌNG: Nếu user yêu cầu viết lại đề bài hoặc giải câu b, hãy tìm trong lịch sử hội thoại để tìm đề bài gốc và viết lại chính xác. Đừng đòi hỏi thêm thông tin nếu đề bài đã có trong context.`
-        
-        const originalImageMessage = allMessages?.find(msg => msg.imageFile || msg.imageUrl)
+        // Tìm ảnh gốc trong toàn bộ lịch sử
+        const originalImageMessage = allMessages.find(msg => msg.imageFile || msg.imageUrl)
         if (originalImageMessage && !imageToSend) {
           if (originalImageMessage.imageFile) {
             imageToSend = originalImageMessage.imageFile
@@ -283,27 +284,25 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
         }
       }
 
-      const messagesForGemini = (allMessages || []).map(msg => ({
-        role: (msg.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
-        content: msg.content,
-        timestamp: msg.timestamp
-      }))
-      
-      if (messagesForGemini.length === 0) {
-        const fallback = context.recent.map(msg => ({
-          role: (msg.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
-          content: msg.content,
-          timestamp: msg.timestamp
-        }))
-        messagesForGemini.push(...fallback)
+      // Tạo system message với hướng dẫn rõ ràng về việc duy trì context
+      const systemMessage = {
+        role: 'assistant' as const,
+        content: `Bạn là một giáo viên chuyên môn về ${subject?.label || 'môn học'}. 
+
+QUAN TRỌNG:
+1. Bạn có TOÀN BỘ lịch sử trò chuyện trước đó trong cuộc hội thoại này
+2. Khi học sinh yêu cầu giải lại, viết lại đề, hoặc giải câu b, bạn PHẢI sử dụng thông tin từ các tin nhắn trước đó
+3. KHÔNG được yêu cầu học sinh cung cấp lại đề bài nếu đề bài đã có trong lịch sử trò chuyện
+4. Nếu học sinh nói "giải lại" hoặc "sai rồi", hãy xem lại lời giải trước đó và đưa ra lời giải mới chính xác hơn
+5. Luôn duy trì context và tham chiếu đến các câu hỏi, bài giải trước đó khi cần thiết
+
+Hãy trả lời câu hỏi của học sinh một cách chi tiết, dễ hiểu và chính xác, sử dụng toàn bộ thông tin từ cuộc trò chuyện.`,
+        timestamp: new Date()
       }
 
+      // Gửi TOÀN BỘ lịch sử trò chuyện + tin nhắn mới
       const enhancedMessages = [
-        {
-          role: 'assistant' as const,
-          content: `Bạn là một giáo viên chuyên môn về ${subject?.label || 'môn học'}. Hãy trả lời câu hỏi của học sinh một cách chi tiết, dễ hiểu và chính xác. QUAN TRỢNG: Duy trì context của cuộc trò chuyện và sử dụng thông tin từ các tin nhắn trước đó để trả lời.`,
-          timestamp: new Date()
-        },
+        systemMessage,
         ...messagesForGemini
       ]
 
@@ -322,7 +321,9 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
       manager.addMessage(sessionIdRef.current, 'model', assistantMessage.content)
       setMessages(prev => [...prev, assistantMessage])
 
-      if (context.recent.length > 10) {
+      // Tự động summarize khi có quá nhiều tin nhắn (để tối ưu hiệu suất)
+      const updatedMessages = manager.getAllMessages(sessionIdRef.current) || []
+      if (updatedMessages.length > 15) {
         manager.summarizeHistory(sessionIdRef.current, subject?.label || 'môn học')
       }
     } catch (error) {

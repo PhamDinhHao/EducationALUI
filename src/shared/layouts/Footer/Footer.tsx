@@ -123,7 +123,7 @@ const Footer = () => {
       <div
         style={{
           position: 'absolute',
-          right: 40,
+          right: 20,
           top: '50%',
           transform: 'translateY(-50%)'
         }}

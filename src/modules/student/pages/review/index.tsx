@@ -3,7 +3,7 @@ import { Card, Typography, Select, Button, Spin, message } from 'antd'
 
 import Sidebar from '@/shared/components/Sidebar'
 import { GeminiService, ChatMessage } from '@/modules/ai/pages/ai/Service/gemini.service'
-import { formatAIText } from '@/shared/lib/aiFormat'
+import Quiz, { QuizQuestion } from './Quiz'
 
 // Types and Interfaces
 interface SubjectOption {
@@ -70,13 +70,41 @@ const SUBJECT_TOPICS: Record<string, TopicOption[]> = {
 }
 
 // Utility Functions
-const generatePrompt = (
+const generateQuizPrompt = (
   subjectLabel: string, 
   grade: string, 
   levelLabel: string, 
   topicLabel: string
 ): string => {
-  return `Tạo nội dung ôn tập cho học sinh với các tham số:\n\n- Môn: ${subjectLabel}\n- Lớp: ${grade}\n- Mức độ: ${levelLabel}\n- Chủ đề: ${topicLabel}\n\nYêu cầu output bằng tiếng Việt, rõ ràng, có cấu trúc:\n1) Tóm tắt kiến thức trọng tâm (gạch đầu dòng)\n2) Công thức/định nghĩa quan trọng (code block hoặc định dạng dễ đọc)\n3) 3-5 bài luyện tập mẫu theo đúng chủ đề (ghi rõ câu hỏi → đáp án → giải thích ngắn)\n4) Mẹo ghi nhớ (ít nhất 3 mẹo cụ thể)\n5) Lỗi sai thường gặp (ít nhất 3 lỗi phổ biến)\n6) Đề xuất lộ trình ôn tập 3 ngày ngắn gọn.\n\nQUAN TRỌNG: \n- Bắt đầu trực tiếp với nội dung ôn tập, KHÔNG có lời chào hỏi hay giới thiệu vai trò gia sư\n- Đảm bảo hoàn thành đầy đủ tất cả 6 phần, không được cắt cụt\n- Phần "Mẹo ghi nhớ" và "Lỗi sai thường gặp" phải có nội dung cụ thể, không được để trống`
+  return `Tạo một bài thi trắc nghiệm cho học sinh với các tham số:
+- Môn: ${subjectLabel}
+- Lớp: ${grade}
+- Mức độ: ${levelLabel}
+- Chủ đề: ${topicLabel}
+
+Yêu cầu:
+1. Tạo 10 câu hỏi trắc nghiệm (nếu mức độ Dễ thì 8 câu, Trung bình 10 câu, Khó 12 câu)
+2. Mỗi câu hỏi có 4 đáp án (A, B, C, D)
+3. Chỉ có 1 đáp án đúng cho mỗi câu
+4. Mỗi câu hỏi cần có giải thích ngắn gọn
+
+Trả về KẾT QUẢ DUY NHẤT dưới dạng JSON với format sau (KHÔNG có text thừa, KHÔNG có markdown, CHỈ JSON thuần):
+{
+  "questions": [
+    {
+      "question": "Nội dung câu hỏi",
+      "options": ["Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D"],
+      "correctAnswer": 0,
+      "explanation": "Giải thích ngắn gọn tại sao đáp án này đúng"
+    }
+  ]
+}
+
+QUAN TRỌNG:
+- CHỈ trả về JSON, KHÔNG có text thừa, KHÔNG có markdown code block
+- correctAnswer là index (0, 1, 2, hoặc 3) của đáp án đúng trong mảng options
+- Tất cả nội dung bằng tiếng Việt
+- Câu hỏi phải phù hợp với mức độ ${levelLabel} và lớp ${grade}`
 }
 
 // Components
@@ -97,33 +125,79 @@ const ReviewPage = () => {
   const [level, setLevel] = useState('easy')
   const [topic, setTopic] = useState('natural')
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<string>('')
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
 
   // Computed values
   const topicOptions = useMemo(() => SUBJECT_TOPICS[subject] || [], [subject])
+
+  // Parse JSON from AI response
+  const parseQuizJSON = (text: string): QuizQuestion[] => {
+    try {
+      // Try to extract JSON from markdown code blocks
+      const jsonMatch = text.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/) || text.match(/(\{[\s\S]*\})/)
+      const jsonString = jsonMatch ? jsonMatch[1] : text.trim()
+      
+      // Remove any leading/trailing whitespace and parse
+      const parsed = JSON.parse(jsonString.trim())
+      
+      if (parsed.questions && Array.isArray(parsed.questions)) {
+        return parsed.questions.map((q: any) => ({
+          question: q.question || '',
+          options: q.options || [],
+          correctAnswer: typeof q.correctAnswer === 'number' ? q.correctAnswer : parseInt(q.correctAnswer) || 0,
+          explanation: q.explanation || ''
+        }))
+      }
+      
+      throw new Error('Invalid format')
+    } catch (error) {
+      console.error('Error parsing quiz JSON:', error)
+      message.error('Không thể parse dữ liệu từ AI. Vui lòng thử lại!')
+      return []
+    }
+  }
 
   // Event Handlers
   const handleGenerate = async () => {
     try {
       setLoading(true)
-      setResult('')
+      setQuizQuestions([])
 
       const subjectLabel = SUBJECTS.find(s => s.value === subject)?.label || subject
       const levelLabel = LEVELS.find(l => l.value === level)?.label || level
       const topicLabel = topicOptions.find(t => t.value === topic)?.label || topic
 
-      const prompt = generatePrompt(subjectLabel, grade, levelLabel, topicLabel)
+      const prompt = generateQuizPrompt(subjectLabel, grade, levelLabel, topicLabel)
 
       const messages: ChatMessage[] = [
         { role: 'user', content: prompt, timestamp: new Date() }
       ]
 
-      const aiText = await GeminiService.chat(messages, subjectLabel)
-      setResult(formatAIText(aiText))
+      const aiResponse = await GeminiService.chat(messages, subjectLabel)
+      const questions = parseQuizJSON(aiResponse)
+      
+      if (questions.length > 0) {
+        setQuizQuestions(questions)
+        message.success(`Đã tạo ${questions.length} câu hỏi trắc nghiệm!`)
+      } else {
+        message.error('Không thể tạo câu hỏi. Vui lòng thử lại!')
+      }
     } catch (err) {
-      message.error('Không thể tạo nội dung ôn tập. Vui lòng thử lại!')
+      console.error('Error generating quiz:', err)
+      message.error('Không thể tạo bài thi trắc nghiệm. Vui lòng thử lại!')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleQuizComplete = (score: number, total: number) => {
+    const percentage = Math.round((score / total) * 100)
+    if (percentage >= 80) {
+      message.success(`Xuất sắc! Bạn đã đạt ${percentage}%`)
+    } else if (percentage >= 50) {
+      message.info(`Tốt! Bạn đã đạt ${percentage}%`)
+    } else {
+      message.warning(`Cần cố gắng thêm! Bạn đã đạt ${percentage}%`)
     }
   }
 
@@ -194,12 +268,19 @@ const ReviewPage = () => {
             </div>
           </Card>
 
-          {result && (
-            <Card className="rounded-2xl mt-4" title="Kết quả ôn tập" bodyStyle={{ padding: 0 }}>
-              <div className="max-h-[65vh] overflow-y-auto p-5">
-                <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: result }} />
+          {loading && (
+            <Card className="rounded-2xl mt-4" bodyStyle={{ padding: 40, textAlign: 'center' }}>
+              <Spin size="large" />
+              <div className="mt-4">
+                <Text>Đang tạo bài thi trắc nghiệm...</Text>
               </div>
             </Card>
+          )}
+
+          {quizQuestions.length > 0 && !loading && (
+            <div className="mt-4">
+              <Quiz questions={quizQuestions} onComplete={handleQuizComplete} />
+            </div>
           )}
 
           <div className="text-center mt-3">

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Radio, Typography, Progress, Space, Divider, message } from 'antd'
+import { Card, Button, Radio, Typography, Progress, Space, Divider } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined, ArrowRightOutlined } from '@ant-design/icons'
 
 const { Title, Text } = Typography

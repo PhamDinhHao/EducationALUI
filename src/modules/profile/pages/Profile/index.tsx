@@ -8,7 +8,7 @@ import { useBoundStore } from '@/shared/stores'
 import { getProfile, updateProfile, changePassword, uploadAvatar } from '@/shared/services/auth.service'
 import { User } from '@/shared/core/types'
 import { beforeUpload } from '@/shared/utils/image-utils'
-import { getMyCertificates, downloadCertificate, type Certificate } from '@/modules/course/services/certificate.service'
+import { getMyCertificates, type Certificate } from '@/modules/course/services/certificate.service'
 import { downloadCertificatePDF, downloadCertificateImage } from '@/modules/course/services/certificateGenerator.service'
 
 const { Title, Text } = Typography

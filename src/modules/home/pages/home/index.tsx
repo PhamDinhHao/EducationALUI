@@ -4,7 +4,6 @@ import { Input, Button } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import TopCourses from '@/modules/home/component/TopCourses/TopCourses.tsx'
-import ExplorerCourse from '@/modules/home/component/ExplorerCourse/ExplorerCourse.tsx'
 import TopArticles from '@/modules/home/component/TopArticles/TopArticles.tsx'
 import StudentReviews from '@/modules/home/component/StudentReviews/StudentReviews.tsx'
 import Footer from '@shared/layouts/Footer/Footer.tsx'
@@ -64,11 +63,12 @@ const Home = () => {
   return (
     <div className='w-full bg-white' style={{ minHeight: '100%', overflow: 'visible' }}>
       {/* Banner Section */}
-      <section className='relative w-full' style={{ minHeight: '100vh', marginBottom: 0, paddingBottom: 0 }}>
+      <section className='relative w-full' style={{ marginBottom: 0, paddingBottom: 0 }}>
         <motion.div
           className='relative w-full overflow-hidden'
           style={{
-            minHeight: '100vh',
+            minHeight: '80vh',
+            padding: '60px 0',
             background: 'linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%)',
             backgroundImage: `
               repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px),
@@ -82,7 +82,7 @@ const Home = () => {
           animate="visible"
           variants={bannerVariants}
         >
-          <div className='container mx-auto h-full px-4 sm:px-6 lg:px-8' style={{ paddingTop: '10%' }}>
+          <div className='container mx-auto h-full px-4 sm:px-6 lg:px-8'>
             <div className='flex h-full items-center justify-between'>
               {/* Left Section - Text and Search */}
               <motion.div
@@ -260,41 +260,15 @@ const Home = () => {
       </section>
 
       {/* Top Courses Section */}
-      <section className='flex w-full items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50' style={{ minHeight: '100vh', padding: '80px 0', marginTop: 0 }}>
+      <section className='flex w-full items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50' style={{ padding: '60px 0', marginTop: 0 }}>
         <motion.div
           className='w-full max-w-7xl px-8'
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: false, amount: 0.2 }}
           variants={sectionVariants}
         >
           <TopCourses />
-        </motion.div>
-      </section>
-
-      {/* Explorer Course Section */}
-      <section className='flex w-full items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50 p-8' style={{ minHeight: '100vh' }}>
-        <motion.div
-          className='w-full max-w-7xl'
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={sectionVariants}
-        >
-          <ExplorerCourse />
-        </motion.div>
-      </section>
-
-      {/* Top Articles Section */}
-      <section className='flex w-full items-center justify-center bg-gradient-to-br from-green-50 to-teal-50' style={{ minHeight: '100vh', padding: '80px 0' }}>
-        <motion.div
-          className='w-full max-w-7xl px-8'
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={sectionVariants}
-        >
-          <TopArticles />
         </motion.div>
       </section>
 
@@ -302,6 +276,20 @@ const Home = () => {
       <section className='w-full'>
         <StudentReviews />
       </section>
+
+      {/* Top Articles Section */}
+      <section className='flex w-full items-center justify-center bg-gradient-to-br from-green-50 to-teal-50' style={{ padding: '60px 0' }}>
+        <motion.div
+          className='w-full max-w-7xl px-8'
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.2 }}
+          variants={sectionVariants}
+        >
+          <TopArticles />
+        </motion.div>
+      </section>
+
 
       {/* Footer Section */}
       <section className='w-full'>

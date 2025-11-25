@@ -4,7 +4,7 @@ import TitleHeaderHome from '@shared/components/TitleHeaderHome/TitleHeaderHome.
 import ItemTopCourses from '@/modules/home/component/TopCourses/ItemTopCourses.tsx'
 import { fetchTopEnrolledCourses } from '@/shared/server-action/courses.server'
 import { useNavigate } from 'react-router-dom'
-import CarouselSlider from '@shared/components/CarouselSlider/CarouselSlider.tsx'
+import { Row, Col } from 'antd'
 
 const TopCourses = () => {
 
@@ -27,14 +27,25 @@ const TopCourses = () => {
   }
 
 
+  // Limit to 8 courses for grid display (2 rows x 4 items)
+  const displayCourses = courses.slice(0, 8)
+
   return (
     <div>
-      <TitleHeaderHome onAction={handleNavigate} heading='Khóa học nổi bật' description='Explore our Popular Courses' buttonLabel='Tất cả khóa học' />
-      <CarouselSlider<ICourse>
-        data={courses}
-        renderItem={(course) => <ItemTopCourses course={course} />}
-        itemsPerView={4}
+      <TitleHeaderHome 
+        onAction={handleNavigate} 
+        heading='TÀI NGUYÊN NỔI BẬT' 
+        description='Khám phá những đột phá mới và truy cập các tài nguyên trong AI' 
+        buttonLabel='Tất cả khóa học' 
+        center={true}
       />
+      <Row gutter={[16, 16]}>
+        {displayCourses.map((course) => (
+          <Col xs={24} sm={12} md={12} lg={6} xl={6} key={course.id}>
+            <ItemTopCourses course={course} />
+          </Col>
+        ))}
+      </Row>
     </div>
   )
 }

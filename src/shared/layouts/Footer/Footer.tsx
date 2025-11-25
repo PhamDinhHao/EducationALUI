@@ -11,7 +11,37 @@ import {
 
 const { Title, Text, Link } = Typography
 
-const Footer = () => (
+const Footer = () => {
+  const scrollToTop = () => {
+    // Tìm container scroll chính
+    const rootLayoutContent = document.querySelector('.root-layout-content') as HTMLElement
+    
+    if (rootLayoutContent) {
+      // Scroll container chính với smooth behavior
+      rootLayoutContent.scrollTo({ top: 0, behavior: 'smooth' })
+      // Cũng scroll window để đảm bảo
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else {
+      // Fallback: scroll window và document
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      if (document.documentElement) {
+        document.documentElement.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+      if (document.body) {
+        document.body.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+    }
+    
+    // Thêm fallback: scroll đến phần tử đầu tiên
+    setTimeout(() => {
+      const firstElement = document.querySelector('section, .container, [class*="banner"]')
+      if (firstElement) {
+        firstElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }, 100)
+  }
+
+  return (
   <div
     style={{
       background: '#fafafa',
@@ -99,6 +129,7 @@ const Footer = () => (
         }}
       >
         <div
+          onClick={scrollToTop}
           style={{
             width: 44,
             height: 44,
@@ -107,7 +138,17 @@ const Footer = () => (
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            transform: 'translateY(-50%)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#ff8c00'
+            e.currentTarget.style.transform = 'translateY(calc(-50% - 2px))'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#222'
+            e.currentTarget.style.transform = 'translateY(-50%)'
           }}
         >
           <ArrowUpOutlined style={{ color: '#fff', fontSize: 24 }} />
@@ -115,6 +156,7 @@ const Footer = () => (
       </div>
     </div>
   </div>
-)
+  )
+}
 
 export default Footer

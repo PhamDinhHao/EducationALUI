@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import { Card, Button, Radio, Checkbox, Input, Typography, Progress, Space, Divider, Modal, Form, message } from 'antd'
+import { Card, Button, Radio, Input, Typography, Progress, Space, Divider, Modal, message } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined } from '@ant-design/icons'
 
 const { Title, Text } = Typography
-const { TextArea } = Input
 
 export interface Part1Question {
   question: string
@@ -49,7 +48,6 @@ interface AdvancedQuizProps {
 }
 
 const AdvancedQuiz: React.FC<AdvancedQuizProps> = ({ quizData, onComplete, onRetry }) => {
-  const [form] = Form.useForm()
   const [studentName, setStudentName] = useState('')
   const [studentClass, setStudentClass] = useState('')
   const [timeLeft, setTimeLeft] = useState(20 * 60) // 20 phút = 1200 giây
@@ -418,9 +416,6 @@ const QuizResults: React.FC<QuizResultsProps> = ({ quizData, result, onRetry }) 
       const correctPart3 = quizData.part3.filter((q, i) => 
         result.answers.part3[i].trim().toLowerCase() === q.correctAnswer.trim().toLowerCase()
       ).length
-
-      const totalCorrect = correctPart1 + correctPart2 + correctPart3
-      const percentage = Math.round((result.score / 10) * 100)
 
       // Generate feedback using AI (simplified version - you can enhance this)
       const strengths: string[] = []

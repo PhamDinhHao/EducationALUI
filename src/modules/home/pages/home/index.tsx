@@ -265,7 +265,7 @@ const Home = () => {
           className='w-full max-w-7xl px-8'
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: false, amount: 0.2 }}
           variants={sectionVariants}
         >
           <TopCourses />
@@ -283,7 +283,7 @@ const Home = () => {
           className='w-full max-w-7xl px-8'
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: false, amount: 0.2 }}
           variants={sectionVariants}
         >
           <TopArticles />

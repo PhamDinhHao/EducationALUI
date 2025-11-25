@@ -55,7 +55,7 @@ const StudentReviews = () => {
           className='text-center mb-12'
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: false }}
           transition={{ duration: 0.6 }}
         >
           <h2 className='text-4xl sm:text-5xl font-bold mb-4' style={{ color: '#ff8c00' }}>
@@ -73,7 +73,7 @@ const StudentReviews = () => {
               key={testimonial.id}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: false }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
               <Card
@@ -111,7 +111,7 @@ const StudentReviews = () => {
         className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-16'
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ once: false, amount: 0.2 }}
         variants={bannerVariants}
       >
           <div

@@ -1,6 +1,12 @@
-import { Menu as MenuAntd, Button, Layout } from 'antd'
+import { Menu as MenuAntd, Button, Layout, Input } from 'antd'
 import { Link, useLocation } from 'react-router-dom'
-import { LogoutOutlined, ReadOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons'
+import { 
+  ReadOutlined, 
+  SearchOutlined, 
+  UserOutlined, 
+  DownloadOutlined, 
+  SettingOutlined
+} from '@ant-design/icons'
 import { MenuItem } from '@/shared/core/types'
 import { PagePath } from '@/shared/core/enum/page.enum'
 import { memo, useMemo, useState } from 'react'
@@ -9,11 +15,6 @@ import { useMenu } from '@/shared/hooks/useMenu'
 const { Sider } = Layout
 
 const MENU_ITEMS: MenuItem[] = [
-  {
-    key: 'search',
-    icon: <SearchOutlined  />,
-    label: <Link to={PagePath.SEARCH_AI}>Tìm kiếm</Link>,
-  },
   {
     key: 'teacher',
     icon: <ReadOutlined />,
@@ -45,10 +46,9 @@ const Sidebar: React.FC = () => {
   const { onMenuClick } = useMenu()
   const location = useLocation()
 
-  const [searchText] = useState('')
+  const [searchText, setSearchText] = useState('')
 
   // Filter menu theo searchText
-  // console.log(location.pathname)
   const filteredItems = useMemo(() => {
     if (!searchText) return MENU_ITEMS
 
@@ -71,42 +71,236 @@ const Sidebar: React.FC = () => {
   }, [searchText])
 
   const selectedKey = useMemo(() => {
-    if (location.pathname.startsWith('/ai/')) {
-      return location.pathname.replace('/ai/', '')
-    }
-    return location.pathname
+    const pathname = location.pathname
+    
+    // Check all possible paths and return the matching PagePath
+    const allPaths = [
+      PagePath.BUILD_STRUCTURE,
+      PagePath.BUILD_LESSON,
+      PagePath.EXPREANDSUCCE,
+      PagePath.ASSISTANTAI,
+      PagePath.STUDENT_EXERCISE,
+      PagePath.STUDENT_REVIEW,
+      PagePath.STUDENT_MINDMAP,
+      PagePath.STUDENT_PLAN
+    ]
+    
+    // Find exact match first
+    const exactMatch = allPaths.find(path => pathname === path)
+    if (exactMatch) return exactMatch
+    
+    // Find path that is included in pathname
+    const includedMatch = allPaths.find(path => pathname.includes(path))
+    if (includedMatch) return includedMatch
+    
+    return pathname
   }, [location.pathname])
 
-  return (
-    <Sider
-      breakpoint='lg'
-      collapsedWidth='0'
-      className='site-layout-background shadow-sm'
-      style={{
-        background: '#fff',
-        height: '100vh',
-        borderRight: '1px solid #f0f0f0',
-        paddingTop: '16px',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <MenuAntd
-        selectedKeys={[selectedKey]}
-        defaultOpenKeys={[ 'search', 'teacher', 'student']}
-        items={filteredItems}
-        mode='inline'
-        theme='light'
-        onClick={onMenuClick}
-        className='menu-multiline'
-      />
+  // Check if current path is teacher section
+  const isTeacherSection = useMemo(() => {
+    const teacherPaths = [
+      PagePath.BUILD_STRUCTURE,
+      PagePath.BUILD_LESSON,
+      PagePath.EXPREANDSUCCE,
+      PagePath.ASSISTANTAI
+    ]
+    return teacherPaths.some(path => location.pathname.includes(path))
+  }, [location.pathname])
 
-      <div style={{ borderTop: '1px solid #f0f0f0', padding: '8px' }}>
-        <Button type='text' icon={<LogoutOutlined />} className='flex w-full items-center' style={{ width: '100%' }}>
+  // Check if current path is student section
+  const isStudentSection = useMemo(() => {
+    const studentPaths = [
+      PagePath.STUDENT_EXERCISE,
+      PagePath.STUDENT_REVIEW,
+      PagePath.STUDENT_MINDMAP,
+      PagePath.STUDENT_PLAN
+    ]
+    return studentPaths.some(path => location.pathname.includes(path))
+  }, [location.pathname])
+
+  // Get selected keys for menu - only child items, Ant Design will auto-highlight parent
+  const menuSelectedKeys = useMemo(() => {
+    if (!selectedKey) return []
+    
+    // Only return the child item key, not parent
+    // Ant Design Menu will automatically highlight parent when child is selected
+    return [selectedKey]
+  }, [selectedKey])
+
+  return (
+    <>
+      <style>{`
+        /* Set fixed margin for all menu items to prevent layout shift */
+        .ant-menu-inline .ant-menu-item,
+        .ant-menu-submenu-title {
+          margin: 0 8px !important;
+          border-radius: 8px;
+          transition: background-color 0.2s ease !important;
+        }
+
+        /* Remove default active style from parent menu */
+        .ant-menu-submenu-selected > .ant-menu-submenu-title {
+          background: transparent !important;
+          color: inherit !important;
+        }
+        .ant-menu-submenu-selected > .ant-menu-submenu-title .anticon {
+          color: inherit !important;
+        }
+        .ant-menu-submenu-selected > .ant-menu-submenu-title::after {
+          display: none !important;
+        }
+
+        /* Highlight child menu items when selected - with higher specificity */
+        .ant-menu-inline .ant-menu-item-selected,
+        .ant-menu-inline .ant-menu-item.ant-menu-item-selected {
+          background: #ff8c00 !important;
+          color: white !important;
+        }
+        .ant-menu-inline .ant-menu-item-selected .anticon,
+        .ant-menu-inline .ant-menu-item-selected a,
+        .ant-menu-inline .ant-menu-item.ant-menu-item-selected a {
+          color: white !important;
+        }
+        .ant-menu-inline .ant-menu-item-selected::after,
+        .ant-menu-inline .ant-menu-item.ant-menu-item-selected::after {
+          display: none !important;
+        }
+
+        /* Hover effect for menu items - only change background, not margin */
+        .ant-menu-inline .ant-menu-item:hover:not(.ant-menu-item-selected) {
+          background: #fff5e6 !important;
+        }
+        .ant-menu-submenu-title:hover {
+          background: #fff5e6 !important;
+        }
+      `}</style>
+      <Sider
+        width={280}
+        breakpoint='lg'
+        collapsedWidth='0'
+        className='site-layout-background shadow-sm'
+        style={{
+          background: '#fff',
+          height: '100vh',
+          borderRight: '1px solid #f0f0f0',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+      {/* Logo */}
+      <div style={{ padding: '20px 16px', borderBottom: '1px solid #f0f0f0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <h2 style={{ 
+            margin: 0, 
+            fontSize: '32px', 
+            fontWeight: 700,
+            color: '#222',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px'
+          }}>
+            GEN A
+            <span style={{ position: 'relative' }}>
+              I
+              <span style={{
+                position: 'absolute',
+                top: '-4px',
+                right: '-2px',
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                background: '#ff8c00'
+              }} />
+            </span>
+          </h2>
+        </div>
+      </div>
+
+      {/* Search Bar */}
+      <div style={{ padding: '16px' }}>
+        <Input
+          placeholder="Tìm kiếm"
+          prefix={<SearchOutlined style={{ color: '#999' }} />}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{
+            borderRadius: '8px',
+            border: '1px solid #e5e7eb'
+          }}
+        />
+      </div>
+
+      {/* Menu */}
+      <div style={{ flex: 1, overflowY: 'auto' }}>
+        <MenuAntd
+          selectedKeys={menuSelectedKeys}
+          defaultOpenKeys={['teacher', 'student']}
+          items={filteredItems.map((item) => {
+            if (item.key === 'teacher') {
+              return {
+                ...item,
+                className: isTeacherSection ? 'teacher-menu-item' : ''
+              }
+            }
+            if (item.key === 'student') {
+              return {
+                ...item,
+                className: isStudentSection ? 'student-menu-item' : ''
+              }
+            }
+            return item
+          })}
+          mode='inline'
+          theme='light'
+          onClick={onMenuClick}
+          className='menu-multiline'
+          style={{
+            border: 'none',
+            background: 'transparent'
+          }}
+        />
+      </div>
+
+      {/* Start Button */}
+      <div style={{ padding: '16px', borderTop: '1px solid #f0f0f0' }}>
+        <Button 
+          type='primary'
+          block
+          style={{
+            background: '#ff8c00',
+            border: 'none',
+            borderRadius: '8px',
+            height: '40px',
+            fontWeight: 600
+          }}
+        >
           Bắt đầu
         </Button>
       </div>
+
+      {/* Footer Icons */}
+      <div style={{ 
+        padding: '12px 16px', 
+        borderTop: '1px solid #f0f0f0',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <Button
+          type='text'
+          icon={<DownloadOutlined />}
+          style={{ color: '#666', padding: '4px 8px' }}
+        >
+          Tải về
+        </Button>
+        <Button
+          type='text'
+          icon={<SettingOutlined />}
+          style={{ color: '#666', padding: '4px 8px' }}
+        />
+      </div>
     </Sider>
+    </>
   )
 }
 

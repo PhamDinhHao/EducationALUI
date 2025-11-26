@@ -6,6 +6,12 @@ import { Button } from 'antd'
 import { getBlogList, getBlogTags, getRecentPosts } from '@/modules/blog/services/blogService.service'
 import { useBoundStore } from '@/shared/stores'
 
+const categories = [
+  { name: 'Student', icon: '🎓' },
+  { name: 'Teacher', icon: '🏫' },
+  { name: 'Contest', icon: '🏫' }
+]
+
 const Blog = () => {
   const { user } = useBoundStore((state) => state)
   const [articles, setArticles] = useState([])
@@ -19,6 +25,7 @@ const Blog = () => {
   const [recentPosts, setRecentPosts] = useState<any[]>([])
   const [activeTab, setActiveTab] = useState('articles') // 'articles' or 'contests'
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [activeCategory, setActiveCategory] = useState('')
   const navigate = useNavigate()
 
   // Banner slides data
@@ -51,15 +58,6 @@ const Blog = () => {
     return () => clearInterval(timer)
   }, [])
 
-  const categories = [
-    { name: 'Commercial', count: 15, icon: '🏢' },
-    { name: 'Office', count: 15, icon: '💼' },
-    { name: 'Shop', count: 15, icon: '🛍️' },
-    { name: 'Educate', count: 15, icon: '📚' },
-    { name: 'Academy', count: 15, icon: '🎓' },
-    { name: 'Single family home', count: 15, icon: '🏠' }
-  ]
-
   useEffect(() => {
     setIsVisible(true)
   }, [])
@@ -73,7 +71,8 @@ const Blog = () => {
         sortBy: 'createdAt:desc',
         ...(title && { title }),
         ...(tag && { tags: tag }),
-        ...(activeTab === 'contests' ? { type: 'CONTESTS' } : { type: 'BLOG' })
+        ...(activeTab === 'contests' ? { type: 'CONTESTS' } : { type: 'BLOG' }),
+        ...(activeCategory && { category: activeCategory.toUpperCase() })
       }
 
       Promise.all([
@@ -96,7 +95,7 @@ const Blog = () => {
 
   useEffect(() => {
     fetchBlogs(currentPage, searchQuery, selectedTag)
-  }, [currentPage, searchQuery, selectedTag, activeTab])
+  }, [currentPage, searchQuery, selectedTag, activeTab, activeCategory])
 
   const handleSearch = (value: string) => {
     setSearchQuery(value)
@@ -699,16 +698,14 @@ const Blog = () => {
                 <div className='space-y-1'>
                   {categories.map((item, idx) => (
                     <div
+                      onClick={() => setActiveCategory(item.name.toLowerCase())}
                       key={idx}
-                      className='sidebar-item group flex cursor-pointer items-center justify-between rounded-2xl px-4 py-4 transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50'
+                      className={`sidebar-item group flex cursor-pointer items-center justify-between rounded-2xl px-4 py-4 transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 ${activeCategory === item.name.toLowerCase() ? 'bg-gradient-to-r from-indigo-50 to-purple-50' : ''}`}
                     >
                       <div className='flex items-center gap-3'>
                         <span className='category-icon text-2xl'>{item.icon}</span>
                         <span className='font-semibold text-gray-700 group-hover:text-indigo-600'>{item.name}</span>
                       </div>
-                      <span className='rounded-full bg-indigo-100 px-3 py-1 text-sm font-bold text-indigo-700'>
-                        {item.count}
-                      </span>
                     </div>
                   ))}
                 </div>

@@ -6,7 +6,11 @@ import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createBlogTag, getBlogDetail, getBlogTags, updateBlog } from '@/modules/blog/services/blogService.service'
-
+const categories = [
+  'Student',
+  'Teacher',
+  'Contest'
+]
 const BlogUpdate = () => {
   const { id } = useParams()
   const [form] = Form.useForm()
@@ -19,6 +23,7 @@ const BlogUpdate = () => {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [newTagName, setNewTagName] = useState('')
+  const [selectedType, setSelectedType] = useState<'Student' | 'Teacher' | 'Contest'>('Student')
   // Fetch tags khi component mount
   const [addingTag, setAddingTag] = useState(false)
   // --- Fetch Tags ---
@@ -37,14 +42,17 @@ const BlogUpdate = () => {
       const response = await getBlogDetail(id as string)
       const blog = response.data
 
-      // Đổ dữ liệu vào form
-      form.setFieldsValue({
-        title: blog.title,
-        tags: blog.tags?.map((t: any) => t.id) || []
-      })
-      setSelectedTags(blog.tags?.map((t: any) => t.id) || [])
-      setContent(blog.content || '')
+       const normalizedCategory = blog.category.charAt(0).toUpperCase() + blog.category.slice(1).toLowerCase()
 
+    // Đổ dữ liệu vào form
+    form.setFieldsValue({
+      title: blog.title,
+      tags: blog.tags?.map((t: any) => t.id) || [],
+      category: normalizedCategory  // ← Thêm dòng này
+    })
+    setSelectedTags(blog.tags?.map((t: any) => t.id) || [])
+    setContent(blog.content || '')
+    setSelectedType(normalizedCategory)
       if (blog.image) {
         setFileList([
           {
@@ -124,7 +132,7 @@ const BlogUpdate = () => {
 
       // Mock: Giả lập thêm tag mới
 
-      setTags(pre => [...pre, response.data])
+      setTags((pre) => [...pre, response.data])
       message.success('Thêm tag thành công!')
       setNewTagName('')
       setIsModalOpen(false)
@@ -181,6 +189,7 @@ const BlogUpdate = () => {
       const formData = new FormData()
       formData.append('title', values.title)
       formData.append('content', content)
+      formData.append('category', selectedType.toUpperCase())
       if (fileList.length > 0 && fileList[0].originFileObj) {
         formData.append('image', fileList[0].originFileObj as any)
       }
@@ -251,6 +260,23 @@ const BlogUpdate = () => {
               >
                 Tạo tag mới
               </Button>
+
+              {/* Category */}
+              <Form.Item label={<span className='text-lg font-semibold text-gray-700'>Loại</span>} name='category'>
+                <Select
+                  size='large'
+                  placeholder='Chọn loại...'
+                  className='rounded-xl'
+                  value={selectedType}
+                  onChange={(selected) => {
+                    setSelectedType(selected)
+                  }}
+                  options={categories.map((categorie) => ({
+                    label: categorie,
+                    value: categorie
+                  }))}
+                />
+              </Form.Item>
               {/* Cover Image */}
               <Form.Item label={<span className='text-lg font-semibold text-gray-700'>Ảnh cover</span>}>
                 <Upload {...uploadProps}>
@@ -262,6 +288,8 @@ const BlogUpdate = () => {
                   )}
                 </Upload>
               </Form.Item>
+
+              
 
               {/* Content */}
               <Form.Item label={<span className='text-lg font-semibold text-gray-700'>Nội dung</span>}>

@@ -7,6 +7,12 @@ import 'react-quill/dist/quill.snow.css'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { createBlog, createBlogTag, getBlogTags } from '@/modules/blog/services/blogService.service'
 import { useEffect } from 'react'
+
+const categories = [
+  'Student',
+  'Teacher',
+  'Contest'
+]
 const AddBlog = () => {
   const [form] = Form.useForm()
   const [content, setContent] = useState('')
@@ -14,13 +20,13 @@ const AddBlog = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([])
   const [tags, setTags] = useState<any[]>([])
   const [selectedTags, setSelectedTags] = useState<{ label: string; value: number }[]>([])
+  const [selectedType, setSelectedType] = useState<'Student' | 'Teacher' | 'Contest'>('Student')
   const quillRef = useRef<any>(null)
   const navigate = useNavigate()
   const { state } = useLocation()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [newTagName, setNewTagName] = useState('')
   // Fetch tags khi component mount
-  console.log(state)
   const [addingTag, setAddingTag] = useState(false)
   const fetchTags = async () => {
     try {
@@ -170,6 +176,7 @@ const AddBlog = () => {
       const formData = new FormData()
       formData.append('title', values.title)
       formData.append('content', content)
+      formData.append('category', selectedType.toUpperCase())
       formData.append('image', fileList[0].originFileObj as any)
       if (selectedTags.length > 0) {
         formData.append('tags', selectedTags.join(','))
@@ -313,6 +320,23 @@ const AddBlog = () => {
               >
                 Tạo tag mới
               </Button>
+
+              {/* Category */}
+              <Form.Item label={<span className='text-lg font-semibold text-gray-700'>Loại</span>} name='category'>
+                <Select
+                  size='large'
+                  placeholder='Chọn loại...'
+                  className='rounded-xl'
+                  value={selectedType}
+                  onChange={(selected) => {
+                    setSelectedType(selected)
+                  }}
+                  options={categories.map((categorie) => ({
+                    label: categorie,
+                    value: categorie
+                  }))}
+                />
+              </Form.Item>
 
               {/* Cover Image */}
               <Form.Item label={<span className='text-lg font-semibold text-gray-700'>Ảnh cover</span>} required>

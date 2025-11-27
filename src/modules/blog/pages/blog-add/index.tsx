@@ -11,7 +11,8 @@ import { useEffect } from 'react'
 const categories = [
   'Student',
   'Teacher',
-  'Contest'
+  'Management staff',
+  'New technology'
 ]
 const AddBlog = () => {
   const [form] = Form.useForm()
@@ -20,7 +21,7 @@ const AddBlog = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([])
   const [tags, setTags] = useState<any[]>([])
   const [selectedTags, setSelectedTags] = useState<{ label: string; value: number }[]>([])
-  const [selectedType, setSelectedType] = useState<'Student' | 'Teacher' | 'Contest'>('Student')
+  const [selectedType, setSelectedType] = useState<'Student' | 'Teacher' | 'Management staff' | 'New technology'>('Student')
   const quillRef = useRef<any>(null)
   const navigate = useNavigate()
   const { state } = useLocation()
@@ -176,7 +177,7 @@ const AddBlog = () => {
       const formData = new FormData()
       formData.append('title', values.title)
       formData.append('content', content)
-      formData.append('category', selectedType.toUpperCase())
+      formData.append('category', selectedType.toUpperCase().replace(' ', '_'))
       formData.append('image', fileList[0].originFileObj as any)
       if (selectedTags.length > 0) {
         formData.append('tags', selectedTags.join(','))

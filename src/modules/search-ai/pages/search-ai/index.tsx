@@ -1,29 +1,15 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button, Card, Col, Image, Input, Row, Spin, Tooltip, Typography, message, Upload } from 'antd'
 import {
-  CalculatorOutlined,
-  EnvironmentOutlined,
-  ExperimentOutlined,
   PictureOutlined,
-  ReadOutlined,
   RobotOutlined,
   SendOutlined,
-  ThunderboltOutlined,
   UserOutlined
 } from '@ant-design/icons'
 import Sidebar from '@/shared/components/Sidebar'
 import { GeminiService } from '@/modules/ai/pages/ai/Service/gemini.service'
 import { ConversationManager, ConversationMessage } from '@/modules/ai/pages/ai/Service/conversation.manager'
 import { formatAIText } from '@/shared/lib/aiFormat'
-
-// Types and Interfaces
-interface Subject {
-  key: string
-  label: string
-  description: string
-  icon: ReactNode
-  color: string
-}
 const topQuestions = ['Cách giải toán mạch điện', 'Cơ học', 'Xác xuất', 'Giải hệ phương trình']
 interface ChatMessageWithImage extends ConversationMessage {
   imageUrl?: string
@@ -32,51 +18,6 @@ interface ChatMessageWithImage extends ConversationMessage {
 
 // Constants
 const { Title, Text } = Typography
-
-const SUBJECTS: Subject[] = [
-  {
-    key: 'math',
-    label: 'Toán học',
-    description: 'Đại số, Hình học, Giải tích, Thống kê',
-    icon: <CalculatorOutlined />,
-    color: '#3b82f6'
-  },
-  {
-    key: 'physics',
-    label: 'Vật lý',
-    description: 'Cơ học, Điện học, Quang học, Nhiệt học',
-    icon: <ExperimentOutlined />,
-    color: '#10b981'
-  },
-  {
-    key: 'chemistry',
-    label: 'Hóa học',
-    description: 'Hóa vô cơ, Hóa hữu cơ, Hóa phân tích',
-    icon: <ThunderboltOutlined />,
-    color: '#8b5cf6'
-  },
-  {
-    key: 'biology',
-    label: 'Sinh học',
-    description: 'Tế bào, Di truyền, Tiến hóa, Sinh thái',
-    icon: <EnvironmentOutlined />,
-    color: '#ef4444'
-  },
-  {
-    key: 'geography',
-    label: 'Địa lý',
-    description: 'Địa lý tự nhiên, Địa lý kinh tế - xã hội',
-    icon: <EnvironmentOutlined />,
-    color: '#eab308'
-  },
-  {
-    key: 'history',
-    label: 'Lịch sử',
-    description: 'Lịch sử Việt Nam, Lịch sử thế giới',
-    icon: <ReadOutlined />,
-    color: '#6366f1'
-  }
-]
 
 // Utility Functions
 
@@ -93,7 +34,6 @@ const urlToFile = async (url: string): Promise<File | null> => {
 type ChatBoxProps = { activeKey: string }
 
 const ChatBox = ({ activeKey }: ChatBoxProps) => {
-  const subject = SUBJECTS.find((x) => x.key === activeKey)
   const [inputValue, setInputValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
@@ -101,6 +41,7 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
   const [messages, setMessages] = useState<ChatMessageWithImage[]>([])
 
   const inputRef = useRef<any>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
   const conversationManagerRef = useRef<ConversationManager>()
   const sessionIdRef = useRef<string>('')
 
@@ -115,12 +56,15 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
   if (!sessionIdRef.current || sessionIdRef.current !== `student_${activeKey}`) {
     sessionIdRef.current = `student_${activeKey}`
   }
-
   useEffect(() => {
-    if (subject && conversationManagerRef.current) {
-      conversationManagerRef.current.createSession(sessionIdRef.current, subject.label)
+    if (conversationManagerRef.current) {
+      conversationManagerRef.current.createSession(sessionIdRef.current, '')
     }
-  }, [activeKey, subject])
+  }, [activeKey])
+  // Auto scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   // Event Handlers
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -206,7 +150,7 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
       const manager = conversationManagerRef.current
       if (!manager) throw new Error('ConversationManager not initialized')
 
-      const context = manager.getContext(sessionIdRef.current, subject?.label || 'môn học')
+      const context = manager.getContext(sessionIdRef.current, '')
       const allMessages = manager.getAllMessages(sessionIdRef.current)
 
       let prompt = `Dựa trên context sau, hãy trả lời câu hỏi mới:\n\nContext: ${context.summary}\n\nTin nhắn gần đây:\n${context.recent.map((msg) => `${msg.role}: ${msg.content}`).join('\n')}\n\nCâu hỏi mới: ${userMessage.content}`
@@ -255,7 +199,7 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
       const enhancedMessages = [
         {
           role: 'assistant' as const,
-          content: `Bạn là một giáo viên chuyên môn về ${subject?.label || 'môn học'}. Hãy trả lời câu hỏi của học sinh một cách chi tiết, dễ hiểu và chính xác. QUAN TRỢNG: Duy trì context của cuộc trò chuyện và sử dụng thông tin từ các tin nhắn trước đó để trả lời.`,
+          content: '',
           timestamp: new Date()
         },
         ...messagesForGemini
@@ -263,7 +207,7 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
 
       const aiResponse = await GeminiService.chat(
         enhancedMessages,
-        subject?.label || 'môn học',
+        '',
         imageToSend || undefined
       )
 
@@ -277,7 +221,7 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
       setMessages((prev) => [...prev, assistantMessage])
 
       if (context.recent.length > 10) {
-        manager.summarizeHistory(sessionIdRef.current, subject?.label || 'môn học')
+        manager.summarizeHistory(sessionIdRef.current, '')
       }
     } catch (error) {
       message.error(error instanceof Error ? error.message : 'Có lỗi xảy ra')
@@ -287,60 +231,61 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
   }
 
   return (
-    <>
-      <div className='mb-8'>
-        <div className='mb-12 mt-8 text-center'>
-          <div className='mb-4 flex items-center justify-center gap-3'>
-            <span className='text-5xl'>🔍</span>
-            <Title level={1} style={{ color: '#E8612A', margin: 0 }}>
-              XIN CHÀO
-            </Title>
+    <div className='flex h-full flex-col'>
+      {/* Scrollable Messages Area */}
+      <div className='flex-1 overflow-y-auto pb-4'>
+        <div className='mb-8'>
+          <div className='mb-12 mt-8 text-center'>
+            <div className='mb-4 flex items-center justify-center gap-3'>
+              <span className='text-5xl'>🔍</span>
+              <Title level={1} style={{ color: '#E8612A', margin: 0 }}>
+                XIN CHÀO
+              </Title>
+            </div>
+            <Text className='text-lg text-gray-600'>
+              GEN AI giúp bạn giải đáp mọi thắc mắc khi
+              <br />
+              học tập và cập nhật kiến thức nhanh chóng
+            </Text>
           </div>
-          <Text className='text-lg text-gray-600'>
-            GEN AI giúp bạn giải đáp mọi thắc mắc khi
-            <br />
-            học tập và cập nhật kiến thức nhanh chóng
-          </Text>
+
+          {/* Top Questions */}
+          {messages.length === 0 && (
+            <div className='mb-8'>
+              <div className='mb-6 flex items-center justify-center gap-2'>
+                <div
+                  className='flex h-10 w-10 items-center justify-center rounded-full'
+                  style={{ background: 'linear-gradient(135deg, #60A5FA 0%, #34D399 100%)' }}
+                >
+                  <span className='text-xl text-white'>🌍</span>
+                </div>
+                <Text className='text-lg font-semibold text-gray-700'>Top câu hỏi:</Text>
+              </div>
+
+              <Row gutter={[16, 16]}>
+                {topQuestions.map((question, index) => (
+                  <Col xs={24} sm={12} key={index}>
+                    <Card
+                      hoverable
+                      style={{
+                        borderWidth: 2,
+                        borderRadius: 12,
+                        textAlign: 'center'
+                      }}
+                    >
+                      <Text strong style={{ color: '#333' }}>
+                        {question}
+                      </Text>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </div>
+          )}
         </div>
 
-        {/* Top Questions */}
-        {messages.length === 0 && (
-          <div className='mb-8'>
-            <div className='mb-6 flex items-center gap-2'>
-              <div
-                className='flex h-10 w-10 items-center justify-center rounded-full'
-                style={{ background: 'linear-gradient(135deg, #60A5FA 0%, #34D399 100%)' }}
-              >
-                <span className='text-xl text-white'>🌍</span>
-              </div>
-              <Text className='text-lg font-semibold text-gray-700'>Top câu hỏi:</Text>
-            </div>
-
-            <Row gutter={[16, 16]}>
-              {topQuestions.map((question, index) => (
-                <Col xs={24} sm={12} key={index}>
-                  <Card
-                    hoverable
-                    style={{
-                      borderColor: '#E8612A',
-                      borderWidth: 2,
-                      borderRadius: 12,
-                      backgroundColor: '#FFF5F0'
-                    }}
-                  >
-                    <Text strong style={{ color: '#333' }}>
-                      {question}
-                    </Text>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          </div>
-        )}
-      </div>
-      {/* Chat Messages */}
-      {messages.length > 0 && (
-        <div className='mb-8'>
+        {/* Chat Messages */}
+        {messages.length > 0 && (
           <div className='space-y-4'>
             {messages.map((msg, index) => (
               <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -396,13 +341,14 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Fixed Bottom Input */}
-      <div className='fixed bottom-0 left-[200px] right-0 z-50 bg-gray-50'>
-        <div className='mx-auto max-w-[1100px]'>
+      <div className='sticky bottom-0 left-0 z-50 w-full bg-white'>
+        <div className='bg-gray-50 p-4'>
           <div className='rounded-2xl border border-[#f97316] bg-white p-4'>
             {/* Image Preview */}
             {imagePreview && (
@@ -410,7 +356,6 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
                 <div className='flex items-center gap-3'>
                   <Image src={imagePreview} alt='Preview' width={60} height={60} className='rounded-lg object-cover' />
                   <div className='flex-1'>
-                    <p className='mb-1 text-sm text-gray-600'>Ảnh bài tập đã chọn</p>
                     <p className='text-xs text-gray-500'>{selectedImage?.name}</p>
                   </div>
                   <Button
@@ -425,7 +370,7 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
               </div>
             )}
 
-            {/* Input and Buttons */}
+            {/* Input + Buttons */}
             <div className='flex items-center gap-3'>
               <Input.TextArea
                 ref={inputRef}
@@ -434,8 +379,8 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
                 onKeyDown={handleKeyDown}
                 onPaste={handlePaste}
                 autoSize={{ minRows: 1, maxRows: 4 }}
-                className='flex-1 resize-none rounded-none border-0 p-0 text-base leading-6 shadow-none focus:border-0 focus:outline-none focus:ring-0'
-                placeholder={`Đặt câu hỏi cho AL`}
+                className='flex-1 resize-none rounded-none border-0 p-0 text-base leading-6 shadow-none focus:ring-0'
+                placeholder='Đặt câu hỏi cho AI'
                 disabled={isLoading}
               />
 
@@ -449,7 +394,6 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
                       className={`h-10 w-10 border ${
                         selectedImage ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
                       } hover:border-gray-400 hover:bg-gray-50`}
-                      disabled={isLoading}
                     />
                   </Upload>
                 </Tooltip>
@@ -461,7 +405,7 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
                     size='large'
                     icon={<SendOutlined />}
                     onClick={handleSend}
-                    className='h-10 w-10 border-[#f97316] bg-[#f97316] hover:border-[#f97316] hover:bg-[#f97316]'
+                    className='h-10 w-10 border-[#f97316] bg-[#f97316] hover:bg-[#f97316]'
                     loading={isLoading}
                     disabled={(!inputValue.trim() && !selectedImage) || isLoading}
                   />
@@ -470,7 +414,6 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
             </div>
           </div>
 
-          {/* Terms */}
           <div className='my-2 text-center'>
             <Text type='secondary' className='text-xs'>
               Khi đặt câu hỏi, bạn đồng ý với <strong>Điều khoản</strong> và <strong>Chính sách quyền riêng tư</strong>.
@@ -478,17 +421,17 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
 // Main Component
 const ExercisePage = () => {
   return (
-    <div className='flex min-h-screen bg-gray-50'>
+    <div className='flex h-screen bg-gray-50'>
       <Sidebar />
-      <div className='w-full p-6 pb-48'>
-        <div className='mx-auto max-w-[1100px]'>
+      <div className='flex-1 p-6'>
+        <div className='mx-auto flex h-full max-w-[1100px] flex-col'>
           <ChatBox activeKey='math' />
         </div>
       </div>

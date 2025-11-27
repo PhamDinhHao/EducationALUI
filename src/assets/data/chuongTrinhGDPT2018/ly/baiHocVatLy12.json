@@ -1,0 +1,95 @@
+{
+  "fileName": "baiHocVatLy12",
+  "subject": "ly",
+  "title": "BÀI HỌC VẬT LÝ 12",
+  "lessons": [
+    {
+      "number": 1,
+      "title": "Cấu trúc của chất. Sự chuyển thể"
+    },
+    {
+      "number": 2,
+      "title": "Nội năng. Định luật I của nhiệt động lực học"
+    },
+    {
+      "number": 3,
+      "title": "Nhiệt độ. Thang nhiệt độ – nhiệt kế"
+    },
+    {
+      "number": 4,
+      "title": "Nhiệt dung riêng"
+    },
+    {
+      "number": 5,
+      "title": "Nhiệt nóng chảy riêng"
+    },
+    {
+      "number": 6,
+      "title": "Nhiệt hóa hơi riêng"
+    },
+    {
+      "number": 8,
+      "title": "Mô hình động học phân tử chất khí"
+    },
+    {
+      "number": 9,
+      "title": "Định luật Boyle"
+    },
+    {
+      "number": 10,
+      "title": "Định luật Charles"
+    },
+    {
+      "number": 11,
+      "title": "Phương trình trạng thái của khí lí tưởng"
+    },
+    {
+      "number": 12,
+      "title": "Áp suất khí theo mô hình động học phân tử. Quan hệ giữa động năng phần tử và nhiệt độ"
+    },
+    {
+      "number": 14,
+      "title": "Từ trường"
+    },
+    {
+      "number": 15,
+      "title": "Lực tử tác dụng lên dây dẫn mang dòng điện. Cảm ứng từ"
+    },
+    {
+      "number": 16,
+      "title": "Từ thông. Hiện tượng cảm ứng điện từ"
+    },
+    {
+      "number": 17,
+      "title": "Máy phát điện xoay chiều"
+    },
+    {
+      "number": 18,
+      "title": "Ứng dụng hiện tượng cảm ứng điện từ"
+    },
+    {
+      "number": 19,
+      "title": "Điện từ trường. Mô hình sóng điện từ"
+    },
+    {
+      "number": 21,
+      "title": "Cấu trúc hạt nhân"
+    },
+    {
+      "number": 22,
+      "title": "Phản ứng hạt nhần và năng lượng liên kết"
+    },
+    {
+      "number": 23,
+      "title": "Hiện tượng phóng xạ"
+    },
+    {
+      "number": 24,
+      "title": "Công nghiệp hạt nhân.Bải 25. Bài tập về vật lí hạt nhân"
+    }
+  ],
+  "reviewSections": [
+    "ÔN TẬP GIỮA KÌ",
+    "ÔN TẬP CUỐI KÌ"
+  ]
+}

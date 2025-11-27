@@ -1,0 +1,63 @@
+{
+  "fileName": "onTapLichSu11",
+  "subject": "su",
+  "title": "ÔN TẬP LỊCH SỬ 11",
+  "lessons": [
+    {
+      "number": 1,
+      "title": "Một số vấn đề chung về cách mạng tư sản"
+    },
+    {
+      "number": 2,
+      "title": "Sự xác lập và phát triển của chủ nghĩa tư bản"
+    },
+    {
+      "number": 3,
+      "title": "Sự hình thành Liên bang Cộng hoà xã hội chủ nghĩa Xô viết"
+    },
+    {
+      "number": 4,
+      "title": "Sự phát triển của chủ nghĩa xã hội từ sau Chiến tranh thế giới thứ hai đến nay"
+    },
+    {
+      "number": 5,
+      "title": "Quá trình xâm lược và cai trị của chủ nghĩa thực dân ở Đông Nam Á"
+    },
+    {
+      "number": 6,
+      "title": "Hành trình đi đến độc lập dân tộc ở Đông Nam Á"
+    },
+    {
+      "number": 7,
+      "title": "Chiến tranh bảo vệ Tổ quốc trong lịch sử Việt Nam"
+    },
+    {
+      "number": 8,
+      "title": "Một số cuộc khởi nghĩa và chiến tranh giải phóng trong lịch sử Việt Nam (từ thế kỉ III trước Công nguyên đến cuối thế kỉ XIX)"
+    },
+    {
+      "number": 9,
+      "title": "Cuộc cải cách của Hồ Quý Ly và triều Hồ"
+    },
+    {
+      "number": 10,
+      "title": "Cuộc cải cách của Lê Thánh Tông (thế kỉ XV)"
+    },
+    {
+      "number": 11,
+      "title": "Cuộc cải cách của Minh Mạng (nửa đầu thế kỉ XIX)"
+    },
+    {
+      "number": 12,
+      "title": "Vị trí và tầm quan trọng của Biển Đông"
+    },
+    {
+      "number": 13,
+      "title": "Việt Nam và Biển Đông"
+    }
+  ],
+  "reviewSections": [
+    "ÔN TẬP GIỮA KÌ",
+    "ÔN TẬP CUỐI KÌ"
+  ]
+}

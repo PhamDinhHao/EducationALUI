@@ -9,7 +9,8 @@ import { createBlogTag, getBlogDetail, getBlogTags, updateBlog } from '@/modules
 const categories = [
   'Student',
   'Teacher',
-  'Contest'
+  'Management staff',
+  'New technology'
 ]
 const BlogUpdate = () => {
   const { id } = useParams()
@@ -23,7 +24,7 @@ const BlogUpdate = () => {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [newTagName, setNewTagName] = useState('')
-  const [selectedType, setSelectedType] = useState<'Student' | 'Teacher' | 'Contest'>('Student')
+  const [selectedType, setSelectedType] = useState<'Student' | 'Teacher' | 'Management staff' | 'New technology'>('Student')
   // Fetch tags khi component mount
   const [addingTag, setAddingTag] = useState(false)
   // --- Fetch Tags ---
@@ -189,7 +190,7 @@ const BlogUpdate = () => {
       const formData = new FormData()
       formData.append('title', values.title)
       formData.append('content', content)
-      formData.append('category', selectedType.toUpperCase())
+      formData.append('category', selectedType.toUpperCase().replace(' ', '_'))
       if (fileList.length > 0 && fileList[0].originFileObj) {
         formData.append('image', fileList[0].originFileObj as any)
       }

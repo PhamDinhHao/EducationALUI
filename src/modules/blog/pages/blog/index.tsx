@@ -9,7 +9,8 @@ import { useBoundStore } from '@/shared/stores'
 const categories = [
   { name: 'Student', icon: '🎓' },
   { name: 'Teacher', icon: '🏫' },
-  { name: 'Contest', icon: '🏫' }
+  { name: 'Management staff', icon: '💼' },
+  { name: 'New technology', icon: '📱' }
 ]
 
 const Blog = () => {
@@ -72,7 +73,7 @@ const Blog = () => {
         ...(title && { title }),
         ...(tag && { tags: tag }),
         ...(activeTab === 'contests' ? { type: 'CONTESTS' } : { type: 'BLOG' }),
-        ...(activeCategory && { category: activeCategory.toUpperCase() })
+        ...(activeCategory && { category: activeCategory.toUpperCase().replace(' ', '_') })
       }
 
       Promise.all([

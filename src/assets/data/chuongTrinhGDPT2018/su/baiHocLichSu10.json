@@ -1,0 +1,67 @@
+{
+  "fileName": "baiHocLichSu10",
+  "subject": "su",
+  "title": "BÀI HỌC LỊCH SỬ 10",
+  "lessons": [
+    {
+      "number": 1,
+      "title": "Hiện thực lịch sử và nhận thức lịch sử"
+    },
+    {
+      "number": 2,
+      "title": "Tri thức lịch sử và cuộc sống"
+    },
+    {
+      "number": 3,
+      "title": "Sử học với các lĩnh vực khoa học"
+    },
+    {
+      "number": 4,
+      "title": "Sử học với một số lĩnh vực, ngành nghề hiện đại"
+    },
+    {
+      "number": 5,
+      "title": "Khái niệm văn minh. Một số nền văn minh phương Đông thời kì cổ – trung đại"
+    },
+    {
+      "number": 6,
+      "title": "Một số nền văn minh phương Tây thời kì cổ – trung đại"
+    },
+    {
+      "number": 7,
+      "title": "Các cuộc cách mạng công nghiệp thời kì cận đại"
+    },
+    {
+      "number": 8,
+      "title": "Các cuộc cách mạng công nghiệp thời kì hiện đại"
+    },
+    {
+      "number": 9,
+      "title": "Cơ sở hình thành văn minh Đông Nam Á thời kì cổ – trung đại"
+    },
+    {
+      "number": 10,
+      "title": "Hành trình phát triển và thành tựu của văn minh Đông Nam Á thời kì cổ – trung đại"
+    },
+    {
+      "number": 11,
+      "title": "Một số nền văn minh cổ trên đất nước Việt Nam"
+    },
+    {
+      "number": 12,
+      "title": "Văn minh Đại Việt"
+    },
+    {
+      "number": 13,
+      "title": "Đời sống vật chất và tinh thần của cộng đồng các dân tộc Việt Nam"
+    },
+    {
+      "number": 14,
+      "title": "Khối đại đoàn kết dân tộc trong lịch sử Việt Nam"
+    }
+  ],
+  "reviewSections": [
+    "ÔN TẬP GIỮA KÌ",
+    "ÔN TẬP CUỐI KÌ"
+  ]
+}

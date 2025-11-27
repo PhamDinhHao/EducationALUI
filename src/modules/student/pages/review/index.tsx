@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, Typography, Select, Button, Spin, message } from 'antd'
 
 import Sidebar from '@/shared/components/Sidebar'
@@ -16,65 +16,76 @@ interface TopicOption {
   value: string
 }
 
+interface Lesson {
+  number: number
+  title: string
+}
+
+interface OnTapData {
+  fileName: string
+  subject: string
+  title: string
+  lessons: Lesson[]
+  reviewSections?: string[]
+}
+
 // Constants
 const { Title, Text } = Typography
 
 const SUBJECTS: SubjectOption[] = [
-  { label: 'Toán học', value: 'math' },
   { label: 'Vật lý', value: 'physics' },
-  { label: 'Hóa học', value: 'chemistry' },
-  { label: 'Sinh học', value: 'biology' },
-  { label: 'Địa lý', value: 'geography' },
   { label: 'Lịch sử', value: 'history' }
 ]
 
-const LEVELS: SubjectOption[] = [
-  { label: 'Dễ', value: 'easy' },
-  { label: 'Trung bình', value: 'medium' },
-  { label: 'Khó', value: 'hard' }
+const GRADES: SubjectOption[] = [
+  { label: 'Lớp 10', value: '10' },
+  { label: 'Lớp 11', value: '11' },
+  { label: 'Lớp 12', value: '12' }
 ]
 
-const GRADES: SubjectOption[] = Array.from({ length: 12 }, (_, i) => ({ 
-  label: `Lớp ${i + 1}`, 
-  value: `${i + 1}` 
-}))
+// Import all JSON files statically
+import onTapVatLy10 from '@/assets/data/onTap/ly/onTapVatLy10.json'
+import onTapVatLy11 from '@/assets/data/onTap/ly/onTapVatLy11.json'
+import onTapVatLy12 from '@/assets/data/onTap/ly/onTapVatLy12.json'
+import onTapLichSu10 from '@/assets/data/onTap/su/onTapLichSu10.json'
+import onTapLichSu11 from '@/assets/data/onTap/su/onTapLichSu11.json'
+import onTapLichSu12 from '@/assets/data/onTap/su/onTapLichSu12.json'
 
-const SUBJECT_TOPICS: Record<string, TopicOption[]> = {
-  math: [
-    { label: 'Tập hợp và tổ hợp', value: 'set-combinatorics' },
-    { label: 'Đại số', value: 'algebra' },
-    { label: 'Hình học', value: 'geometry' },
-    { label: 'Giải tích', value: 'calculus' }
-  ],
-  physics: [
-    { label: 'Cơ học', value: 'mechanics' },
-    { label: 'Điện - Từ', value: 'em' },
-    { label: 'Quang học', value: 'optics' }
-  ],
-  chemistry: [
-    { label: 'Hóa vô cơ', value: 'inorganic' },
-    { label: 'Hóa hữu cơ', value: 'organic' }
-  ],
-  biology: [
-    { label: 'Di truyền', value: 'genetics' },
-    { label: 'Sinh thái học', value: 'ecology' }
-  ],
-  geography: [
-    { label: 'Địa lý tự nhiên', value: 'natural' },
-    { label: 'Địa lý kinh tế - xã hội', value: 'economic' }
-  ],
-  history: [
-    { label: 'Lịch sử Việt Nam', value: 'vn' },
-    { label: 'Lịch sử thế giới', value: 'world' }
-  ]
+// Load JSON data
+const loadOnTapData = (subject: string, grade: string): OnTapData | null => {
+  try {
+    const dataMap: Record<string, OnTapData> = {
+      'physics-10': onTapVatLy10 as OnTapData,
+      'physics-11': onTapVatLy11 as OnTapData,
+      'physics-12': onTapVatLy12 as OnTapData,
+      'history-10': onTapLichSu10 as OnTapData,
+      'history-11': onTapLichSu11 as OnTapData,
+      'history-12': onTapLichSu12 as OnTapData,
+    }
+    
+    const key = `${subject}-${grade}`
+    return dataMap[key] || null
+  } catch (error) {
+    console.error('Error loading onTap data:', error)
+    return null
+  }
+}
+
+// Parse bài từ lessons array
+const parseLessons = (lessons: Lesson[]): TopicOption[] => {
+  if (!lessons || !Array.isArray(lessons)) return []
+  
+  return lessons.map((lesson) => ({
+    label: `Bài ${lesson.number}. ${lesson.title}`,
+    value: `bai-${lesson.number}`
+  }))
 }
 
 // Utility Functions
 const generateQuizPrompt = (
   subjectLabel: string, 
   grade: string, 
-  levelLabel: string, 
-  topicLabel: string
+  lessonLabel: string
 ): string => {
   return `#NGỮ CẢNH
 
@@ -82,7 +93,7 @@ Bạn là một giáo viên dạy ${subjectLabel} có nhiều năm kinh nghiệm
 
 #NGUỒN DỮ LIỆU
 
-Nội dung để tạo câu hỏi và đáp án chỉ được phép lấy thông tin từ sách giáo khoa kết nối tri thức, bộ kết nối tri thức. Cụ thể là nội dung về chủ đề: ${topicLabel}. Tập trung hỏi vào các phần kiến thức trong chủ đề này.
+Nội dung để tạo câu hỏi và đáp án chỉ được phép lấy thông tin từ sách giáo khoa kết nối tri thức, bộ kết nối tri thức. Cụ thể là nội dung về: ${lessonLabel}. Tập trung hỏi vào các phần kiến thức trong bài học này.
 
 #HƯỚNG DẪN CHI TIẾT
 
@@ -149,9 +160,9 @@ QUAN TRỌNG:
 - correctAnswer trong part1 là index (0, 1, 2, hoặc 3) của đáp án đúng
 - correctAnswer trong part3 là chuỗi tối đa 4 ký tự
 - Tất cả nội dung bằng tiếng Việt
-- Câu hỏi phải phù hợp với mức độ ${levelLabel} và lớp ${grade}
+- Câu hỏi phải phù hợp với lớp ${grade}
 - Môn: ${subjectLabel}
-- Chủ đề: ${topicLabel}`
+- Bài học: ${lessonLabel}`
 }
 
 // Components
@@ -167,15 +178,29 @@ const ReviewHeader = () => (
 // Main Component
 const ReviewPage = () => {
   // State
-  const [subject, setSubject] = useState('geography')
-  const [grade, setGrade] = useState('12')
-  const [level, setLevel] = useState('easy')
-  const [topic, setTopic] = useState('natural')
+  const [subject, setSubject] = useState('physics')
+  const [grade, setGrade] = useState('10')
+  const [lesson, setLesson] = useState('')
   const [loading, setLoading] = useState(false)
   const [quizData, setQuizData] = useState<QuizData | null>(null)
+  const [onTapData, setOnTapData] = useState<OnTapData | null>(null)
+  const [lessonOptions, setLessonOptions] = useState<TopicOption[]>([])
 
-  // Computed values
-  const topicOptions = useMemo(() => SUBJECT_TOPICS[subject] || [], [subject])
+  // Load onTap data when subject or grade changes
+  useEffect(() => {
+    const data = loadOnTapData(subject, grade)
+    setOnTapData(data)
+    if (data && data.lessons) {
+      const lessons = parseLessons(data.lessons)
+      setLessonOptions(lessons)
+      if (lessons.length > 0) {
+        setLesson(lessons[0].value)
+      }
+    } else {
+      setLessonOptions([])
+      setLesson('')
+    }
+  }, [subject, grade])
 
   // Parse JSON from AI response
   const parseQuizJSON = (text: string): QuizData | null => {
@@ -218,15 +243,19 @@ const ReviewPage = () => {
 
   // Event Handlers
   const handleGenerate = async () => {
+    if (!lesson) {
+      message.warning('Vui lòng chọn bài học!')
+      return
+    }
+
     try {
       setLoading(true)
       setQuizData(null)
 
       const subjectLabel = SUBJECTS.find(s => s.value === subject)?.label || subject
-      const levelLabel = LEVELS.find(l => l.value === level)?.label || level
-      const topicLabel = topicOptions.find(t => t.value === topic)?.label || topic
+      const lessonLabel = lessonOptions.find(l => l.value === lesson)?.label || lesson
 
-      const prompt = generateQuizPrompt(subjectLabel, grade, levelLabel, topicLabel)
+      const prompt = generateQuizPrompt(subjectLabel, grade, lessonLabel)
 
       const messages: ChatMessage[] = [
         { role: 'user', content: prompt, timestamp: new Date() }
@@ -274,7 +303,7 @@ const ReviewPage = () => {
           <ReviewHeader />
           
           <Card className="rounded-2xl" bodyStyle={{ padding: 20 }}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <div className="text-sm font-semibold mb-2">Môn:</div>
                 <Select
@@ -283,8 +312,6 @@ const ReviewPage = () => {
                   options={SUBJECTS}
                   onChange={(value) => {
                     setSubject(value)
-                    const newTopics = SUBJECT_TOPICS[value] || []
-                    setTopic(newTopics[0]?.value || '')
                   }}
                 />
               </div>
@@ -295,27 +322,22 @@ const ReviewPage = () => {
                   className="w-full"
                   value={grade}
                   options={GRADES}
-                  onChange={setGrade}
+                  onChange={(value) => {
+                    setGrade(value)
+                  }}
                 />
               </div>
 
               <div>
-                <div className="text-sm font-semibold mb-2">Mức độ:</div>
+                <div className="text-sm font-semibold mb-2">Chọn bài tập luyện:</div>
                 <Select
                   className="w-full"
-                  value={level}
-                  options={LEVELS}
-                  onChange={setLevel}
-                />
-              </div>
-
-              <div>
-                <div className="text-sm font-semibold mb-2">Chọn bài cần luyện tập:</div>
-                <Select
-                  className="w-full"
-                  value={topic}
-                  options={topicOptions}
-                  onChange={setTopic}
+                  value={lesson}
+                  options={lessonOptions}
+                  onChange={setLesson}
+                  placeholder="Chọn bài học"
+                  loading={!onTapData}
+                  disabled={lessonOptions.length === 0}
                 />
               </div>
             </div>

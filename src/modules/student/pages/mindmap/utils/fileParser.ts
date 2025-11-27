@@ -216,6 +216,39 @@ export class FileParser {
   }
 
   /**
+   * Parse PDF from URL/path
+   */
+  static async parsePDFFromUrl(url: string): Promise<string> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch PDF: ${response.statusText}`);
+      }
+      
+      const arrayBuffer = await response.arrayBuffer();
+      const typedArray = new Uint8Array(arrayBuffer);
+      const pdf = await pdfjsLib.getDocument(typedArray).promise;
+      
+      let fullText = '';
+      
+      // Extract text from all pages
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items
+          .filter((item: any) => item.str)
+          .map((item: any) => item.str)
+          .join(' ');
+        fullText += `\n--- Trang ${i} ---\n${pageText}\n`;
+      }
+      
+      return fullText.trim();
+    } catch (error) {
+      throw new Error(`Lỗi khi đọc PDF từ URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  /**
    * Get file type description
    */
   static getFileTypeDescription(fileType: string): string {

@@ -1,0 +1,127 @@
+{
+  "fileName": "baiHocVatLy10",
+  "subject": "ly",
+  "title": "BÀI HỌC VẬT LÝ 10",
+  "lessons": [
+    {
+      "number": 1,
+      "title": "Làm quen với Vật lí"
+    },
+    {
+      "number": 2,
+      "title": "Các quy tắc an toàn trong phòng thực hành Vật lí"
+    },
+    {
+      "number": 4,
+      "title": "Độ dịch chuyển và quãng đường đi được"
+    },
+    {
+      "number": 5,
+      "title": "Tốc độ và vận tốc"
+    },
+    {
+      "number": 7,
+      "title": "Đồ thị độ dịch chuyển – thời gian"
+    },
+    {
+      "number": 8,
+      "title": "Chuyển động biến đổi. Gia tốc"
+    },
+    {
+      "number": 9,
+      "title": "Chuyển động thẳng biến đổi đều"
+    },
+    {
+      "number": 10,
+      "title": "Sự rơi tự do"
+    },
+    {
+      "number": 12,
+      "title": "Chuyển động ném"
+    },
+    {
+      "number": 13,
+      "title": "Tổng hợp và phân tích lực. Cân bằng lực"
+    },
+    {
+      "number": 14,
+      "title": "Định luật 1 Newton"
+    },
+    {
+      "number": 15,
+      "title": "Định luật 2 Newton"
+    },
+    {
+      "number": 16,
+      "title": "Định luật 3 Newton"
+    },
+    {
+      "number": 17,
+      "title": "Trọng lực và lực căng"
+    },
+    {
+      "number": 18,
+      "title": "Lực ma sát"
+    },
+    {
+      "number": 19,
+      "title": "Lực cản và lực nâng"
+    },
+    {
+      "number": 20,
+      "title": "Một số ví dụ về cách giải các bài toán thuộc phần động lực học"
+    },
+    {
+      "number": 21,
+      "title": "Moment lực. Cân bằng của vật rắn"
+    },
+    {
+      "number": 23,
+      "title": "Năng lượng. Công cơ học"
+    },
+    {
+      "number": 24,
+      "title": "Công suất"
+    },
+    {
+      "number": 25,
+      "title": "Động năng, thế năng"
+    },
+    {
+      "number": 26,
+      "title": "Cơ năng và định luật bảo toàn cơ năng"
+    },
+    {
+      "number": 27,
+      "title": "Hiệu suất"
+    },
+    {
+      "number": 28,
+      "title": "Động lượng"
+    },
+    {
+      "number": 29,
+      "title": "Định luật bảo toàn động lượng"
+    },
+    {
+      "number": 31,
+      "title": "Động học của chuyển động tròn đều"
+    },
+    {
+      "number": 32,
+      "title": "Lực hướng tâm và gia tốc hướng tâm"
+    },
+    {
+      "number": 33,
+      "title": "Biến dạng của vật rắn"
+    },
+    {
+      "number": 34,
+      "title": "Khối lượng riêng. Áp suất chất lỏng"
+    }
+  ],
+  "reviewSections": [
+    "ÔN TẬP GIỮA KÌ",
+    "ÔN TẬP CUỐI KÌ"
+  ]
+}

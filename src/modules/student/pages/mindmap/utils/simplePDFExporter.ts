@@ -1,9 +1,10 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import domtoimage from 'dom-to-image';
 
 /**
  * Simple PDF Exporter cho jsMind
- * Sử dụng jsPDF + html2canvas để convert HTML sang PDF
+ * Sử dụng jsPDF + dom-to-image/html2canvas để convert HTML sang PDF/PNG
  */
 export class SimplePDFExporter {
   /**
@@ -50,6 +51,16 @@ export class SimplePDFExporter {
         transformOrigin: container.style.transformOrigin
       };
 
+      // Reset transform của jsmind-inner trước khi capture
+      const jsmindInner = container.querySelector('.jsmind-inner') as HTMLElement;
+      const originalInnerTransform = jsmindInner ? jsmindInner.style.transform : '';
+      const originalInnerTransformOrigin = jsmindInner ? jsmindInner.style.transformOrigin : '';
+      
+      if (jsmindInner) {
+        jsmindInner.style.transform = 'none';
+        jsmindInner.style.transformOrigin = 'top left';
+      }
+
       // 4. Tạm thời mở rộng container để hiển thị toàn bộ content
       container.style.overflow = 'visible';
       container.style.border = 'none';
@@ -62,30 +73,103 @@ export class SimplePDFExporter {
       await new Promise(resolve => requestAnimationFrame(() => resolve(null)));
 
       // 6. Tính toán kích thước thực tế của content
-      const contentWidth = Math.max(container.scrollWidth, mindmapContent.scrollWidth);
-      const contentHeight = Math.max(container.scrollHeight, mindmapContent.scrollHeight);
+      // Lấy bounding box để đảm bảo capture đầy đủ
+      const mindmapBounds = (mindmapContent as HTMLElement).getBoundingClientRect();
+      const containerBounds = container.getBoundingClientRect();
+      
+      const contentWidth = Math.max(
+        container.scrollWidth || 0, 
+        mindmapContent.scrollWidth || 0,
+        mindmapBounds.width || 0,
+        containerBounds.width || 0,
+        1200 // Minimum width
+      );
+      const contentHeight = Math.max(
+        container.scrollHeight || 0, 
+        mindmapContent.scrollHeight || 0,
+        mindmapBounds.height || 0,
+        containerBounds.height || 0,
+        800 // Minimum height
+      );
 
       // 7. Set container size để fit toàn bộ content
-      container.style.width = `${contentWidth}px`;
-      container.style.height = `${contentHeight}px`;
+      const padding = 50;
+      container.style.width = `${contentWidth + padding}px`;
+      container.style.height = `${contentHeight + padding}px`;
       container.style.maxWidth = 'none';
       container.style.maxHeight = 'none';
 
-      // 8. Capture container với kích thước đầy đủ
-      const canvas = await html2canvas(container, {
-        backgroundColor: '#ffffff',
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        width: contentWidth,
-        height: contentHeight,
-        scrollX: 0,
-        scrollY: 0
-      });
+      // 8. Đợi render xong
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // 9. Sử dụng dom-to-image thay vì html2canvas để xử lý SVG tốt hơn
+      let canvas: HTMLCanvasElement;
+      try {
+        // Thử dùng dom-to-image trước (xử lý SVG tốt hơn)
+        const dataUrl = await domtoimage.toPng(container, {
+          quality: 1.0,
+          width: contentWidth + padding,
+          height: contentHeight + padding,
+          style: {
+            transform: 'scale(1)',
+            transformOrigin: 'top left'
+          },
+          filter: () => {
+            // Không filter gì cả - lấy tất cả
+            return true;
+          }
+        });
+        
+        // Convert dataUrl sang canvas với scale cao
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        await new Promise<void>((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = reject;
+          img.src = dataUrl;
+        });
+        
+        canvas = document.createElement('canvas');
+        const scale = 3; // Scale 3x để text rõ
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Failed to get canvas context');
+        
+        // Enable image smoothing for better quality
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      } catch (domError) {
+        console.warn('dom-to-image failed, falling back to html2canvas:', domError);
+        // Fallback to html2canvas
+        canvas = await html2canvas(container, {
+          backgroundColor: '#ffffff',
+          scale: 3,
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+          onclone: (clonedDoc) => {
+            const clonedContainer = clonedDoc.getElementById(containerId);
+            if (clonedContainer) {
+              const clonedInner = clonedContainer.querySelector('.jsmind-inner') as HTMLElement;
+              if (clonedInner) {
+                clonedInner.style.transform = 'none';
+                clonedInner.style.transformOrigin = 'top left';
+              }
+            }
+          }
+        });
+      }
 
       // 9. Khôi phục styles gốc
       Object.assign(container.style, originalStyles);
+      
+      // Khôi phục transform của jsmind-inner
+      if (jsmindInner) {
+        jsmindInner.style.transform = originalInnerTransform;
+        jsmindInner.style.transformOrigin = originalInnerTransformOrigin;
+      }
 
       // 4. Tạo PDF với jsPDF
       const pdf = new jsPDF({
@@ -187,6 +271,16 @@ export class SimplePDFExporter {
         transformOrigin: container.style.transformOrigin
       };
 
+      // Reset transform của jsmind-inner trước khi capture
+      const jsmindInner = container.querySelector('.jsmind-inner') as HTMLElement;
+      const originalInnerTransform = jsmindInner ? jsmindInner.style.transform : '';
+      const originalInnerTransformOrigin = jsmindInner ? jsmindInner.style.transformOrigin : '';
+      
+      if (jsmindInner) {
+        jsmindInner.style.transform = 'none';
+        jsmindInner.style.transformOrigin = 'top left';
+      }
+
       // 4. Tạm thời mở rộng container để hiển thị toàn bộ content
       container.style.overflow = 'visible';
       container.style.border = 'none';
@@ -199,30 +293,104 @@ export class SimplePDFExporter {
       await new Promise(resolve => requestAnimationFrame(() => resolve(null)));
 
       // 6. Tính toán kích thước thực tế của content
-      const contentWidth = Math.max(container.scrollWidth, mindmapContent.scrollWidth);
-      const contentHeight = Math.max(container.scrollHeight, mindmapContent.scrollHeight);
+      // Lấy bounding box để đảm bảo capture đầy đủ
+      const mindmapBounds = (mindmapContent as HTMLElement).getBoundingClientRect();
+      const containerBounds = container.getBoundingClientRect();
+      
+      const contentWidth = Math.max(
+        container.scrollWidth || 0, 
+        mindmapContent.scrollWidth || 0,
+        mindmapBounds.width || 0,
+        containerBounds.width || 0,
+        1200 // Minimum width
+      );
+      const contentHeight = Math.max(
+        container.scrollHeight || 0, 
+        mindmapContent.scrollHeight || 0,
+        mindmapBounds.height || 0,
+        containerBounds.height || 0,
+        800 // Minimum height
+      );
 
       // 7. Set container size để fit toàn bộ content
-      container.style.width = `${contentWidth}px`;
-      container.style.height = `${contentHeight}px`;
+      const padding = 50;
+      container.style.width = `${contentWidth + padding}px`;
+      container.style.height = `${contentHeight + padding}px`;
       container.style.maxWidth = 'none';
       container.style.maxHeight = 'none';
 
-      // 8. Capture container với kích thước đầy đủ
-      const canvas = await html2canvas(container, {
-        backgroundColor: '#ffffff',
-        scale: scale,
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        width: contentWidth,
-        height: contentHeight,
-        scrollX: 0,
-        scrollY: 0
-      });
+      // 8. Đợi render xong
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // 9. Sử dụng dom-to-image thay vì html2canvas để xử lý SVG tốt hơn
+      let canvas: HTMLCanvasElement;
+      try {
+        // Thử dùng dom-to-image trước (xử lý SVG tốt hơn)
+        const dataUrl = await domtoimage.toPng(container, {
+          quality: 1.0,
+          width: contentWidth + padding,
+          height: contentHeight + padding,
+          style: {
+            transform: 'scale(1)',
+            transformOrigin: 'top left'
+          },
+          filter: () => {
+            // Không filter gì cả - lấy tất cả
+            return true;
+          }
+        });
+        
+        // Convert dataUrl sang canvas với scale cao
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        await new Promise<void>((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = reject;
+          img.src = dataUrl;
+        });
+        
+        canvas = document.createElement('canvas');
+        const finalScale = Math.max(scale, 3); // Scale tối thiểu 3x
+        canvas.width = img.width * finalScale;
+        canvas.height = img.height * finalScale;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Failed to get canvas context');
+        
+        // Enable image smoothing for better quality
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      } catch (domError) {
+        console.warn('dom-to-image failed, falling back to html2canvas:', domError);
+        // Fallback to html2canvas
+        const finalScale = Math.max(scale, 3);
+        canvas = await html2canvas(container, {
+          backgroundColor: '#ffffff',
+          scale: finalScale,
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+          onclone: (clonedDoc) => {
+            const clonedContainer = clonedDoc.getElementById(containerId);
+            if (clonedContainer) {
+              const clonedInner = clonedContainer.querySelector('.jsmind-inner') as HTMLElement;
+              if (clonedInner) {
+                clonedInner.style.transform = 'none';
+                clonedInner.style.transformOrigin = 'top left';
+              }
+            }
+          }
+        });
+      }
 
       // 9. Khôi phục styles gốc
       Object.assign(container.style, originalStyles);
+      
+      // Khôi phục transform của jsmind-inner
+      if (jsmindInner) {
+        jsmindInner.style.transform = originalInnerTransform;
+        jsmindInner.style.transformOrigin = originalInnerTransformOrigin;
+      }
 
       // 4. Download PNG
       canvas.toBlob((blob) => {

@@ -48,7 +48,7 @@ const RootLayout = () => {
           <Menu />
           <div className='hidden lg:block' style={{ width: 120 }}></div>
         </Header>
-        <div className='root-layout-content' style={{ width: '100%', flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>
+        <div className='root-layout-content' style={{ width: '100%', flex: 1, overflowX: 'hidden', minHeight: 0 }}>
           <Outlet />
         </div>
         <FloatingAIChat />

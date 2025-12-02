@@ -70,7 +70,7 @@ const ItemTopArticles = ({ item }: { item: IArticle }) => {
 `}</style>
 
       <div
-        className='article-card cursor-pointer overflow-hidden rounded-2xl bg-white shadow-lg'
+        className='article-card cursor-pointer overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:-translate-y-2'
         onClick={() => navigate(`/blog/${item.id}`)}
       >
         {/* Image Section */}

@@ -56,8 +56,9 @@ export const OptimizedCourseCard: React.FC<OptimizedCourseCardProps> = ({
   return (
     <div ref={cardRef} style={style}>
       <Card
+        className="transition-all duration-300 hover:-translate-y-2"
         cover={
-          <div style={{ position: 'relative', width: '100%', height: 200, overflow: 'hidden' }}>
+          <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
             {inView ? (
               <>
                 {!imageLoaded && (
@@ -81,8 +82,8 @@ export const OptimizedCourseCard: React.FC<OptimizedCourseCardProps> = ({
                   alt={`Khoá học ${course.title}`}
                   fallback={images.imgeNotFond}
                   style={{
+                    height: '250px',
                     width: '100%',
-                    height: 200,
                     objectFit: 'cover',
                     opacity: imageLoaded ? 1 : 0,
                     transition: 'opacity 0.3s ease-in-out',

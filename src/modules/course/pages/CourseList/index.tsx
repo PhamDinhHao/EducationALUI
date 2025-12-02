@@ -6,6 +6,7 @@ import { fetchQueryCourses } from '@/shared/server-action/courses.server'
 import { fetchCourseTypes, fetchTopCategories } from '@/shared/server-action/courseTypes.server'
 import { ICourse, ICourseType } from '@/modules/home/cores/interfaces'
 import { OptimizedCourseCard } from '@/modules/course/components/OptimizedCourseCard'
+import images from '@/assets/images/images'
 
 export default function CourseList() {
   const navigate = useNavigate()
@@ -205,7 +206,10 @@ export default function CourseList() {
           height: 100%;
           opacity: 0;
           transition: opacity 1s ease-in-out;
-          background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+          background: url(${images.bgBannerCourse}) no-repeat center center;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
           display: flex;
           flex-direction: column;
           justify-content: center;

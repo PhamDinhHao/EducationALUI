@@ -955,7 +955,7 @@ RULES:
               `\n\n[Lưu ý: Nội dung PDF đã được rút gọn từ ${pdfContent.length} ký tự xuống ${maxContentLength} ký tự để tránh JSON quá dài]`;
           }
           
-          prompt = `ROLE: Bạn là chuyên gia giáo dục theo chương trình GDPT 2018.
+          prompt = `ROLE: Từ dữ liệu mà tôi cung cấp hãy cho tôi sơ đồ tư duy.
 
 TASK: Phân tích nội dung PDF từ chương trình GDPT 2018 - Lớp ${grade}, Môn ${subjectName}${lessonContext} và tạo mindmap JSON chi tiết.
 
@@ -1000,7 +1000,7 @@ RULES:
           const selectedLessonOption = lessonOptions.find(l => l.value === lesson);
           const lessonTitle = selectedLessonOption ? selectedLessonOption.label.replace(/^Bài \d+\.\s*/, '') : '';
           const autoLesson = lessonTitle || `Bài học ${subjectName} lớp ${grade}`;
-          prompt = `ROLE: Bạn là chuyên gia giáo dục theo chương trình GDPT 2018.
+          prompt = `ROLE: Từ dữ liệu mà tôi cung cấp hãy cho tôi sơ đồ tư duy.
 
 TASK: Tạo mindmap JSON chi tiết cho "${autoLesson}" theo GDPT 2018 - Lớp ${grade}, Môn ${subjectName}.
 

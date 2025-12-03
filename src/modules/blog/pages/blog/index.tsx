@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons'
+import { CalendarOutlined, ClockCircleOutlined, EyeOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { PagePath } from '@/shared/core/enum/page.enum'
-import { Button } from 'antd'
+import { Button, Modal } from 'antd'
 import { getBlogList, getBlogTags, getRecentPosts } from '@/modules/blog/services/blogService.service'
 import { useBoundStore } from '@/shared/stores'
 import images from '@/assets/images/images'
@@ -28,6 +28,7 @@ const Blog = () => {
   const [activeTab, setActiveTab] = useState('articles') // 'articles' or 'contests'
   const [currentSlide, setCurrentSlide] = useState(0)
   const [activeCategory, setActiveCategory] = useState('')
+  const [isBannerPreviewOpen, setIsBannerPreviewOpen] = useState(false)
   const navigate = useNavigate()
 
   // Banner slides data
@@ -92,6 +93,11 @@ const Blog = () => {
   useEffect(() => {
     fetchBlogs(currentPage, searchQuery, selectedTag)
   }, [currentPage, searchQuery, selectedTag, activeTab, activeCategory])
+
+  // Reset category filter when switching between tabs
+  useEffect(() => {
+    setActiveCategory('')
+  }, [activeTab])
 
   const handleSearch = (value: string) => {
     setSearchQuery(value)
@@ -454,6 +460,43 @@ const Blog = () => {
         .tab-button:hover {
           transform: translateY(-2px);
         }
+
+        .banner-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(15,23,42,0.1), rgba(79,70,229,0.45));
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          transition: all 0.3s ease;
+        }
+
+        .banner-wrapper:hover .banner-overlay {
+          opacity: 1;
+        }
+
+        .banner-eye-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 64px;
+          height: 64px;
+          border-radius: 9999px;
+          background: rgba(255,255,255,0.95);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+          color: #4f46e5;
+          font-size: 30px;
+          border: 2px solid rgba(129,140,248,0.6);
+          transition: all 0.25s ease;
+          cursor: pointer;
+        }
+
+        .banner-eye-btn:hover {
+          transform: scale(1.08) translateY(-2px);
+          box-shadow: 0 24px 50px rgba(0,0,0,0.3);
+          background: white;
+        }
       `}</style>
 
       <div className='bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-10' style={{ minHeight: '100%', width: '100%', overflow: 'visible' }}>
@@ -661,26 +704,45 @@ const Blog = () => {
                 {activeTab === 'articles' ? '➕ Add Blog' : '➕ Add Contest'}
               </Button>
 
-              <div
-                className={`mb-8 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
-                style={{ animationDelay: '0.3s' }}
-              >
-                <h4 className='mb-6 text-2xl font-bold text-gray-800'>Categories</h4>
-                <div className='space-y-1'>
-                  {categories.map((item, idx) => (
-                    <div
-                      onClick={() => setActiveCategory(item.name.toLowerCase())}
-                      key={idx}
-                      className={`sidebar-item group flex cursor-pointer items-center justify-between rounded-2xl px-4 py-4 transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 ${activeCategory === item.name.toLowerCase() ? 'bg-gradient-to-r from-indigo-50 to-purple-50' : ''}`}
-                    >
-                      <div className='flex items-center gap-3'>
-                        <span className='category-icon text-2xl'>{item.icon}</span>
-                        <span className='font-semibold text-gray-700 group-hover:text-indigo-600'>{item.name}</span>
+              {activeTab === 'articles' ? (
+                <div
+                  className={`mb-8 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
+                  style={{ animationDelay: '0.3s' }}
+                >
+                  <h4 className='mb-6 text-2xl font-bold text-gray-800'>Categories</h4>
+                  <div className='space-y-1'>
+                    {categories.map((item, idx) => (
+                      <div
+                        onClick={() => setActiveCategory(item.name.toLowerCase())}
+                        key={idx}
+                        className={`sidebar-item group flex cursor-pointer items-center justify-between rounded-2xl px-4 py-4 transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 ${activeCategory === item.name.toLowerCase() ? 'bg-gradient-to-r from-indigo-50 to-purple-50' : ''}`}
+                      >
+                        <div className='flex items-center gap-3'>
+                          <span className='category-icon text-2xl'>{item.icon}</span>
+                          <span className='font-semibold text-gray-700 group-hover:text-indigo-600'>{item.name}</span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div
+                  className={`mb-8 overflow-hidden rounded-3xl bg-white p-3 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
+                  style={{ animationDelay: '0.3s' }}
+                >
+                  <div className='banner-wrapper relative h-80 w-full rounded-2xl bg-cover bg-center' style={{ backgroundImage: `url(${images.bgCompetition})` }}>
+                    <div className='banner-overlay'>
+                      <button
+                        type='button'
+                        className='banner-eye-btn'
+                        onClick={() => setIsBannerPreviewOpen(true)}
+                      >
+                        <EyeOutlined />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div
                 className={`mb-8 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
@@ -740,6 +802,20 @@ const Blog = () => {
           </div>
         </div>
       </div>
+      <Modal
+        open={isBannerPreviewOpen}
+        footer={null}
+        onCancel={() => setIsBannerPreviewOpen(false)}
+        centered
+        width={900}
+        bodyStyle={{ padding: 0, borderRadius: 24, overflow: 'hidden', backgroundColor: 'transparent' }}
+      >
+        <img
+          src={images.bgCompetition}
+          alt='Competition Banner'
+          style={{ width: '100%', display: 'block' }}
+        />
+      </Modal>
     </>
   )
 }

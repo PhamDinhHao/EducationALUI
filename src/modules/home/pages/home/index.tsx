@@ -166,7 +166,7 @@ const Home = () => {
                     }}
                   >
                     <img
-                      src='https://via.placeholder.com/500x600/ff8c00/ffffff?text=ETA+AI+Owl'
+                      src={images.icAi}
                       alt='ETA AI Assistant'
                       className='w-[400px] h-[500px] object-contain'
                     />

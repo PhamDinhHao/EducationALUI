@@ -5,6 +5,7 @@ import { PagePath } from '@/shared/core/enum/page.enum'
 import { Button } from 'antd'
 import { getBlogList, getBlogTags, getRecentPosts } from '@/modules/blog/services/blogService.service'
 import { useBoundStore } from '@/shared/stores'
+import images from '@/assets/images/images'
 
 const categories = [
   { name: 'Student', icon: '🎓' },
@@ -33,21 +34,15 @@ const Blog = () => {
   const bannerSlides = [
     {
       id: 1,
-      image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&h=400&fit=crop',
-      title: 'Discover Amazing Stories',
-      subtitle: 'Explore our collection of insightful articles and tutorials'
+      image: images.bgBanner1
     },
     {
       id: 2,
-      image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&h=400&fit=crop',
-      title: 'Join Creative Community',
-      subtitle: 'Share your knowledge and learn from experts'
+      image: images.bgBanner2
     },
     {
       id: 3,
-      image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=400&fit=crop',
-      title: 'Inspire and Be Inspired',
-      subtitle: 'Read stories that matter and make an impact'
+      image: images.bgBanner3
     }
   ]
 
@@ -335,7 +330,7 @@ const Blog = () => {
 
         .banner-slider {
           position: relative;
-          overflow: hidden;
+          overflow: visible;
           border-radius: 24px;
           height: 400px;
         }
@@ -348,42 +343,12 @@ const Blog = () => {
           transition: opacity 1s ease-in-out;
           background-size: cover;
           background-position: center;
+          background-repeat: no-repeat;
+          border-radius: 24px;
         }
 
         .banner-slide.active {
           opacity: 1;
-        }
-
-        .banner-overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          padding: 2rem;
-          text-align: center;
-        }
-
-        .banner-title {
-          color: white;
-          font-size: 3.5rem;
-          font-weight: 800;
-          margin-bottom: 1rem;
-          text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-          animation: fadeInUp 0.8s ease-out;
-        }
-
-        .banner-subtitle {
-          color: rgba(255,255,255,0.95);
-          font-size: 1.25rem;
-          max-width: 600px;
-          text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-          animation: fadeInUp 0.8s ease-out 0.2s both;
         }
 
         .slider-dots {
@@ -411,14 +376,17 @@ const Blog = () => {
           background: white;
         }
 
+        .banner-slider:hover .slider-nav {
+          opacity: 1;
+        }
+
         .slider-nav {
           position: absolute;
           top: 50%;
-          transform: translateY(-50%);
-          background: rgba(255,255,255,0.2);
+          background: rgba(255,255,255,0.9);
           backdrop-filter: blur(10px);
-          border: none;
-          color: white;
+          border: 2px solid rgba(255,255,255,0.5);
+          color: #333;
           width: 50px;
           height: 50px;
           border-radius: 50%;
@@ -429,32 +397,37 @@ const Blog = () => {
           align-items: center;
           justify-content: center;
           font-size: 24px;
+          opacity: 0;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .slider-nav:hover {
-          background: rgba(255,255,255,0.3);
-          transform: translateY(-50%) scale(1.1);
+          background: rgba(255,255,255,1);
+          transform: scale(1.1);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.25);
         }
 
         .slider-nav.prev {
-          left: 20px;
+          left: 0;
+          transform: translateX(-50%) translateY(-50%);
+        }
+
+        .slider-nav.prev:hover {
+          transform: translateX(-50%) translateY(-50%) scale(1.1);
         }
 
         .slider-nav.next {
-          right: 20px;
+          right: 0;
+          transform: translateX(50%) translateY(-50%);
+        }
+
+        .slider-nav.next:hover {
+          transform: translateX(50%) translateY(-50%) scale(1.1);
         }
 
         @media (max-width: 768px) {
           .banner-slider {
             height: 300px;
-          }
-          
-          .banner-title {
-            font-size: 2rem;
-          }
-          
-          .banner-subtitle {
-            font-size: 1rem;
           }
         }
 
@@ -492,13 +465,10 @@ const Blog = () => {
                 <div
                   key={slide.id}
                   className={`banner-slide ${index === currentSlide ? 'active' : ''}`}
-                  style={{ backgroundImage: `url(${slide.image})` }}
-                >
-                  <div className='banner-overlay'>
-                    <h1 className='banner-title'>{slide.title}</h1>
-                    <p className='banner-subtitle'>{slide.subtitle}</p>
-                  </div>
-                </div>
+                  style={{
+                    backgroundImage: `url(${slide.image})`
+                  }}
+                />
               ))}
 
               {/* Navigation Buttons */}

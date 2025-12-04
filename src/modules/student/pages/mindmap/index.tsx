@@ -765,6 +765,287 @@ const MindmapPage = () => {
     }
   }, [showMindmap, mindmapData]);
 
+  const handleCreateMindmap_2018= async () => {
+    try {
+      setLoading(true);
+
+      let prompt = '';
+      if (selectedType === 'standard') {
+        if (selectedFile) {
+          if (fileType === 'image') {
+            // Smart image analysis prompt
+            const userContext = inputValue ? ` với góc nhìn: "${inputValue}"` : '';
+            prompt = `ROLE: Bạn là chuyên gia phân tích hình ảnh và tạo mindmap giáo dục.
+
+TASK: Phân tích ảnh đã gửi${userContext} và tạo mindmap JSON chi tiết.
+
+OUTPUT FORMAT (BẮT BUỘC):
+{
+  "topic": "Chủ đề chính từ ảnh",
+  "children": [
+    {"topic": "Nhánh 1"},
+    {"topic": "Nhánh 2", "children": [{"topic": "Chi tiết"}]}
+  ]
+}
+
+EXAMPLES:
+- Ảnh bài học Toán → {"topic": "Toán học lớp 12", "children": [
+    {"topic": "Đại số", "children": [{"topic": "Hàm số"}, {"topic": "Phương trình"}, {"topic": "Bất phương trình"}]},
+    {"topic": "Hình học", "children": [{"topic": "Khối đa diện"}, {"topic": "Mặt cầu"}, {"topic": "Tọa độ không gian"}]}
+  ]}
+- Ảnh sơ đồ sinh học → {"topic": "Hệ tuần hoàn", "children": [
+    {"topic": "Tim", "children": [{"topic": "Cấu tạo"}, {"topic": "Chức năng"}, {"topic": "Hoạt động"}]},
+    {"topic": "Mạch máu", "children": [{"topic": "Động mạch"}, {"topic": "Tĩnh mạch"}, {"topic": "Mao mạch"}]}
+  ]}
+
+ANALYSIS GUIDE:
+1. Xác định chủ đề chính (văn bản, biểu đồ, sơ đồ, khái niệm học tập)
+2. Trích xuất thông tin quan trọng từ ảnh
+3. Tổ chức logic: tổng quát → chi tiết
+4. Tài liệu học tập: khái niệm → định nghĩa → ví dụ → ứng dụng
+5. Biểu đồ/sơ đồ: theo cấu trúc của biểu đồ
+6. Văn bản: ý chính → chi tiết
+
+DETAIL REQUIREMENTS:
+- Tạo mindmap CHI TIẾT và ĐẦY ĐỦ từ nội dung ảnh
+- Mỗi nhánh chính phải có ít nhất 3-5 nhánh con
+- Nhánh con có thể có thêm 2-3 nhánh con cấp 2
+- Trích xuất TẤT CẢ thông tin quan trọng từ ảnh
+- Bao gồm: khái niệm, định nghĩa, công thức, ví dụ, ứng dụng, lưu ý
+- Nếu là tài liệu học tập: chia theo khái niệm, định nghĩa, ví dụ, ứng dụng
+- Nếu là biểu đồ/sơ đồ: theo cấu trúc của biểu đồ với chi tiết
+- Nếu là văn bản: theo ý chính và chi tiết với phân tích sâu
+
+RULES:
+- Chỉ trả về JSON thuần, KHÔNG có text khác
+- Tối đa 3 cấp độ children để có đủ chi tiết
+- Mỗi topic ngắn gọn nhưng đầy đủ thông tin
+- Đảm bảo JSON hợp lệ (dấu hai chấm, dấu phẩy, ngoặc kép)
+- Không có dấu phẩy thừa trước ] hoặc }`;
+          } else {
+            // Smart document analysis prompt với chunking
+            const fileTypeDesc = FileParser.getFileTypeDescription(selectedFile.type);
+            const userContext = inputValue ? ` với góc nhìn: "${inputValue}"` : '';
+            
+            // Chia nhỏ nội dung file nếu quá dài
+            const maxContentLength = 8000; // Giới hạn độ dài content
+            let contentToAnalyze = parsedFileContent;
+            
+            if (parsedFileContent.length > maxContentLength) {
+              contentToAnalyze = parsedFileContent.substring(0, maxContentLength) + 
+                `\n\n[Lưu ý: Nội dung đã được rút gọn từ ${parsedFileContent.length} ký tự xuống ${maxContentLength} ký tự để tránh JSON quá dài]`;
+            }
+            
+            prompt = `ROLE: Bạn là chuyên gia phân tích tài liệu và tạo mindmap giáo dục.
+
+TASK: Phân tích nội dung ${fileTypeDesc}${userContext} và tạo mindmap JSON chi tiết.
+
+CONTENT TO ANALYZE:
+===== NỘI DUNG FILE =====
+${contentToAnalyze}
+===== KẾT THÚC NỘI DUNG FILE =====
+
+OUTPUT FORMAT (BẮT BUỘC):
+{
+  "topic": "Chủ đề chính từ nội dung",
+  "children": [
+    {"topic": "Nhánh 1"},
+    {"topic": "Nhánh 2", "children": [{"topic": "Chi tiết"}]}
+  ]
+}
+
+EXAMPLES:
+- Tài liệu Toán → {"topic": "Đại số lớp 12", "children": [
+    {"topic": "Hàm số", "children": [{"topic": "Định nghĩa"}, {"topic": "Tính chất"}, {"topic": "Đồ thị"}]},
+    {"topic": "Phương trình", "children": [{"topic": "Bậc nhất"}, {"topic": "Bậc hai"}, {"topic": "Hệ phương trình"}]}
+  ]}
+- Bài học Lịch sử → {"topic": "Chiến tranh thế giới", "children": [
+    {"topic": "Nguyên nhân", "children": [{"topic": "Kinh tế"}, {"topic": "Chính trị"}, {"topic": "Xã hội"}]},
+    {"topic": "Diễn biến", "children": [{"topic": "Giai đoạn 1"}, {"topic": "Giai đoạn 2"}, {"topic": "Kết thúc"}]}
+  ]}
+
+ANALYSIS GUIDE:
+1. Tự động xác định chủ đề chính của tài liệu
+2. Phân tích cấu trúc: tiêu đề → mục lục → phần chính → kết luận
+3. Trích xuất: khái niệm, định nghĩa, công thức, ví dụ quan trọng
+4. Tổ chức logic: tổng quát → chi tiết
+5. Bài học: mục tiêu → nội dung → bài tập → đánh giá
+6. Tài liệu kỹ thuật: tính năng → hướng dẫn → lưu ý
+7. Bài tập: dạng bài → phương pháp → ví dụ
+
+DETAIL REQUIREMENTS:
+- Tạo mindmap CHI TIẾT và ĐẦY ĐỦ từ nội dung tài liệu
+- Mỗi nhánh chính phải có ít nhất 3-5 nhánh con
+- Nhánh con có thể có thêm 2-3 nhánh con cấp 2
+- Trích xuất TẤT CẢ thông tin quan trọng từ tài liệu
+- Bao gồm: khái niệm, định nghĩa, công thức, ví dụ, bài tập, lưu ý
+- Nếu là bài học: chia theo mục tiêu, nội dung chính, bài tập, đánh giá
+- Nếu là tài liệu kỹ thuật: chia theo tính năng, hướng dẫn, lưu ý, ứng dụng
+
+RULES:
+- Chỉ trả về JSON thuần, KHÔNG có text khác
+- Tối đa 3 cấp độ children để có đủ chi tiết
+- Mỗi topic ngắn gọn nhưng đầy đủ thông tin
+- Đảm bảo JSON hợp lệ (dấu hai chấm, dấu phẩy, ngoặc kép)
+- Không có dấu phẩy thừa trước ] hoặc }`;
+          }
+        } else {
+          prompt = `ROLE: Bạn là chuyên gia tạo mindmap giáo dục.
+
+TASK: Tạo mindmap JSON chi tiết cho chủ đề "${inputValue}".
+
+OUTPUT FORMAT (BẮT BUỘC):
+{
+  "topic": "${inputValue}",
+  "children": [
+    {"topic": "Nhánh 1"},
+    {"topic": "Nhánh 2", "children": [{"topic": "Chi tiết"}]}
+  ]
+}
+
+EXAMPLES:
+- "Toán học lớp 12" → {"topic": "Toán học lớp 12", "children": [
+    {"topic": "Đại số", "children": [{"topic": "Hàm số"}, {"topic": "Phương trình"}, {"topic": "Bất phương trình"}]},
+    {"topic": "Hình học", "children": [{"topic": "Khối đa diện"}, {"topic": "Mặt cầu"}, {"topic": "Tọa độ không gian"}]},
+    {"topic": "Giải tích", "children": [{"topic": "Đạo hàm"}, {"topic": "Tích phân"}, {"topic": "Ứng dụng"}]}
+  ]}
+- "Hóa học hữu cơ" → {"topic": "Hóa học hữu cơ", "children": [
+    {"topic": "Hiđrocacbon", "children": [{"topic": "Ankan"}, {"topic": "Anken"}, {"topic": "Ankin"}]},
+    {"topic": "Dẫn xuất", "children": [{"topic": "Ancol"}, {"topic": "Axit"}, {"topic": "Este"}]},
+    {"topic": "Polime", "children": [{"topic": "Tổng hợp"}, {"topic": "Ứng dụng"}]}
+  ]}
+
+MINDMAP STRUCTURE GUIDE:
+1. Phân tích chủ đề và xác định các khía cạnh chính
+2. Tạo cấu trúc: tổng quát → chi tiết
+3. Bao gồm: định nghĩa, đặc điểm, phân loại, ứng dụng, ví dụ
+4. Đảm bảo logic và dễ hiểu
+5. Mỗi nhánh phải có ý nghĩa rõ ràng
+
+DETAIL REQUIREMENTS:
+- Tạo mindmap CHI TIẾT và ĐẦY ĐỦ nhất có thể
+- Mỗi nhánh chính phải có ít nhất 3-5 nhánh con
+- Nhánh con có thể có thêm 2-3 nhánh con cấp 2
+- Bao phủ tất cả khía cạnh quan trọng của chủ đề
+- Bao gồm: định nghĩa, đặc điểm, phân loại, ví dụ, ứng dụng, công thức, lưu ý
+- Nếu là môn học: chia theo chương, bài, khái niệm, công thức, bài tập
+- Nếu là chủ đề: chia theo khía cạnh, ứng dụng, ví dụ, lưu ý
+
+RULES:
+- Chỉ trả về JSON thuần, KHÔNG có text khác
+- Tối đa 3 cấp độ children để có đủ chi tiết
+- Mỗi topic ngắn gọn nhưng đầy đủ thông tin
+- Đảm bảo JSON hợp lệ (dấu hai chấm, dấu phẩy, ngoặc kép)
+- Không có dấu phẩy thừa trước ] hoặc }`;
+        }
+      } else if (selectedType === 'gdpt2018') {
+        // Use PDF content if available
+        if (pdfContent) {
+          const subjectName = SUBJECTS.find(s => s.value === subject)?.label || 'Học tập';
+          const selectedLessonOption = lessonOptions.find(l => l.value === lesson);
+          const lessonTitle = selectedLessonOption ? selectedLessonOption.label.replace(/^Bài \d+\.\s*/, '') : '';
+          const lessonContext = lessonTitle ? ` - Bài học: "${lessonTitle}"` : '';
+          
+          // Chia nhỏ nội dung PDF nếu quá dài
+          const maxContentLength = 8000;
+          let contentToAnalyze = pdfContent;
+          
+          if (pdfContent.length > maxContentLength) {
+            contentToAnalyze = pdfContent.substring(0, maxContentLength) + 
+              `\n\n[Lưu ý: Nội dung PDF đã được rút gọn từ ${pdfContent.length} ký tự xuống ${maxContentLength} ký tự để tránh JSON quá dài]`;
+          }
+          
+          prompt = `ROLE: Từ dữ liệu mà tôi cung cấp hãy cho tôi sơ đồ tư duy.
+
+TASK: Phân tích nội dung PDF từ chương trình GDPT 2018 - Lớp ${grade}, Môn ${subjectName}${lessonContext} và tạo mindmap JSON chi tiết.
+
+CONTENT FROM PDF:
+===== NỘI DUNG PDF =====
+${contentToAnalyze}`;
+        } else {
+          // Auto-generate lesson content for GDPT 2018
+          const subjectName = SUBJECTS.find(s => s.value === subject)?.label || 'Học tập';
+          // Get lesson title from selected lesson
+          const selectedLessonOption = lessonOptions.find(l => l.value === lesson);
+          const lessonTitle = selectedLessonOption ? selectedLessonOption.label.replace(/^Bài \d+\.\s*/, '') : '';
+          const autoLesson = lessonTitle || `Bài học ${subjectName} lớp ${grade}`;
+          prompt = `ROLE: Từ dữ liệu mà tôi cung cấp hãy cho tôi sơ đồ tư duy.
+
+TASK: Tạo mindmap JSON chi tiết cho Từ dữ liệu nội dung PDF mà tôi cung cấp hãy tạo cho tôi sơ đồ tư duy Bài "${autoLesson}" theo GDPT 2018 - Lớp ${grade}, Môn ${subjectName}.
+
+
+`;
+        }
+      }
+
+      const response = await GeminiService.generateText(prompt);
+
+      let rawText = response;
+
+      // ✅ làm sạch dữ liệu trả về từ Gemini
+      rawText = rawText
+        .replace(/```json/gi, "")
+        .replace(/```/g, "")
+        .replace(/```javascript/gi, "")
+        .replace(/```js/gi, "")
+        .trim();
+
+
+      // ✅ tách ra phần JSON hợp lệ
+      const firstBrace = rawText.indexOf("{");
+      const lastBrace = rawText.lastIndexOf("}");
+      
+      if (firstBrace === -1 || lastBrace === -1) {
+        console.error("❌ Không tìm thấy JSON hợp lệ trong response:", rawText);
+        throw new Error("Không tìm thấy JSON hợp lệ trong response từ AI");
+      }
+
+      const jsonString = rawText.substring(firstBrace, lastBrace + 1);
+
+      // Sử dụng hàm validate và sửa JSON
+      const json = validateAndFixJSON(jsonString);
+      
+      // Kiểm tra xem có sử dụng fallback không
+      const isLikelyFallback = json.children && json.children.length <= 15 && jsonString.length > 5000;
+      if (isLikelyFallback) {
+        message.warning({
+          content: 'JSON từ AI có lỗi cú pháp, đã tự động tạo mindmap từ nội dung có sẵn',
+          duration: 5,
+          style: { marginTop: '10vh' }
+        });
+      } else {
+        message.success({
+          content: 'Mindmap đã được tạo thành công!',
+          duration: 3,
+          style: { marginTop: '10vh' }
+        });
+      }
+
+      // ✅ convert về jsMind format
+      const mindmapData = convertToJsMind(json);
+
+      // ✅ Lưu data và hiển thị container
+      setMindmapData(mindmapData);
+      setShowMindmap(true);
+      
+      // ✅ Clear input tương ứng với loại mindmap
+      if (selectedType === 'standard') {
+        setInputValue('');
+        message.success('Mindmap Tiêu chuẩn đã được tạo thành công!');
+      } else if (selectedType === 'gdpt2018') {
+        // Keep lesson selected, just clear mindmap
+        message.success('Mindmap GDPT 2018 đã được tạo thành công!');
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error creating mindmap:", error);
+      message.error('Có lỗi xảy ra khi tạo mindmap. Vui lòng thử lại.');
+      setLoading(false);
+    }
+  }
+
+
   const handleCreateMindmap = async () => {
     try {
       setLoading(true);
@@ -1111,7 +1392,6 @@ RULES:
   }
 
 
-
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
@@ -1198,7 +1478,7 @@ RULES:
                     type="primary"
                     size="large"
                     icon={loading ? <Spin /> : <SendOutlined />}
-                    onClick={handleCreateMindmap}
+                    onClick={handleCreateMindmap_2018}
                     disabled={!lesson.trim() || loading || isLoadingPdf}
                     className="!bg-orange-500 !border-orange-500 hover:!bg-orange-600 hover:border-orange-600 !h-12 !px-8 !text-base !font-semibold"
                   >

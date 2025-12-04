@@ -36,7 +36,7 @@ const TitleHeaderHome = (props: TTitleHeaderHome) => {
         <h1 className='mb-1 text-xl font-bold text-gray-800'>{heading}</h1>
         <p className='text-sm text-gray-500'>{description}</p>
       </div>
-      {isButtonHeading && <Button shape='round' size='small' onClick={onAction}>
+      {isButtonHeading && <Button  shape='round' size='small' onClick={onAction}>
         {buttonLabel}
       </Button>}
 

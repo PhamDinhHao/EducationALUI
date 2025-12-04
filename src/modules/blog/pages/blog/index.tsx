@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react'
-import { CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons'
+import { CalendarOutlined, ClockCircleOutlined, EyeOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { PagePath } from '@/shared/core/enum/page.enum'
-import { Button } from 'antd'
+import { Button, Modal } from 'antd'
 import { getBlogList, getBlogTags, getRecentPosts } from '@/modules/blog/services/blogService.service'
 import { useBoundStore } from '@/shared/stores'
+import images from '@/assets/images/images'
 
 const categories = [
-  { name: 'Student', icon: '🎓' },
-  { name: 'Teacher', icon: '🏫' },
-  { name: 'Management staff', icon: '💼' },
-  { name: 'New technology', icon: '📱' }
+  { name: 'Học sinh', icon: '🎓' },
+  { name: 'Giáo viên', icon: '🏫' },
+  { name: 'Cán bộ quản lý', icon: '💼' },
+  { name: 'Công nghệ mới', icon: '📱' }
 ]
 
 const Blog = () => {
@@ -27,27 +28,22 @@ const Blog = () => {
   const [activeTab, setActiveTab] = useState('articles') // 'articles' or 'contests'
   const [currentSlide, setCurrentSlide] = useState(0)
   const [activeCategory, setActiveCategory] = useState('')
+  const [isBannerPreviewOpen, setIsBannerPreviewOpen] = useState(false)
   const navigate = useNavigate()
 
   // Banner slides data
   const bannerSlides = [
     {
       id: 1,
-      image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&h=400&fit=crop',
-      title: 'Discover Amazing Stories',
-      subtitle: 'Explore our collection of insightful articles and tutorials'
+      image: images.bgBanner1
     },
     {
       id: 2,
-      image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&h=400&fit=crop',
-      title: 'Join Creative Community',
-      subtitle: 'Share your knowledge and learn from experts'
+      image: images.bgBanner2
     },
     {
       id: 3,
-      image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=400&fit=crop',
-      title: 'Inspire and Be Inspired',
-      subtitle: 'Read stories that matter and make an impact'
+      image: images.bgBanner3
     }
   ]
 
@@ -97,6 +93,11 @@ const Blog = () => {
   useEffect(() => {
     fetchBlogs(currentPage, searchQuery, selectedTag)
   }, [currentPage, searchQuery, selectedTag, activeTab, activeCategory])
+
+  // Reset category filter when switching between tabs
+  useEffect(() => {
+    setActiveCategory('')
+  }, [activeTab])
 
   const handleSearch = (value: string) => {
     setSearchQuery(value)
@@ -335,7 +336,7 @@ const Blog = () => {
 
         .banner-slider {
           position: relative;
-          overflow: hidden;
+          overflow: visible;
           border-radius: 24px;
           height: 400px;
         }
@@ -348,42 +349,12 @@ const Blog = () => {
           transition: opacity 1s ease-in-out;
           background-size: cover;
           background-position: center;
+          background-repeat: no-repeat;
+          border-radius: 24px;
         }
 
         .banner-slide.active {
           opacity: 1;
-        }
-
-        .banner-overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          padding: 2rem;
-          text-align: center;
-        }
-
-        .banner-title {
-          color: white;
-          font-size: 3.5rem;
-          font-weight: 800;
-          margin-bottom: 1rem;
-          text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-          animation: fadeInUp 0.8s ease-out;
-        }
-
-        .banner-subtitle {
-          color: rgba(255,255,255,0.95);
-          font-size: 1.25rem;
-          max-width: 600px;
-          text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-          animation: fadeInUp 0.8s ease-out 0.2s both;
         }
 
         .slider-dots {
@@ -411,14 +382,17 @@ const Blog = () => {
           background: white;
         }
 
+        .banner-slider:hover .slider-nav {
+          opacity: 1;
+        }
+
         .slider-nav {
           position: absolute;
           top: 50%;
-          transform: translateY(-50%);
-          background: rgba(255,255,255,0.2);
+          background: rgba(255,255,255,0.9);
           backdrop-filter: blur(10px);
-          border: none;
-          color: white;
+          border: 2px solid rgba(255,255,255,0.5);
+          color: #333;
           width: 50px;
           height: 50px;
           border-radius: 50%;
@@ -429,32 +403,37 @@ const Blog = () => {
           align-items: center;
           justify-content: center;
           font-size: 24px;
+          opacity: 0;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .slider-nav:hover {
-          background: rgba(255,255,255,0.3);
-          transform: translateY(-50%) scale(1.1);
+          background: rgba(255,255,255,1);
+          transform: scale(1.1);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.25);
         }
 
         .slider-nav.prev {
-          left: 20px;
+          left: 0;
+          transform: translateX(-50%) translateY(-50%);
+        }
+
+        .slider-nav.prev:hover {
+          transform: translateX(-50%) translateY(-50%) scale(1.1);
         }
 
         .slider-nav.next {
-          right: 20px;
+          right: 0;
+          transform: translateX(50%) translateY(-50%);
+        }
+
+        .slider-nav.next:hover {
+          transform: translateX(50%) translateY(-50%) scale(1.1);
         }
 
         @media (max-width: 768px) {
           .banner-slider {
             height: 300px;
-          }
-          
-          .banner-title {
-            font-size: 2rem;
-          }
-          
-          .banner-subtitle {
-            font-size: 1rem;
           }
         }
 
@@ -481,6 +460,43 @@ const Blog = () => {
         .tab-button:hover {
           transform: translateY(-2px);
         }
+
+        .banner-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(15,23,42,0.1), rgba(79,70,229,0.45));
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          transition: all 0.3s ease;
+        }
+
+        .banner-wrapper:hover .banner-overlay {
+          opacity: 1;
+        }
+
+        .banner-eye-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 64px;
+          height: 64px;
+          border-radius: 9999px;
+          background: rgba(255,255,255,0.95);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+          color: #4f46e5;
+          font-size: 30px;
+          border: 2px solid rgba(129,140,248,0.6);
+          transition: all 0.25s ease;
+          cursor: pointer;
+        }
+
+        .banner-eye-btn:hover {
+          transform: scale(1.08) translateY(-2px);
+          box-shadow: 0 24px 50px rgba(0,0,0,0.3);
+          background: white;
+        }
       `}</style>
 
       <div className='bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-10' style={{ minHeight: '100%', width: '100%', overflow: 'visible' }}>
@@ -492,13 +508,10 @@ const Blog = () => {
                 <div
                   key={slide.id}
                   className={`banner-slide ${index === currentSlide ? 'active' : ''}`}
-                  style={{ backgroundImage: `url(${slide.image})` }}
-                >
-                  <div className='banner-overlay'>
-                    <h1 className='banner-title'>{slide.title}</h1>
-                    <p className='banner-subtitle'>{slide.subtitle}</p>
-                  </div>
-                </div>
+                  style={{
+                    backgroundImage: `url(${slide.image})`
+                  }}
+                />
               ))}
 
               {/* Navigation Buttons */}
@@ -562,12 +575,12 @@ const Blog = () => {
                 style={{ animationDelay: '0.2s' }}
               >
                 <h2 className='mb-6 text-4xl font-bold text-gray-800'>
-                  {activeTab === 'articles' ? 'All Articles' : 'All Contests'}
+                  {activeTab === 'articles' ? 'Tất cả bài viết' : 'Tất cả cuộc thi'}
                 </h2>
                 <div className='search-input'>
                   <input
                     type='text'
-                    placeholder={activeTab === 'articles' ? '🔍 Search for articles...' : '🔍 Search for contests...'}
+                    placeholder={activeTab === 'articles' ? '🔍 Tìm kiếm bài viết...' : '🔍 Tìm kiếm cuộc thi...'}
                     className='w-full rounded-2xl border-2 border-gray-200 bg-white px-6 py-4 text-lg shadow-md transition-all focus:border-indigo-400 focus:outline-none'
                     onKeyPress={(e: any) => {
                       if (e.key === 'Enter') handleSearch(e.target.value)
@@ -582,7 +595,7 @@ const Blog = () => {
               {loading ? (
                 <div className='py-20 text-center'>
                   <div className='loading-spinner mx-auto mb-4'></div>
-                  <p className='text-lg text-gray-500'>Loading awesome content...</p>
+                  <p className='text-lg text-gray-500'>Đang tải nội dung...</p>
                 </div>
               ) : articles.length === 0 ? (
                 <div className='animate-fadeIn rounded-3xl bg-white py-24 text-center shadow-xl'>
@@ -590,7 +603,7 @@ const Blog = () => {
                   <p className='text-2xl font-semibold text-gray-500'>
                     {activeTab === 'articles' ? 'Không tìm thấy bài viết nào' : 'Không tìm thấy cuộc thi nào'}
                   </p>
-                  <p className='mt-2 text-gray-400'>Try adjusting your search or filters</p>
+                  <p className='mt-2 text-gray-400'>Thử tìm kiếm lại hoặc lọc theo các tiêu chí</p>
                 </div>
               ) : (
                 <div className='space-y-6'>
@@ -609,7 +622,7 @@ const Blog = () => {
                           }}
                           className='absolute right-4 bottom-4 flex items-center gap-2 rounded-full bg-indigo-600 px-3 py-1.5 text-center text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-indigo-700'
                         >
-                          <span className='hidden sm:inline'>Edit</span>
+                          <span className='hidden sm:inline'>Sửa</span>
                         </button>
                       )}
                       <div className='grid grid-cols-1 sm:grid-cols-5'>
@@ -621,7 +634,7 @@ const Blog = () => {
                             }}
                           />
                           <div className='absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-indigo-600 backdrop-blur-sm'>
-                            NEW
+                            Mới
                           </div>
                         </div>
 
@@ -639,7 +652,7 @@ const Blog = () => {
                             className='mb-5 line-clamp-3 leading-relaxed text-gray-600'
                             dangerouslySetInnerHTML={{
                               __html:
-                                getPlainTextFromHTML(item.content?.toString() || '') || '<p>No content available</p>'
+                                getPlainTextFromHTML(item.content?.toString() || '') || '<p>Không có nội dung</p>'
                             }}
                           ></p>
                           {item.tags && item.tags.length > 0 && (
@@ -688,14 +701,15 @@ const Blog = () => {
                 className='mb-8 w-full rounded-3xl bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-lg font-bold text-white shadow-xl hover:shadow-2xl'
                 onClick={() => navigate(PagePath.BLOG_ADD, { state: { type: activeTab } })}
               >
-                {activeTab === 'articles' ? '➕ Add Blog' : '➕ Add Contest'}
+                {activeTab === 'articles' ? '➕ Thêm bài viết' : '➕ Thêm cuộc thi'}
               </Button>
 
+              {activeTab === 'articles' ? (
               <div
                 className={`mb-8 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
                 style={{ animationDelay: '0.3s' }}
               >
-                <h4 className='mb-6 text-2xl font-bold text-gray-800'>Categories</h4>
+                <h4 className='mb-6 text-2xl font-bold text-gray-800'>Phân loại</h4>
                 <div className='space-y-1'>
                   {categories.map((item, idx) => (
                     <div
@@ -711,12 +725,30 @@ const Blog = () => {
                   ))}
                 </div>
               </div>
+              ) : (
+                <div
+                  className={`mb-8 overflow-hidden rounded-3xl bg-white p-3 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
+                  style={{ animationDelay: '0.3s' }}
+                >
+                  <div className='banner-wrapper relative h-80 w-full rounded-2xl bg-cover bg-center' style={{ backgroundImage: `url(${images.bgCompetition})` }}>
+                    <div className='banner-overlay'>
+                      <button
+                        type='button'
+                        className='banner-eye-btn'
+                        onClick={() => setIsBannerPreviewOpen(true)}
+                      >
+                        <EyeOutlined />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div
                 className={`mb-8 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
                 style={{ animationDelay: '0.4s' }}
               >
-                <h4 className='mb-6 text-2xl font-bold text-gray-800'>Recent Posts</h4>
+                <h4 className='mb-6 text-2xl font-bold text-gray-800'>Bài viết gần đây</h4>
                 <div className='space-y-4'>
                   {recentPosts?.map((item: any) => (
                     <div
@@ -749,7 +781,7 @@ const Blog = () => {
                 className={`mb-16 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
                 style={{ animationDelay: '0.5s' }}
               >
-                <h4 className='mb-6 text-2xl font-bold text-gray-800'>Popular Tags</h4>
+                <h4 className='mb-6 text-2xl font-bold text-gray-800'>Thẻ phổ biến</h4>
                 <div className='flex flex-wrap gap-3'>
                   {tags.map((tag, index) => (
                     <button
@@ -770,6 +802,20 @@ const Blog = () => {
           </div>
         </div>
       </div>
+      <Modal
+        open={isBannerPreviewOpen}
+        footer={null}
+        onCancel={() => setIsBannerPreviewOpen(false)}
+        centered
+        width={900}
+        bodyStyle={{ padding: 0, borderRadius: 24, overflow: 'hidden', backgroundColor: 'transparent' }}
+      >
+        <img
+          src={images.bgCompetition}
+          alt='Competition Banner'
+          style={{ width: '100%', display: 'block' }}
+        />
+      </Modal>
     </>
   )
 }

@@ -52,11 +52,11 @@ export type LessonResponse = {
   raw?: string; // fallback khi AI trả text
 };
 export interface Question {
-  type: string;
-  level: string;
-  question: string;
-  options?: string[];
-  answer: string;
+  level?: string
+  question: string
+  options?: string[]
+  statements?: string[]
+  answer: string | string[]
 }
 
 export interface ExamPreviewProps {

@@ -29,7 +29,7 @@ const TopArticles = () => {
 
   return (
     <div>
-      <TitleHeaderHome onAction={handleNavigate} heading='Latest Articles' description='Explore our Free Articles' buttonLabel='All Articles' />
+      <TitleHeaderHome onAction={handleNavigate} heading='Bài viết nổi bật' description='Khám phá, học hỏi và chia sẻ' buttonLabel='Xem tất cả' />
       <Row gutter={[16, 16]}>
         {displayArticles.map((item, index) => (
           <Col xs={24} sm={12} md={12} lg={6} xl={6} key={item.id || index}>

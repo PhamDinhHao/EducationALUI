@@ -3,6 +3,7 @@ import { Button, Input, message } from 'antd'
 import { RobotOutlined, SendOutlined, CloseOutlined, UserOutlined } from '@ant-design/icons'
 import { GeminiService, ChatMessage } from '@/modules/ai/pages/ai/Service/gemini.service'
 import { ConversationManager, ConversationMessage } from '@/modules/ai/pages/ai/Service/conversation.manager'
+import images from '@/assets/images'
 
 const FloatingAIChat = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -115,26 +116,26 @@ const FloatingAIChat = () => {
           width: '60px',
           height: '60px',
           borderRadius: '50%',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg,rgb(234, 194, 102) 0%, rgb(255, 102, 0) 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
-          boxShadow: '0 4px 20px rgba(102, 126, 234, 0.4)',
+          boxShadow: '0 4px 20px rgba(255, 102, 0, 0.4)',
           zIndex: 1000,
           transition: 'all 0.3s ease',
           border: '3px solid white'
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = 'scale(1.1)'
-          e.currentTarget.style.boxShadow = '0 6px 25px rgba(102, 126, 234, 0.6)'
+          e.currentTarget.style.boxShadow = '0 6px 25px rgba(255, 102, 0, 0.6)'
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.transform = 'scale(1)'
-          e.currentTarget.style.boxShadow = '0 4px 20px rgba(102, 126, 234, 0.4)'
+          e.currentTarget.style.boxShadow = '0 4px 20px rgba(255, 102, 0, 0.4)'
         }}
       >
-        <RobotOutlined style={{ fontSize: '28px', color: 'white' }} />
+        <img src={images.icLogoAi} alt='Logo' className='w-full h-full object-cover' />
       </div>
 
       {/* Chat Window */}
@@ -163,7 +164,7 @@ const FloatingAIChat = () => {
           <div
             style={{
               padding: '16px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: 'linear-gradient(135deg,rgb(234, 194, 102) 0%, rgb(255, 102, 0) 100%)',
               color: 'white',
               display: 'flex',
               alignItems: 'center',
@@ -171,9 +172,9 @@ const FloatingAIChat = () => {
               borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <RobotOutlined style={{ fontSize: '20px' }} />
-              <span style={{ fontWeight: 600, fontSize: '16px' }}>ETA AI Assistant</span>
+            <div style={{ display: 'flex', alignItems: 'center'}}>
+              <img src={images.icLogoAi} width={60} alt='Logo' />
+              <span style={{ fontWeight: 600, fontSize: '16px' }}>Trợ lý GenAI</span>
             </div>
             <Button
               type="text"
@@ -197,8 +198,8 @@ const FloatingAIChat = () => {
           >
             {messages.length === 0 && (
               <div style={{ textAlign: 'center', color: '#6b7280', marginTop: '40px' }}>
-                <RobotOutlined style={{ fontSize: '48px', marginBottom: '12px', color: '#667eea' }} />
-                <p style={{ fontSize: '14px' }}>Xin chào! Tôi là ETA, trợ lý AI của bạn.</p>
+                <img src={images.icLogoAi} alt='Logo' className='w-[50px] h-[50px] object-cover mx-auto mb-4' />
+                <p style={{ fontSize: '14px' }}>Xin chào! Tôi là Trợ lý GenAI, trợ lý AI của bạn.</p>
                 <p style={{ fontSize: '14px', marginTop: '4px' }}>Hãy hỏi tôi bất cứ điều gì bạn muốn!</p>
               </div>
             )}
@@ -217,7 +218,7 @@ const FloatingAIChat = () => {
                     padding: '10px 14px',
                     borderRadius: '12px',
                     background: msg.role === 'user' 
-                      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
+                      ? 'linear-gradient(135deg,rgb(234, 194, 102) 0%, rgb(255, 102, 0) 100%)' 
                       : 'white',
                     color: msg.role === 'user' ? 'white' : '#1f2937',
                     boxShadow: msg.role === 'user' 
@@ -296,7 +297,7 @@ const FloatingAIChat = () => {
               disabled={!inputValue.trim()}
               style={{
                 borderRadius: '12px',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'linear-gradient(135deg,rgb(234, 194, 102) 0%, rgb(255, 102, 0) 100%)',
                 border: 'none',
                 height: '40px',
                 width: '40px',

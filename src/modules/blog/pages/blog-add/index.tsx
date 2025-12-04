@@ -266,8 +266,8 @@ const AddBlog = () => {
         <div className='mx-auto max-w-5xl'>
           {/* Header */}
           <div className='animate-fadeInUp mb-10 text-center'>
-            <h1 className='gradient-text mb-4 text-5xl font-extrabold'>Create New Blog Post</h1>
-            <p className='text-lg text-gray-600'>Share your thoughts and stories with the world</p>
+            <h1 className='gradient-text mb-4 text-5xl font-extrabold'>Thêm bài viết mới</h1>
+            <p className='text-lg text-gray-600'>Chia sẻ ý tưởng và câu chuyện của bạn với GenAI</p>
           </div>
 
           {/* Form */}
@@ -297,7 +297,6 @@ const AddBlog = () => {
                   value={selectedTags}
                   onChange={(selected) => {
                     const labels = tags.filter((tag) => selected.includes(tag.id)).map((item: any) => item.name)
-                    console.log(labels)
                     setSelectedTags(labels)
                   }}
                   options={tags.map((tag) => ({

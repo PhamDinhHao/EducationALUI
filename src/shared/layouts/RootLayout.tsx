@@ -42,8 +42,7 @@ const RootLayout = () => {
       <div style={{ backgroundColor: '#fff', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <Header className='flex items-center justify-between border-b border-gray-200 bg-white px-4 shadow-sm lg:px-6' style={{ flexShrink: 0 }}>
           <Link className='flex items-center' to='/'>
-            <img src={images.icLogoEdu} width={60} alt='Logo' />
-            <span className='text-black-600 ml-2 text-xl font-bold'>EducationAL</span>
+            <img src={images.icLogo} width={100} alt='Logo' />
           </Link>
           <Menu />
           <div className='hidden lg:block' style={{ width: 120 }}></div>

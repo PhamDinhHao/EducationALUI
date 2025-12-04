@@ -8,6 +8,7 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useBoundStore } from '@/shared/stores'
 import { useMenu } from '@/shared/hooks/useMenu'
 import { getProfile } from '@/shared/services/auth.service'
+import images from "@/assets/images";
 
 const MENU_ITEMS: MenuItem[] = [
   {
@@ -336,7 +337,7 @@ const Menu: React.FC = () => {
       <Drawer
         title={
           <div className='flex items-center'>
-            <img height={40} src='/image/logo.png' width={120} alt='Logo' />
+              <img src={images.icLogo} width={120} alt='Logo' />
           </div>
         }
         placement='right'

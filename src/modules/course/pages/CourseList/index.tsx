@@ -6,6 +6,7 @@ import { fetchQueryCourses } from '@/shared/server-action/courses.server'
 import { fetchCourseTypes, fetchTopCategories } from '@/shared/server-action/courseTypes.server'
 import { ICourse, ICourseType } from '@/modules/home/cores/interfaces'
 import { OptimizedCourseCard } from '@/modules/course/components/OptimizedCourseCard'
+import images from '@/assets/images/images'
 
 export default function CourseList() {
   const navigate = useNavigate()
@@ -28,22 +29,19 @@ export default function CourseList() {
   const currentPage = parseInt(searchParams.get('page') || '1', 10)
   const limit = 12
 
-  // Banner slides data - text only
+  // Banner slides data
   const bannerSlides = [
     {
       id: 1,
-      title: 'Khám phá Khóa học Tuyệt vời',
-      subtitle: 'Khám phá bộ sưu tập các khóa học và hướng dẫn đầy thông tin của chúng tôi'
+      image: images.bgBanner1
     },
     {
       id: 2,
-      title: 'Tham gia Cộng đồng Sáng tạo',
-      subtitle: 'Chia sẻ kiến thức của bạn và học hỏi từ các chuyên gia'
+      image: images.bgBanner2
     },
     {
       id: 3,
-      title: 'Truyền cảm hứng và Được truyền cảm hứng',
-      subtitle: 'Học những điều quan trọng và tạo ra tác động'
+      image: images.bgBanner3
     }
   ]
 
@@ -80,7 +78,7 @@ export default function CourseList() {
       try {
         const types = await fetchCourseTypes()
         setCourseTypes(types)
-        
+
         // Fetch categories with course count
         const categoriesWithCount = await fetchTopCategories(100) // Get all categories
         setCourseTypesWithCount(categoriesWithCount || [])
@@ -194,7 +192,7 @@ export default function CourseList() {
 
         .banner-slider {
           position: relative;
-          overflow: hidden;
+          overflow: visible;
           border-radius: 24px;
           height: 400px;
         }
@@ -205,148 +203,136 @@ export default function CourseList() {
           height: 100%;
           opacity: 0;
           transition: opacity 1s ease-in-out;
-          background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          padding: 2rem;
-          text-align: center;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          border-radius: 24px;
         }
 
         .banner-slide.active {
           opacity: 1;
         }
 
-        .banner-title {
-          color: white;
-          font-size: 3.5rem;
-          font-weight: 800;
-          margin-bottom: 1rem;
-          text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-          animation: fadeInUp 0.8s ease-out;
-        }
-
-        .banner-subtitle {
-          color: rgba(255,255,255,0.95);
-          font-size: 1.25rem;
-          max-width: 600px;
-          text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-          animation: fadeInUp 0.8s ease-out 0.2s both;
-        }
-
         .slider-dots {
           position: absolute;
-          bottom: 20px;
-          left: 50%;
-          transform: translateX(-50%);
-          display: flex;
-          gap: 10px;
-          z-index: 10;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 10;
         }
 
         .slider-dot {
           width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.5);
-          cursor: pointer;
-          transition: all 0.3s ease;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.5);
+        cursor: pointer;
+        transition: all 0.3s ease;
         }
 
         .slider-dot.active {
           width: 32px;
-          border-radius: 6px;
-          background: white;
+        border-radius: 6px;
+        background: white;
+        }
+
+        .banner-slider:hover .slider-nav {
+          opacity: 1;
         }
 
         .slider-nav {
           position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          background: rgba(255,255,255,0.2);
-          backdrop-filter: blur(10px);
-          border: none;
-          color: white;
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          z-index: 10;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 24px;
+        top: 50%;
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255,255,255,0.5);
+        color: #333;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        opacity: 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .slider-nav:hover {
-          background: rgba(255,255,255,0.3);
-          transform: translateY(-50%) scale(1.1);
+          background: rgba(255,255,255,1);
+          transform: scale(1.1);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.25);
         }
 
         .slider-nav.prev {
-          left: 20px;
+          left: 0;
+          transform: translateX(-50%) translateY(-50%);
+        }
+
+        .slider-nav.prev:hover {
+          transform: translateX(-50%) translateY(-50%) scale(1.1);
         }
 
         .slider-nav.next {
-          right: 20px;
+          right: 0;
+          transform: translateX(50%) translateY(-50%);
+        }
+
+        .slider-nav.next:hover {
+          transform: translateX(50%) translateY(-50%) scale(1.1);
         }
 
         @media (max-width: 768px) {
           .banner-slider {
-            height: 300px;
-          }
-          
-          .banner-title {
-            font-size: 2rem;
-          }
-          
-          .banner-subtitle {
-            font-size: 1rem;
+          height: 300px;
           }
         }
 
         .search-input input:focus {
           transform: translateY(-2px);
-          box-shadow: 0 15px 30px -10px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 15px 30px -10px rgba(102, 126, 234, 0.4);
         }
 
         .scroll-to-top {
           position: fixed;
-          bottom: 40px;
-          right: 40px;
-          width: 44px;
-          height: 44px;
-          border-radius: 50%;
-          background: #222;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          z-index: 1000;
-          transition: all 0.3s ease;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        bottom: 40px;
+        right: 40px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #222;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .scroll-to-top:hover {
           background: #667eea;
-          transform: translateY(-4px);
-          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        transform: translateY(-4px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         .scroll-to-top.hidden {
           opacity: 0;
-          pointer-events: none;
-          transform: translateY(20px);
+        pointer-events: none;
+        transform: translateY(20px);
         }
 
         @media (max-width: 768px) {
-          .scroll-to-top {
-            bottom: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
+          .scroll - to - top {
+          bottom: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
           }
         }
       `}</style>
@@ -360,10 +346,10 @@ export default function CourseList() {
                 <div
                   key={slide.id}
                   className={`banner-slide ${index === currentSlide ? 'active' : ''}`}
-                >
-                  <h1 className='banner-title'>{slide.title}</h1>
-                  <p className='banner-subtitle'>{slide.subtitle}</p>
-                </div>
+                  style={{
+                    backgroundImage: `url(${slide.image})`
+                  }}
+                />
               ))}
 
               {/* Navigation Buttons */}
@@ -449,10 +435,10 @@ export default function CourseList() {
                           <>
                             {/* Section: Khóa học cơ bản */}
                             <div style={{ marginBottom: 48 }}>
-                              <h3 style={{ 
-                                fontSize: '28px', 
-                                fontWeight: 700, 
-                                color: '#222', 
+                              <h3 style={{
+                                fontSize: '28px',
+                                fontWeight: 700,
+                                color: '#222',
                                 marginBottom: 24,
                                 paddingBottom: 12,
                                 borderBottom: '3px solid #52c41a'
@@ -461,9 +447,9 @@ export default function CourseList() {
                               </h3>
                               <Row gutter={[16, 16]}>
                                 {courses
-                                  .filter(course => 
-                                    course.level === 'BASIC' || 
-                                    course.level === 'basic' || 
+                                  .filter(course =>
+                                    course.level === 'BASIC' ||
+                                    course.level === 'basic' ||
                                     !course.level // Nếu không có level, mặc định là BASIC
                                   )
                                   .map((course) => (
@@ -472,25 +458,25 @@ export default function CourseList() {
                                     </Col>
                                   ))}
                               </Row>
-                              {courses.filter(course => 
-                                course.level === 'BASIC' || 
-                                course.level === 'basic' || 
+                              {courses.filter(course =>
+                                course.level === 'BASIC' ||
+                                course.level === 'basic' ||
                                 !course.level
                               ).length === 0 && (
-                                <Empty
-                                  description="Chưa có khóa học cơ bản"
-                                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                  style={{ padding: '40px 0' }}
-                                />
-                              )}
+                                  <Empty
+                                    description="Chưa có khóa học cơ bản"
+                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                    style={{ padding: '40px 0' }}
+                                  />
+                                )}
                             </div>
 
                             {/* Section: Khóa học ứng dụng */}
                             <div style={{ marginBottom: 32 }}>
-                              <h3 style={{ 
-                                fontSize: '28px', 
-                                fontWeight: 700, 
-                                color: '#222', 
+                              <h3 style={{
+                                fontSize: '28px',
+                                fontWeight: 700,
+                                color: '#222',
                                 marginBottom: 24,
                                 paddingBottom: 12,
                                 borderBottom: '3px solid #1890ff'
@@ -499,8 +485,8 @@ export default function CourseList() {
                               </h3>
                               <Row gutter={[16, 16]}>
                                 {courses
-                                  .filter(course => 
-                                    course.level === 'APPLICATION' || 
+                                  .filter(course =>
+                                    course.level === 'APPLICATION' ||
                                     course.level === 'application'
                                   )
                                   .map((course) => (
@@ -509,16 +495,16 @@ export default function CourseList() {
                                     </Col>
                                   ))}
                               </Row>
-                              {courses.filter(course => 
-                                course.level === 'APPLICATION' || 
+                              {courses.filter(course =>
+                                course.level === 'APPLICATION' ||
                                 course.level === 'application'
                               ).length === 0 && (
-                                <Empty
-                                  description="Chưa có khóa học ứng dụng"
-                                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                  style={{ padding: '40px 0' }}
-                                />
-                              )}
+                                  <Empty
+                                    description="Chưa có khóa học ứng dụng"
+                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                    style={{ padding: '40px 0' }}
+                                  />
+                                )}
                             </div>
                           </>
                         ) : (

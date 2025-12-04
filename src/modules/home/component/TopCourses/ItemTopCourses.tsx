@@ -28,7 +28,7 @@ const ItemTopCourses = ({ course }: { course: ICourse }) => {
   return (
     <Card
       cover={
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative' }} >
           <Image
             preview={false}
             src={course?.img}
@@ -63,7 +63,7 @@ const ItemTopCourses = ({ course }: { course: ICourse }) => {
         </div>
       }
       hoverable
-      className="group text-center rounded-2xl bg-white transition-all duration-300"
+      className="group text-center rounded-2xl bg-white transition-all duration-300 hover:-translate-y-2"
       style={{
         borderRadius: '16px',
         border: '1px solid #e5e7eb',
@@ -81,11 +81,6 @@ const ItemTopCourses = ({ course }: { course: ICourse }) => {
         <span
           key='view'
           className="transition-colors duration-300 cursor-pointer group-hover:text-blue-500 text-gray-600 font-medium"
-          style={{ 
-            padding: '12px 0',
-            borderTop: '1px solid #f3f4f6',
-            display: 'block'
-          }}
         >
           Xem chi tiết
         </span>
@@ -102,12 +97,8 @@ const ItemTopCourses = ({ course }: { course: ICourse }) => {
       }}
     >
       <Meta
-        title={
-          <div className="text-gray-800 font-semibold text-base line-clamp-2" style={{ minHeight: '48px' }}>
-            {course.title}
-          </div>
-        }
-      />
+        title={course.title}
+      />  
       <div className="mt-3 text-sm text-gray-500">
         <div className="flex items-center justify-center gap-2">
           <UserOutlined className="text-gray-500 group-hover:text-blue-500 transition-colors" />

@@ -7,6 +7,7 @@ import TopCourses from '@/modules/home/component/TopCourses/TopCourses.tsx'
 import TopArticles from '@/modules/home/component/TopArticles/TopArticles.tsx'
 import StudentReviews from '@/modules/home/component/StudentReviews/StudentReviews.tsx'
 import Footer from '@shared/layouts/Footer/Footer.tsx'
+import images from '@/assets/images/images'
 
 // Animation variants for sections
 const sectionVariants = {
@@ -71,8 +72,7 @@ const Home = () => {
             padding: '60px 0',
             background: 'linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%)',
             backgroundImage: `
-              repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px),
-              repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px)
+              url(${images.bgBannerHome})
             `,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
@@ -90,28 +90,28 @@ const Home = () => {
                 variants={bannerChildVariants}
               >
                 <motion.h1
-                  className='mb-4 text-5xl sm:text-6xl lg:text-7xl font-bold'
+                  className='text-white mb-4 text-5xl sm:text-6xl lg:text-7xl font-bold'
                   variants={bannerChildVariants}
                 >
-                  Xin chào, Tôi là{' '}
+                  Xin chào, Tôi là
                   <span className='text-[#ff8c00]'>ETA</span>
                 </motion.h1>
                 <motion.p
-                  className='mb-2 text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-700'
+                  className='mb-2 text-2xl sm:text-3xl lg:text-4xl font-semibold text-white'
                   variants={bannerChildVariants}
                 >
                   Trợ lý{' '}
-                  <span className='bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent'>
+                  <span className='text-[#ff8c00]'>
                     AI
                   </span>{' '}
                   của bạn
                 </motion.p>
                 <motion.p
-                  className='mb-8 text-lg sm:text-xl text-gray-600'
+                  className='mb-8 text-lg sm:text-xl text-white'
                   variants={bannerChildVariants}
                 >
                   Chia sẻ miễn phí kiến thức{' '}
-                  <span className='font-semibold text-[#667eea]'>Ai Giáo dục</span>
+                  <span className='font-semibold text-[#ff8c00]'>Ai Giáo dục</span>
                 </motion.p>
                 
                 {/* Search Bar */}
@@ -166,7 +166,7 @@ const Home = () => {
                     }}
                   >
                     <img
-                      src='https://via.placeholder.com/500x600/ff8c00/ffffff?text=ETA+AI+Owl'
+                      src={images.icAi}
                       alt='ETA AI Assistant'
                       className='w-[400px] h-[500px] object-contain'
                     />

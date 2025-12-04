@@ -218,7 +218,6 @@ const LessonResultEnhanced: React.FC = () => {
     }
   });
 
-  const [editMode, setEditMode] = useState<string | null>(null);
 
   const updateField = (path: string, value: any) => {
     const keys = path.split('.');

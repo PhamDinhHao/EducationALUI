@@ -196,7 +196,7 @@ const LessonForm: React.FC = () => {
 
       const payload = {
         grade: values.grade,
-        subject: values.subject,
+        subject: subjectLabel[subject],
         topic: values.topic,
         periods: Number(values.periods),
         lessonType

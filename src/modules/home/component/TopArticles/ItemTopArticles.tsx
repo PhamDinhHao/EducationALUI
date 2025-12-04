@@ -90,7 +90,7 @@ const ItemTopArticles = ({ item }: { item: IArticle }) => {
         {/* Content Section */}
         <div className='p-5'>
           {/* Title */}
-          <h4 className='mb-3 line-clamp-2 text-lg font-bold text-gray-800 transition-colors duration-300 hover:text-indigo-600'>
+          <h4 className='truncate mb-3 line-clamp-1 text-lg font-bold text-gray-800 transition-colors duration-300 hover:text-indigo-600'>
             {item.title}
           </h4>
 
@@ -111,7 +111,7 @@ const ItemTopArticles = ({ item }: { item: IArticle }) => {
           {/* Content Preview */}
           {item.content && (
             <p
-              className='mb-4 line-clamp-2 text-sm leading-relaxed text-gray-600'
+              className='mb-4 line-clamp-1 text-sm leading-relaxed text-gray-600'
               dangerouslySetInnerHTML={{
                 __html: item.content.substring(0, 100) + '...'
               }}

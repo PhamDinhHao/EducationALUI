@@ -8,6 +8,8 @@ import {
   InstagramFilled,
   ArrowUpOutlined
 } from '@ant-design/icons'
+import images from '@/assets/images/images'
+import { PagePath } from '@/shared/core/enum/page.enum'
 
 const { Title, Text, Link } = Typography
 
@@ -53,52 +55,48 @@ const Footer = () => {
       <Col xs={24} md={6}>
         <Space direction='vertical' size={16}>
           <Space align='center'>
-            <img src='https://i.imgur.com/8Km9tLL.png' alt='EduPress' style={{ height: 32 }} />
-            <Title level={4} style={{ margin: 0, color: '#222', fontWeight: 700 }}>
-              EduPress
-            </Title>
+            <img src={images.icLogo} alt='GenAI' style={{ height: 32 }} />
           </Space>
-          <Text style={{ color: '#555', fontSize: 14 }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua.
+          <Text style={{ color: '#555', fontSize: 14, lineHeight: 1.5 }}>
+          GenAI là nền tảng hỗ trợ giáo viên và học sinh ứng dụng trí tuệ nhân tạo vào dạy và học một cách hiệu quả, thực tiễn, an toàn. 
+          <br />
+          Chúng tôi hướng tới việc mang AI đến gần hơn với lớp học.
           </Text>
         </Space>
       </Col>
       <Col xs={24} md={6}>
         <Title level={5} style={{ marginBottom: 16, color: '#222', fontWeight: 700 }}>
-          GET HELP
+          Chính sách
         </Title>
         <Space direction='vertical' size={8}>
-          <Link>Contact Us</Link>
-          <Link>Latest Articles</Link>
-          <Link>FAQ</Link>
+          <Link>Điều khoản & chính sách</Link>
+          <Link>Câu hỏi thường gặp</Link>
         </Space>
       </Col>
       <Col xs={24} md={6}>
         <Title level={5} style={{ marginBottom: 16, color: '#222', fontWeight: 700 }}>
-          PROGRAMS
+         Danh mục
         </Title>
         <Space direction='vertical' size={8}>
-          <Link>Art &amp; Design</Link>
-          <Link style={{ color: '#ff6600', fontWeight: 500 }}>Business</Link>
-          <Link>IT &amp; Software</Link>
-          <Link>Languages</Link>
-          <Link>Programming</Link>
+          <Link href={PagePath.HOME} target='_blank'>Trang chủ</Link>
+          <Link href={PagePath.COURSE_LIST} target='_blank'>Khóa học</Link>
+          <Link href={PagePath.BLOG} target='_blank'>Bài viết</Link>
+          <Link href={PagePath.SEARCH_AI} target='_blank'>Gen AI</Link>
         </Space>
       </Col>
       <Col xs={24} md={6}>
         <Title level={5} style={{ marginBottom: 16, color: '#222', fontWeight: 700 }}>
-          CONTACT US
+          Liên hệ
         </Title>
         <Space direction='vertical' size={8}>
           <Text>
-            <EnvironmentOutlined /> Address: 2321 New Design Str, Lorem Ipsum10 Hudson Yards, USA
+            <EnvironmentOutlined /> Địa chỉ: Trường THPT Trần Phú, tỉnh Quảng Trị, Việt Nam
           </Text>
           <Text>
-            <PhoneOutlined /> Tel: + (123) 2500-567-8988
+            <PhoneOutlined /> Tel: 0886795538
           </Text>
           <Text>
-            <MailOutlined /> Mail: supportlms@gmail.com
+            <MailOutlined /> Mail: zaza13108386@gmail.com
           </Text>
           <Space size={16}>
             <FacebookFilled style={{ color: '#222', fontSize: 18 }} />
@@ -119,7 +117,7 @@ const Footer = () => {
         position: 'relative'
       }}
     >
-      Copyright © 2024 LearnPress LMS | Powered by ThimPress
+       © 2026 GenAI
       <div
         style={{
           position: 'absolute',

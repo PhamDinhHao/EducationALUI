@@ -388,12 +388,12 @@ export default function CourseList() {
                 style={{ animationDelay: '0.2s' }}
               >
                 <h2 className='mb-6 text-4xl font-bold text-gray-800'>
-                  All Courses
+                  Tất cả khóa học
                 </h2>
                 <div className='search-input mb-10'>
                   <input
                     type='text'
-                    placeholder='🔍 Search for courses...'
+                    placeholder='🔍 Tìm kiếm khóa học...'
                     className='w-full rounded-2xl border-2 border-gray-200 bg-white px-6 py-4 text-lg shadow-md transition-all focus:border-indigo-400 focus:outline-none'
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -547,7 +547,7 @@ export default function CourseList() {
                 <Card
                   title={
                     <span style={{ fontSize: '18px', fontWeight: 700, color: '#222' }}>
-                      Categories
+                      Phân loại
                     </span>
                   }
                   style={{

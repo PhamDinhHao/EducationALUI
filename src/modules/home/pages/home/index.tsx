@@ -94,7 +94,7 @@ const Home = () => {
                   variants={bannerChildVariants}
                 >
                   Xin chào, Tôi là
-                  <span className='text-[#ff8c00]'>ETA</span>
+                  <span className='text-[#ff8c00]'> GenAI</span>
                 </motion.h1>
                 <motion.p
                   className='mb-2 text-2xl sm:text-3xl lg:text-4xl font-semibold text-white'
@@ -102,7 +102,7 @@ const Home = () => {
                 >
                   Trợ lý{' '}
                   <span className='text-[#ff8c00]'>
-                    AI
+                    GenAI
                   </span>{' '}
                   của bạn
                 </motion.p>
@@ -136,7 +136,7 @@ const Home = () => {
                     className='rounded-full px-8 shadow-lg hover:shadow-xl'
                     style={{
                       height: '56px',
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      background: 'linear-gradient(135deg,rgb(234, 194, 102) 0%, rgb(255, 102, 0) 100%)',
                       border: 'none',
                       fontSize: '16px',
                       fontWeight: 600
@@ -166,7 +166,7 @@ const Home = () => {
                     }}
                   >
                     <img
-                      src={images.icAi}
+                      src={images.icBannerMeme}
                       alt='ETA AI Assistant'
                       className='w-[400px] h-[500px] object-contain'
                     />
@@ -186,7 +186,7 @@ const Home = () => {
                       delay: 0.5
                     }}
                   >
-                    <img src='https://via.placeholder.com/64' alt='Icon' className='w-full h-full rounded-xl' />
+                    <img src={images.icBannerNotion} alt='Icon' className='w-full h-full rounded-xl' />
                   </motion.div>
                   
                   <motion.div
@@ -202,11 +202,11 @@ const Home = () => {
                       delay: 1
                     }}
                   >
-                    <img src='https://via.placeholder.com/80' alt='Icon' className='w-full h-full rounded-xl' />
+                    <img src={images.icBannerBorder} alt='Icon' className='w-full h-full rounded-xl' />
                   </motion.div>
                   
                   <motion.div
-                    className='absolute top-48 right-8 w-16 h-16 rounded-xl bg-white shadow-lg'
+                    className='absolute top-48 -right-8 w-16 h-16 rounded-xl bg-white shadow-lg'
                     animate={{
                       y: [0, -12, 0],
                       rotate: [0, 3, 0]
@@ -218,27 +218,11 @@ const Home = () => {
                       delay: 1.5
                     }}
                   >
-                    <img src='https://via.placeholder.com/64' alt='Icon' className='w-full h-full rounded-xl' />
+                    <img src={images.icBannerChatGpt} alt='Icon' className='w-full h-full rounded-xl' />
                   </motion.div>
                   
                   <motion.div
-                    className='absolute top-64 right-0 w-18 h-18 rounded-xl bg-white shadow-lg'
-                    animate={{
-                      y: [0, -18, 0],
-                      rotate: [0, -3, 0]
-                    }}
-                    transition={{
-                      duration: 3.8,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                      delay: 0.8
-                    }}
-                  >
-                    <img src='https://via.placeholder.com/72' alt='Icon' className='w-full h-full rounded-xl' />
-                  </motion.div>
-                  
-                  <motion.div
-                    className='absolute bottom-20 right-12 w-24 h-24 rounded-xl bg-white shadow-lg'
+                    className='absolute bottom-20 -right-20 w-20 h-20 rounded-xl bg-white shadow-lg'
                     animate={{
                       y: [0, -25, 0],
                       scale: [1, 1.05, 1]
@@ -250,7 +234,7 @@ const Home = () => {
                       delay: 2
                     }}
                   >
-                    <img src='https://via.placeholder.com/96' alt='Icon' className='w-full h-full rounded-xl' />
+                    <img src={images.icBannerGemini} alt='Icon' className='w-full h-full rounded-xl' />
                   </motion.div>
                 </div>
               </motion.div>

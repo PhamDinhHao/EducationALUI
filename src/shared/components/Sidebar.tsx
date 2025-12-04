@@ -279,13 +279,13 @@ const Sidebar: React.FC = () => {
             borderTop: '1px solid #f0f0f0',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: 'center',
           }}
         >
           <Button type='text' icon={<DownloadOutlined />} style={{ color: '#666', padding: '4px 8px' }}>
             Tải về
           </Button>
-          <Button type='text' icon={<SettingOutlined />} style={{ color: '#666', padding: '4px 8px' }} />
+          {/* <Button type='text' icon={<SettingOutlined />} style={{ color: '#666', padding: '4px 8px' }} /> */}
         </div>
       </Sider>
     </>

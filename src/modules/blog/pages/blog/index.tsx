@@ -8,10 +8,10 @@ import { useBoundStore } from '@/shared/stores'
 import images from '@/assets/images/images'
 
 const categories = [
-  { name: 'Student', icon: '🎓' },
-  { name: 'Teacher', icon: '🏫' },
-  { name: 'Management staff', icon: '💼' },
-  { name: 'New technology', icon: '📱' }
+  { name: 'Học sinh', icon: '🎓' },
+  { name: 'Giáo viên', icon: '🏫' },
+  { name: 'Cán bộ quản lý', icon: '💼' },
+  { name: 'Công nghệ mới', icon: '📱' }
 ]
 
 const Blog = () => {
@@ -575,12 +575,12 @@ const Blog = () => {
                 style={{ animationDelay: '0.2s' }}
               >
                 <h2 className='mb-6 text-4xl font-bold text-gray-800'>
-                  {activeTab === 'articles' ? 'All Articles' : 'All Contests'}
+                  {activeTab === 'articles' ? 'Tất cả bài viết' : 'Tất cả cuộc thi'}
                 </h2>
                 <div className='search-input'>
                   <input
                     type='text'
-                    placeholder={activeTab === 'articles' ? '🔍 Search for articles...' : '🔍 Search for contests...'}
+                    placeholder={activeTab === 'articles' ? '🔍 Tìm kiếm bài viết...' : '🔍 Tìm kiếm cuộc thi...'}
                     className='w-full rounded-2xl border-2 border-gray-200 bg-white px-6 py-4 text-lg shadow-md transition-all focus:border-indigo-400 focus:outline-none'
                     onKeyPress={(e: any) => {
                       if (e.key === 'Enter') handleSearch(e.target.value)
@@ -595,7 +595,7 @@ const Blog = () => {
               {loading ? (
                 <div className='py-20 text-center'>
                   <div className='loading-spinner mx-auto mb-4'></div>
-                  <p className='text-lg text-gray-500'>Loading awesome content...</p>
+                  <p className='text-lg text-gray-500'>Đang tải nội dung...</p>
                 </div>
               ) : articles.length === 0 ? (
                 <div className='animate-fadeIn rounded-3xl bg-white py-24 text-center shadow-xl'>
@@ -603,7 +603,7 @@ const Blog = () => {
                   <p className='text-2xl font-semibold text-gray-500'>
                     {activeTab === 'articles' ? 'Không tìm thấy bài viết nào' : 'Không tìm thấy cuộc thi nào'}
                   </p>
-                  <p className='mt-2 text-gray-400'>Try adjusting your search or filters</p>
+                  <p className='mt-2 text-gray-400'>Thử tìm kiếm lại hoặc lọc theo các tiêu chí</p>
                 </div>
               ) : (
                 <div className='space-y-6'>
@@ -622,7 +622,7 @@ const Blog = () => {
                           }}
                           className='absolute right-4 bottom-4 flex items-center gap-2 rounded-full bg-indigo-600 px-3 py-1.5 text-center text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-indigo-700'
                         >
-                          <span className='hidden sm:inline'>Edit</span>
+                          <span className='hidden sm:inline'>Sửa</span>
                         </button>
                       )}
                       <div className='grid grid-cols-1 sm:grid-cols-5'>
@@ -634,7 +634,7 @@ const Blog = () => {
                             }}
                           />
                           <div className='absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-indigo-600 backdrop-blur-sm'>
-                            NEW
+                            Mới
                           </div>
                         </div>
 
@@ -652,7 +652,7 @@ const Blog = () => {
                             className='mb-5 line-clamp-3 leading-relaxed text-gray-600'
                             dangerouslySetInnerHTML={{
                               __html:
-                                getPlainTextFromHTML(item.content?.toString() || '') || '<p>No content available</p>'
+                                getPlainTextFromHTML(item.content?.toString() || '') || '<p>Không có nội dung</p>'
                             }}
                           ></p>
                           {item.tags && item.tags.length > 0 && (
@@ -701,30 +701,30 @@ const Blog = () => {
                 className='mb-8 w-full rounded-3xl bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-lg font-bold text-white shadow-xl hover:shadow-2xl'
                 onClick={() => navigate(PagePath.BLOG_ADD, { state: { type: activeTab } })}
               >
-                {activeTab === 'articles' ? '➕ Add Blog' : '➕ Add Contest'}
+                {activeTab === 'articles' ? '➕ Thêm bài viết' : '➕ Thêm cuộc thi'}
               </Button>
 
               {activeTab === 'articles' ? (
-                <div
-                  className={`mb-8 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
-                  style={{ animationDelay: '0.3s' }}
-                >
-                  <h4 className='mb-6 text-2xl font-bold text-gray-800'>Categories</h4>
-                  <div className='space-y-1'>
-                    {categories.map((item, idx) => (
-                      <div
-                        onClick={() => setActiveCategory(item.name.toLowerCase())}
-                        key={idx}
-                        className={`sidebar-item group flex cursor-pointer items-center justify-between rounded-2xl px-4 py-4 transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 ${activeCategory === item.name.toLowerCase() ? 'bg-gradient-to-r from-indigo-50 to-purple-50' : ''}`}
-                      >
-                        <div className='flex items-center gap-3'>
-                          <span className='category-icon text-2xl'>{item.icon}</span>
-                          <span className='font-semibold text-gray-700 group-hover:text-indigo-600'>{item.name}</span>
-                        </div>
+              <div
+                className={`mb-8 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
+                style={{ animationDelay: '0.3s' }}
+              >
+                <h4 className='mb-6 text-2xl font-bold text-gray-800'>Phân loại</h4>
+                <div className='space-y-1'>
+                  {categories.map((item, idx) => (
+                    <div
+                      onClick={() => setActiveCategory(item.name.toLowerCase())}
+                      key={idx}
+                      className={`sidebar-item group flex cursor-pointer items-center justify-between rounded-2xl px-4 py-4 transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 ${activeCategory === item.name.toLowerCase() ? 'bg-gradient-to-r from-indigo-50 to-purple-50' : ''}`}
+                    >
+                      <div className='flex items-center gap-3'>
+                        <span className='category-icon text-2xl'>{item.icon}</span>
+                        <span className='font-semibold text-gray-700 group-hover:text-indigo-600'>{item.name}</span>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
+              </div>
               ) : (
                 <div
                   className={`mb-8 overflow-hidden rounded-3xl bg-white p-3 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
@@ -748,7 +748,7 @@ const Blog = () => {
                 className={`mb-8 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
                 style={{ animationDelay: '0.4s' }}
               >
-                <h4 className='mb-6 text-2xl font-bold text-gray-800'>Recent Posts</h4>
+                <h4 className='mb-6 text-2xl font-bold text-gray-800'>Bài viết gần đây</h4>
                 <div className='space-y-4'>
                   {recentPosts?.map((item: any) => (
                     <div
@@ -781,7 +781,7 @@ const Blog = () => {
                 className={`mb-16 rounded-3xl bg-white p-6 shadow-xl ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}
                 style={{ animationDelay: '0.5s' }}
               >
-                <h4 className='mb-6 text-2xl font-bold text-gray-800'>Popular Tags</h4>
+                <h4 className='mb-6 text-2xl font-bold text-gray-800'>Thẻ phổ biến</h4>
                 <div className='flex flex-wrap gap-3'>
                   {tags.map((tag, index) => (
                     <button

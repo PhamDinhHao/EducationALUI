@@ -165,7 +165,7 @@ const StudentReviews = () => {
               {/* Center: Text */}
               <div className='flex-1 text-center md:text-left'>
                 <h3 className='text-2xl md:text-3xl font-bold text-gray-800'>
-                  Let's Start With Academy LMS
+                  Hãy bắt đầu với GenAI
                 </h3>
               </div>
 
@@ -173,28 +173,30 @@ const StudentReviews = () => {
               <div className='flex flex-col sm:flex-row gap-4 flex-shrink-0'>
                 <Button
                   size='large'
-                  className='rounded-full px-8 py-6 h-auto text-base font-semibold'
+                  className='rounded-full px-10 py-4 h-auto text-base font-semibold hover:bg-[#ff8c00] hover:text-white'
                   style={{
                     border: '2px solid #ff8c00',
                     color: '#ff8c00',
-                    background: 'transparent'
+                    background: 'transparent',
+                    transition: 'all 0.3s ease',  
                   }}
-                  onClick={() => navigate('/courses')}
+                  onClick={() => navigate('/ai/search-ai')}
                 >
-                  I'm A Student
+                  Bắt đầu ngay
                 </Button>
                 <Button
                   type='primary'
                   size='large'
-                  className='rounded-full px-8 py-6 h-auto text-base font-semibold'
+                  className='rounded-full px-10 py-4 h-auto text-base font-semibold hover:bg-[#ff8c00] hover:text-white'
                   style={{
                     background: '#ff8c00',
                     border: 'none',
-                    boxShadow: '0 4px 12px rgba(255, 140, 0, 0.3)'
+                    boxShadow: '0 4px 12px rgba(255, 140, 0, 0.3)',
+                    transition: 'all 0.3s ease',
                   }}
-                  onClick={() => navigate('/courses')}
+                  onClick={() => navigate('/ai/search-ai')}
                 >
-                  Become An Instructor
+                  Tôi sẽ giúp bạn
                 </Button>
               </div>
             </div>

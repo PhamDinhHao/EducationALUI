@@ -1,6 +1,6 @@
 import { Menu as MenuAntd, Button, Layout } from 'antd'
 import { Link, useLocation } from 'react-router-dom'
-import { ReadOutlined, SearchOutlined, UserOutlined, DownloadOutlined, SettingOutlined } from '@ant-design/icons'
+import { ReadOutlined, SearchOutlined, UserOutlined, DownloadOutlined } from '@ant-design/icons'
 import { MenuItem } from '@/shared/core/types'
 import { PagePath } from '@/shared/core/enum/page.enum'
 import { memo, useMemo, useState } from 'react'

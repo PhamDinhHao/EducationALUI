@@ -5,139 +5,103 @@
   "lessons": [
     {
       "number": 1,
-      "title": "Làm quen với Vật lí"
+      "title": "Cấu trúc của chất. Sự chuyển thể"
     },
     {
       "number": 2,
-      "title": "Các quy tắc an toàn trong phòng thực hành Vật lí"
+      "title": "Nội năng. Định luật I của nhiệt động lực học"
     },
     {
       "number": 3,
-      "title": "Thực hành tính sai số trong phép đo. Ghi kết quả đo"
+      "title": "Nhiệt độ. Thang nhiệt độ – nhiệt kế"
     },
     {
       "number": 4,
-      "title": "Độ dịch chuyển và quãng đường đi được"
+      "title": "Nhiệt dung riêng"
     },
     {
       "number": 5,
-      "title": "Tốc độ và vận tốc"
+      "title": "Nhiệt nóng chảy riêng"
     },
     {
       "number": 6,
-      "title": "Thực hành: Đo tốc độ của vật chuyển động"
+      "title": "Nhiệt hóa hơi riêng"
     },
     {
       "number": 7,
-      "title": "Đồ thị độ dịch chuyển – thời gian"
+      "title": "Bài tập về vật lí nhiệt"
     },
     {
       "number": 8,
-      "title": "Chuyển động biến đổi. Gia tốc"
+      "title": "Mô hình động học phân tử chất khí"
     },
     {
       "number": 9,
-      "title": "Chuyển động thẳng biến đổi đều"
+      "title": "Định luật Boyle"
     },
     {
       "number": 10,
-      "title": "Sự rơi tự do"
+      "title": "Định luật Charles"
     },
     {
       "number": 11,
-      "title": "Thực hành: Đo gia tốc rơi tự do"
+      "title": "Phương trình trạng thái của khí lí tưởng"
     },
     {
       "number": 12,
-      "title": "Chuyển động ném"
+      "title": "Áp suất khí theo mô hình động học phân tử. Quan hệ giữa động năng phần tử và nhiệt độ"
     },
     {
       "number": 13,
-      "title": "Tổng hợp và phân tích lực. Cân bằng lực"
+      "title": "Bài tập về khí lí tưởng"
     },
     {
       "number": 14,
-      "title": "Định luật 1 Newton"
+      "title": "Từ trường"
     },
     {
       "number": 15,
-      "title": "Định luật 2 Newton"
+      "title": "Lực tử tác dụng lên dây dẫn mang dòng điện. Cảm ứng từ"
     },
     {
       "number": 16,
-      "title": "Định luật 3 Newton"
+      "title": "Từ thông. Hiện tượng cảm ứng điện từ"
     },
     {
       "number": 17,
-      "title": "Trọng lực và lực căng"
+      "title": "Máy phát điện xoay chiều"
     },
     {
       "number": 18,
-      "title": "Lực ma sát"
+      "title": "Ứng dụng hiện tượng cảm ứng điện từ"
     },
     {
       "number": 19,
-      "title": "Lực cản và lực nâng"
+      "title": "Điện từ trường. Mô hình sóng điện từ"
     },
     {
       "number": 20,
-      "title": "Một số ví dụ về cách giải các bài toán thuộc phần động lực học"
+      "title": "Bài tập về tử trường"
     },
     {
       "number": 21,
-      "title": "Moment lực. Cân bằng của vật rắn"
+      "title": "Cấu trúc hạt nhân"
     },
     {
       "number": 22,
-      "title": "Thực hành: Tổng hợp lực"
+      "title": "Phản ứng hạt nhần và năng lượng liên kết"
     },
     {
       "number": 23,
-      "title": "Năng lượng. Công cơ học"
+      "title": "Hiện tượng phóng xạ"
     },
     {
       "number": 24,
-      "title": "Công suất"
+      "title": "Công nghiệp hạt nhân"
     },
     {
       "number": 25,
-      "title": "Động năng, thế năng"
-    },
-    {
-      "number": 26,
-      "title": "Cơ năng và định luật bảo toàn cơ năng"
-    },
-    {
-      "number": 27,
-      "title": "Hiệu suất"
-    },
-    {
-      "number": 28,
-      "title": "Động lượng"
-    },
-    {
-      "number": 29,
-      "title": "Định luật bảo toàn động lượng"
-    },
-    {
-      "number": 30,
-      "title": "Thực hành: Xác định động lượng của vật trước và sau va chạm"
-    },
-    {
-      "number": 31,
-      "title": "Động học của chuyển động tròn đều"
-    },
-    {
-      "number": 32,
-      "title": "Lực hướng tâm và gia tốc hướng tâm"
-    },
-    {
-      "number": 33,
-      "title": "Biến dạng của vật rắn"
-    },
-    {
-      "number": 34,
-      "title": "Khối lượng riêng. Áp suất chất lỏng"
+      "title": "Bài tập về vật lí hạt nhân"
     }
   ],
   "reviewSections": [

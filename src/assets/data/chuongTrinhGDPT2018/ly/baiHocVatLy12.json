@@ -28,6 +28,10 @@
       "title": "Nhiệt hóa hơi riêng"
     },
     {
+      "number": 7,
+      "title": "Bài tập về vật lí nhiệt"
+    },
+    {
       "number": 8,
       "title": "Mô hình động học phân tử chất khí"
     },
@@ -46,6 +50,10 @@
     {
       "number": 12,
       "title": "Áp suất khí theo mô hình động học phân tử. Quan hệ giữa động năng phần tử và nhiệt độ"
+    },
+    {
+      "number": 13,
+      "title": "Bài tập về khí lí tưởng"
     },
     {
       "number": 14,
@@ -72,6 +80,10 @@
       "title": "Điện từ trường. Mô hình sóng điện từ"
     },
     {
+      "number": 20,
+      "title": "Bài tập về tử trường"
+    },
+    {
       "number": 21,
       "title": "Cấu trúc hạt nhân"
     },
@@ -85,7 +97,11 @@
     },
     {
       "number": 24,
-      "title": "Công nghiệp hạt nhân.Bải 25. Bài tập về vật lí hạt nhân"
+      "title": "Công nghiệp hạt nhân"
+    },
+    {
+      "number": 25,
+      "title": "Bài tập về vật lí hạt nhân"
     }
   ],
   "reviewSections": [

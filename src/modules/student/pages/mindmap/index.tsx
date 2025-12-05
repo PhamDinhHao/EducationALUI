@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
-import { Card, Typography, Select, Input, Button, Spin, Tooltip, message, Space, Dropdown, Upload, Image } from 'antd'
-import { SendOutlined, BulbOutlined, BranchesOutlined, ZoomInOutlined, ZoomOutOutlined, PlusOutlined, MinusOutlined, DownloadOutlined, FullscreenOutlined, FileImageOutlined, FilePdfOutlined, PictureOutlined, FileTextOutlined, FileWordOutlined, FileExcelOutlined } from '@ant-design/icons'
+import { Card, Typography, Select, Input, Button, Spin, Tooltip, message, Space, Dropdown, Upload, Image, Modal } from 'antd'
+import { SendOutlined, BulbOutlined, BranchesOutlined, ZoomInOutlined, ZoomOutOutlined, PlusOutlined, MinusOutlined, DownloadOutlined, FullscreenOutlined, FileImageOutlined, FilePdfOutlined, PictureOutlined, FileTextOutlined, FileWordOutlined, FileExcelOutlined, DeploymentUnitOutlined } from '@ant-design/icons'
 import jsMind from 'jsmind'
 import { simplePDFExporter } from './utils/simplePDFExporter'
 
@@ -23,6 +23,9 @@ const SUBJECTS = [
   { label: 'Vật lý', value: 'physics' },
   { label: 'Lịch sử', value: 'history' }
 ]
+
+// Import infographic images
+const infographicImages = import.meta.glob('/src/assets/images/depot/**/*.{png,jpg,jpeg,webp}')
 
 // Import JSON files from chuongTrinhGDPT2018
 import baiHocVatLy10 from '@/assets/data/chuongTrinhGDPT2018/ly/baiHocVatLy10.json'
@@ -56,7 +59,7 @@ const loadChuongTrinhData = (subject: string, grade: string): ChuongTrinhData | 
       'history-11': baiHocLichSu11 as ChuongTrinhData,
       'history-12': baiHocLichSu12 as ChuongTrinhData,
     }
-    
+
     const key = `${subject}-${grade}`
     return dataMap[key] || null
   } catch (error) {
@@ -68,10 +71,10 @@ const loadChuongTrinhData = (subject: string, grade: string): ChuongTrinhData | 
 // Load PDF URL - use public folder path (Vite serves from public/)
 const getPdfUrl = (subject: string, grade: string): string => {
   const subjectPath = subject === 'physics' ? 'ly' : 'su'
-  const fileName = subject === 'physics' 
+  const fileName = subject === 'physics'
     ? (grade === '12' ? 'vayLy12.pdf' : `vatLy${grade}.pdf`)
     : `lichSu${grade}.pdf`
-  
+
   // Files in public folder are served from root
   return `/data/chuongTrinhGDPT2018/${subjectPath}/${fileName}`
 }
@@ -79,7 +82,7 @@ const getPdfUrl = (subject: string, grade: string): string => {
 // Parse lessons to options
 const parseLessonsToOptions = (lessons: Lesson[]): { label: string; value: string }[] => {
   if (!lessons || !Array.isArray(lessons)) return []
-  
+
   return lessons.map((lesson) => ({
     label: `Bài ${lesson.number}. ${lesson.title}`,
     value: `bai-${lesson.number}` // Now each lesson has unique number
@@ -105,13 +108,13 @@ const MINDMAP_TYPES = [
 
 // 🔹 Hàm validate và sửa JSON với debug chi tiết
 function validateAndFixJSON(jsonString: string): any {
-  
+
   try {
     // Thử parse JSON gốc
     const result = JSON.parse(jsonString);
     return result;
   } catch (error) {
-    
+
     // Sửa các lỗi JSON phổ biến
     let fixedJson = jsonString
       // Xóa dấu phẩy thừa trước ] hoặc }
@@ -132,14 +135,14 @@ function validateAndFixJSON(jsonString: string): any {
       .replace(/"([^"]+)"\s*([^":,}\]]+)/g, '"$1": "$2"')
       // Sửa lỗi thiếu dấu hai chấm sau property name
       .replace(/"([^"]+)"\s*([^":,}\]]+)/g, '"$1": "$2"');
-    
-    
+
+
     try {
       const result = JSON.parse(fixedJson);
       return result;
     } catch (secondError) {
       console.error("❌ Still cannot parse JSON after first fix:", secondError);
-      
+
       // Thử sửa thêm các lỗi khác
       let secondFixedJson = fixedJson
         // Sửa lỗi thiếu dấu phẩy giữa các object
@@ -150,14 +153,14 @@ function validateAndFixJSON(jsonString: string): any {
         .replace(/([^"])\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":')
         // Sửa lỗi value không có quotes khi cần thiết
         .replace(/:\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*([,}\]])/g, ': "$1"$2');
-      
-      
+
+
       try {
         const result = JSON.parse(secondFixedJson);
         return result;
       } catch (thirdError) {
         console.error("❌ All fixes failed:", thirdError);
-        
+
         // Nếu vẫn không được, thử tạo JSON hợp lệ từ dữ liệu có sẵn
         try {
           const fallbackJson = createFallbackJSON(jsonString);
@@ -173,25 +176,25 @@ function validateAndFixJSON(jsonString: string): any {
 
 // 🔹 Hàm tạo JSON fallback khi không thể sửa được
 function createFallbackJSON(jsonString: string): any {
-  
+
   // Tìm topic chính
   const topicMatch = jsonString.match(/"topic"\s*:\s*"([^"]+)"/);
   const mainTopic = topicMatch ? topicMatch[1] : "Mindmap từ AI";
-  
+
   // Tìm tất cả các topic trong JSON
   const allTopicMatches = jsonString.match(/"topic"\s*:\s*"([^"]+)"/g);
   const allTopics = allTopicMatches ? allTopicMatches.map(match => {
     const topic = match.match(/"topic"\s*:\s*"([^"]+)"/);
     return topic ? topic[1] : "Nội dung";
   }) : [];
-  
+
   // Loại bỏ topic chính khỏi danh sách children
   const childrenTopics = allTopics.slice(1);
-  
+
   // Tạo cấu trúc mindmap đơn giản
   const children = childrenTopics.slice(0, 15).map(topic => ({ topic }));
-  
-  
+
+
   return {
     topic: mainTopic,
     children: children
@@ -204,7 +207,7 @@ function convertToJsMind(json: any, idPrefix = "node"): any {
 
   function walk(node: any, depth = 0): any {
     const id = `${idPrefix}-${nodeIdCounter++}`;
-  
+
     // 🎨 Màu sắc đẹp hơn theo cấp độ - gradient và màu sắc hài hòa
     const colorPalettes = [
       // Cấp 0 (root) - Xanh dương đậm với gradient
@@ -220,13 +223,13 @@ function convertToJsMind(json: any, idPrefix = "node"): any {
       // Cấp 5+ - Xanh ngọc
       { bg: "#0891b2", fg: "#ffffff", shadow: "#0e7490" }
     ];
-    
+
     const colorIndex = depth % colorPalettes.length;
     const colors = colorPalettes[colorIndex];
-  
+
     // Lấy topic từ nhiều field khác nhau
     const topic = node.topic || node.title || node.name || "";
-    
+
     // Xử lý children từ nhiều schema khác nhau
     let childNodes = [];
     if (node.children) {
@@ -239,7 +242,7 @@ function convertToJsMind(json: any, idPrefix = "node"): any {
       // Xử lý subtopics dạng array string
       childNodes = node.subtopics.map((item: string) => ({ topic: item }));
     }
-  
+
     return {
       id,
       topic,
@@ -274,13 +277,17 @@ const MindmapPage = () => {
   const [lessonOptions, setLessonOptions] = useState<{ label: string; value: string }[]>([]);
   const [pdfContent, setPdfContent] = useState<string>('');
   const [isLoadingPdf, setIsLoadingPdf] = useState<boolean>(false);
-  
+
   // File upload states (for standard mindmap only)
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string>('');
   const [fileType, setFileType] = useState<'image' | 'document'>('image');
   const [parsedFileContent, setParsedFileContent] = useState<string>('');
   const [isParsingFile, setIsParsingFile] = useState<boolean>(false);
+
+  // Infographic states
+  const [showInfographic, setShowInfographic] = useState(false);
+  const [infographicUrl, setInfographicUrl] = useState<string>('');
 
   // Load chuong trinh data and PDF when subject or grade changes (only for GDPT 2018)
   useEffect(() => {
@@ -290,7 +297,7 @@ const MindmapPage = () => {
       if (data && data.lessons) {
         const options = parseLessonsToOptions(data.lessons);
         setLessonOptions(options);
-        
+
         // Khi thay đổi môn/lớp, luôn reset về bài đầu tiên vì bài học khác nhau
         if (options.length > 0) {
           setLesson(options[0].value);
@@ -305,7 +312,7 @@ const MindmapPage = () => {
       // Load PDF content from public folder
       const pdfUrl = getPdfUrl(subject, grade);
       setIsLoadingPdf(true);
-      
+
       FileParser.parsePDFFromUrl(pdfUrl)
         .then((content) => {
           if (content && content.trim().length > 0) {
@@ -341,33 +348,33 @@ const MindmapPage = () => {
 
   // File upload handlers
   const handleFileUpload = async (file: File) => {
-    
+
     // Check if file type is supported by our parser
     if (!FileParser.isFileTypeSupported(file.type)) {
       message.error(`File type không được hỗ trợ: ${file.type}. Vui lòng chọn file PDF, Word, Excel, PowerPoint, ảnh hoặc text.`);
       return;
     }
-    
+
     if (file.size / 1024 / 1024 >= 50) { // Increase limit to 50MB for documents
       message.error('File phải nhỏ hơn 50MB!');
       return;
     }
-    
+
     setSelectedFile(file);
     setIsParsingFile(true);
-    
+
     try {
       // Parse file content
       const parseResult: FileParseResult = await FileParser.parseFile(file);
-      
+
       if (parseResult.error) {
         message.error(parseResult.error);
         setIsParsingFile(false);
         return;
       }
-      
+
       const isImage = file.type.startsWith('image/');
-      
+
       if (isImage) {
         setFileType('image');
         const reader = new FileReader();
@@ -380,18 +387,18 @@ const MindmapPage = () => {
         setFileType('document');
         setFilePreview('');
         setParsedFileContent(parseResult.content);
-        
+
         const fileTypeDesc = FileParser.getFileTypeDescription(file.type);
         message.success(`Đã phân tích ${fileTypeDesc} thành công! Đã trích xuất ${parseResult.content.length} ký tự.`);
       }
-      
+
     } catch (error) {
       console.error('Error parsing file:', error);
       message.error(`Lỗi khi xử lý file: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsParsingFile(false);
     }
-    
+
     return false; // Prevent default upload
   };
 
@@ -406,32 +413,32 @@ const MindmapPage = () => {
   const getFileIcon = (file: File) => {
     const type = file.type.toLowerCase();
     const name = file.name.toLowerCase();
-    
+
     // Images
     if (type.startsWith('image/')) return <PictureOutlined className="text-green-500 text-2xl" />;
-    
+
     // PDF
     if (type.includes('pdf')) return <FilePdfOutlined className="text-red-500 text-2xl" />;
-    
+
     // Word documents
     if (type.includes('wordprocessingml') || type.includes('msword') || name.endsWith('.doc') || name.endsWith('.docx')) {
       return <FileWordOutlined className="text-blue-500 text-2xl" />;
     }
-    
+
     // Excel files
     if (type.includes('spreadsheetml') || type.includes('ms-excel') || name.endsWith('.xls') || name.endsWith('.xlsx')) {
       return <FileExcelOutlined className="text-green-600 text-2xl" />;
     }
-    
+
     // PowerPoint files
     if (type.includes('presentationml') || type.includes('ms-powerpoint') || name.endsWith('.ppt') || name.endsWith('.pptx')) {
       return <FileImageOutlined className="text-orange-500 text-2xl" />;
     }
-    
+
     // Text files
     if (type.includes('text') || name.endsWith('.txt')) return <FileTextOutlined className="text-blue-500 text-2xl" />;
     if (name.endsWith('.csv')) return <FileTextOutlined className="text-green-500 text-2xl" />;
-    
+
     // Fallback
     return <FileTextOutlined className="text-gray-500 text-2xl" />;
   };
@@ -518,7 +525,7 @@ const MindmapPage = () => {
         nodeElement.style.textAlign = 'center';
         nodeElement.style.width = '100%';
         nodeElement.style.height = '100%';
-        
+
         // Cải thiện typography và styling
         const textElement = nodeElement.querySelector('jmnode');
         if (textElement) {
@@ -538,15 +545,15 @@ const MindmapPage = () => {
           textElement.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
           textElement.style.minHeight = '40px';
           textElement.style.minWidth = '120px';
-          
+
           // Hover effect
-          textElement.addEventListener('mouseenter', function(this: HTMLElement) {
+          textElement.addEventListener('mouseenter', function (this: HTMLElement) {
             this.style.transform = 'scale(1.05)';
             this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.15)';
             this.style.zIndex = '10';
           });
-          
-          textElement.addEventListener('mouseleave', function(this: HTMLElement) {
+
+          textElement.addEventListener('mouseleave', function (this: HTMLElement) {
             this.style.transform = 'scale(1)';
             this.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)';
             this.style.zIndex = '1';
@@ -554,7 +561,7 @@ const MindmapPage = () => {
         }
       }
     });
-    
+
     // Thêm animation cho các đường kết nối
     const links = document.querySelectorAll('#jsmind_container jmexpander, #jsmind_container jmnode');
     links.forEach((link: any) => {
@@ -738,24 +745,24 @@ const MindmapPage = () => {
             support_html: true,
           };
           jmRef.current = new jsMind(options);
-          
+
           // Hiển thị mindmap
           jmRef.current.show(mindmapData);
-          
+
           // Apply styling để căn giữa text
           setTimeout(() => {
             applyNodeStyling();
           }, 100);
-          
+
           // Add event listeners for better interaction
-          jmRef.current.add_event_listener(function(type: string, _data: any) {
+          jmRef.current.add_event_listener(function (type: string, _data: any) {
             if (type === 'edit_node') {
             } else if (type === 'select_node') {
             }
           });
-          
+
           // CSS đã được định nghĩa trong component
-          
+
         } catch (error) {
           console.error("Error initializing jsMind:", error);
         }
@@ -765,7 +772,7 @@ const MindmapPage = () => {
     }
   }, [showMindmap, mindmapData]);
 
-  const handleCreateMindmap_2018= async () => {
+  const handleCreateMindmap_2018 = async () => {
     try {
       setLoading(true);
 
@@ -826,16 +833,16 @@ RULES:
             // Smart document analysis prompt với chunking
             const fileTypeDesc = FileParser.getFileTypeDescription(selectedFile.type);
             const userContext = inputValue ? ` với góc nhìn: "${inputValue}"` : '';
-            
+
             // Chia nhỏ nội dung file nếu quá dài
             const maxContentLength = 8000; // Giới hạn độ dài content
             let contentToAnalyze = parsedFileContent;
-            
+
             if (parsedFileContent.length > maxContentLength) {
-              contentToAnalyze = parsedFileContent.substring(0, maxContentLength) + 
+              contentToAnalyze = parsedFileContent.substring(0, maxContentLength) +
                 `\n\n[Lưu ý: Nội dung đã được rút gọn từ ${parsedFileContent.length} ký tự xuống ${maxContentLength} ký tự để tránh JSON quá dài]`;
             }
-            
+
             prompt = `ROLE: Bạn là chuyên gia phân tích tài liệu và tạo mindmap giáo dục.
 
 TASK: Phân tích nội dung ${fileTypeDesc}${userContext} và tạo mindmap JSON chi tiết.
@@ -945,16 +952,16 @@ RULES:
           const selectedLessonOption = lessonOptions.find(l => l.value === lesson);
           const lessonTitle = selectedLessonOption ? selectedLessonOption.label.replace(/^Bài \d+\.\s*/, '') : '';
           const lessonContext = lessonTitle ? ` - Bài học: "${lessonTitle}"` : '';
-          
+
           // Chia nhỏ nội dung PDF nếu quá dài
           const maxContentLength = 8000;
           let contentToAnalyze = pdfContent;
-          
+
           if (pdfContent.length > maxContentLength) {
-            contentToAnalyze = pdfContent.substring(0, maxContentLength) + 
+            contentToAnalyze = pdfContent.substring(0, maxContentLength) +
               `\n\n[Lưu ý: Nội dung PDF đã được rút gọn từ ${pdfContent.length} ký tự xuống ${maxContentLength} ký tự để tránh JSON quá dài]`;
           }
-          
+
           prompt = `ROLE: Từ dữ liệu mà tôi cung cấp hãy cho tôi sơ đồ tư duy.
 
 TASK: Phân tích nội dung PDF từ chương trình GDPT 2018 - Lớp ${grade}, Môn ${subjectName}${lessonContext} và tạo mindmap JSON chi tiết.
@@ -994,7 +1001,7 @@ TASK: Tạo mindmap JSON chi tiết cho Từ dữ liệu nội dung PDF mà tôi
       // ✅ tách ra phần JSON hợp lệ
       const firstBrace = rawText.indexOf("{");
       const lastBrace = rawText.lastIndexOf("}");
-      
+
       if (firstBrace === -1 || lastBrace === -1) {
         console.error("❌ Không tìm thấy JSON hợp lệ trong response:", rawText);
         throw new Error("Không tìm thấy JSON hợp lệ trong response từ AI");
@@ -1004,7 +1011,7 @@ TASK: Tạo mindmap JSON chi tiết cho Từ dữ liệu nội dung PDF mà tôi
 
       // Sử dụng hàm validate và sửa JSON
       const json = validateAndFixJSON(jsonString);
-      
+
       // Kiểm tra xem có sử dụng fallback không
       const isLikelyFallback = json.children && json.children.length <= 15 && jsonString.length > 5000;
       if (isLikelyFallback) {
@@ -1027,7 +1034,7 @@ TASK: Tạo mindmap JSON chi tiết cho Từ dữ liệu nội dung PDF mà tôi
       // ✅ Lưu data và hiển thị container
       setMindmapData(mindmapData);
       setShowMindmap(true);
-      
+
       // ✅ Clear input tương ứng với loại mindmap
       if (selectedType === 'standard') {
         setInputValue('');
@@ -1107,16 +1114,16 @@ RULES:
             // Smart document analysis prompt với chunking
             const fileTypeDesc = FileParser.getFileTypeDescription(selectedFile.type);
             const userContext = inputValue ? ` với góc nhìn: "${inputValue}"` : '';
-            
+
             // Chia nhỏ nội dung file nếu quá dài
             const maxContentLength = 8000; // Giới hạn độ dài content
             let contentToAnalyze = parsedFileContent;
-            
+
             if (parsedFileContent.length > maxContentLength) {
-              contentToAnalyze = parsedFileContent.substring(0, maxContentLength) + 
+              contentToAnalyze = parsedFileContent.substring(0, maxContentLength) +
                 `\n\n[Lưu ý: Nội dung đã được rút gọn từ ${parsedFileContent.length} ký tự xuống ${maxContentLength} ký tự để tránh JSON quá dài]`;
             }
-            
+
             prompt = `ROLE: Bạn là chuyên gia phân tích tài liệu và tạo mindmap giáo dục.
 
 TASK: Phân tích nội dung ${fileTypeDesc}${userContext} và tạo mindmap JSON chi tiết.
@@ -1226,16 +1233,16 @@ RULES:
           const selectedLessonOption = lessonOptions.find(l => l.value === lesson);
           const lessonTitle = selectedLessonOption ? selectedLessonOption.label.replace(/^Bài \d+\.\s*/, '') : '';
           const lessonContext = lessonTitle ? ` - Bài học: "${lessonTitle}"` : '';
-          
+
           // Chia nhỏ nội dung PDF nếu quá dài
           const maxContentLength = 8000;
           let contentToAnalyze = pdfContent;
-          
+
           if (pdfContent.length > maxContentLength) {
-            contentToAnalyze = pdfContent.substring(0, maxContentLength) + 
+            contentToAnalyze = pdfContent.substring(0, maxContentLength) +
               `\n\n[Lưu ý: Nội dung PDF đã được rút gọn từ ${pdfContent.length} ký tự xuống ${maxContentLength} ký tự để tránh JSON quá dài]`;
           }
-          
+
           prompt = `ROLE: Từ dữ liệu mà tôi cung cấp hãy cho tôi sơ đồ tư duy.
 
 TASK: Phân tích nội dung PDF từ chương trình GDPT 2018 - Lớp ${grade}, Môn ${subjectName}${lessonContext} và tạo mindmap JSON chi tiết.
@@ -1340,7 +1347,7 @@ RULES:
       // ✅ tách ra phần JSON hợp lệ
       const firstBrace = rawText.indexOf("{");
       const lastBrace = rawText.lastIndexOf("}");
-      
+
       if (firstBrace === -1 || lastBrace === -1) {
         console.error("❌ Không tìm thấy JSON hợp lệ trong response:", rawText);
         throw new Error("Không tìm thấy JSON hợp lệ trong response từ AI");
@@ -1350,7 +1357,7 @@ RULES:
 
       // Sử dụng hàm validate và sửa JSON
       const json = validateAndFixJSON(jsonString);
-      
+
       // Kiểm tra xem có sử dụng fallback không
       const isLikelyFallback = json.children && json.children.length <= 15 && jsonString.length > 5000;
       if (isLikelyFallback) {
@@ -1373,7 +1380,7 @@ RULES:
       // ✅ Lưu data và hiển thị container
       setMindmapData(mindmapData);
       setShowMindmap(true);
-      
+
       // ✅ Clear input tương ứng với loại mindmap
       if (selectedType === 'standard') {
         setInputValue('');
@@ -1390,6 +1397,37 @@ RULES:
       setLoading(false);
     }
   }
+
+  const handleShowInfographic = async () => {
+    if (!lesson) return;
+
+    // Parse lesson number from value (e.g., 'bai-1' -> '1')
+    const lessonNumber = lesson.replace('bai-', '');
+
+    // Map subject to folder name
+    const subjectPath = subject === 'physics' ? 'ly' : 'su';
+
+    // Construct path key
+    // Path format: /src/assets/images/depot/{subjectPath}/{grade}/{lessonNumber}.png
+    const pathKey = `/src/assets/images/depot/${subjectPath}/${grade}/${lessonNumber}.png`;
+
+    console.log('Trying to load infographic:', pathKey);
+
+    const imageLoader = infographicImages[pathKey];
+
+    if (imageLoader) {
+      try {
+        const module: any = await imageLoader();
+        setInfographicUrl(module.default);
+        setShowInfographic(true);
+      } catch (error) {
+        console.error('Error loading infographic:', error);
+        message.error('Không thể tải hình ảnh infographic.');
+      }
+    } else {
+      message.info('Chưa có infographic cho bài học này.');
+    }
+  };
 
 
   return (
@@ -1412,9 +1450,8 @@ RULES:
                 key={type.key}
                 hoverable
                 onClick={() => handleTypeChange(type.key)}
-                className={`cursor-pointer transition-all duration-200 ${
-                  selectedType === type.key ? 'ring-2 ring-orange-500 shadow-lg' : 'hover:shadow-md'
-                }`}
+                className={`cursor-pointer transition-all duration-200 ${selectedType === type.key ? 'ring-2 ring-orange-500 shadow-lg' : 'hover:shadow-md'
+                  }`}
                 bodyStyle={{ padding: '20px', textAlign: 'center' }}
               >
                 <div className="mb-3">{type.icon}</div>
@@ -1434,7 +1471,7 @@ RULES:
                     - Chọn môn, lớp và bài học. Hệ thống sẽ tự động tải nội dung PDF từ chương trình GDPT 2018.
                   </Text>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                   <div>
                     <div className="text-sm font-semibold mb-2 text-gray-700">Môn:</div>
@@ -1446,7 +1483,7 @@ RULES:
                       size="large"
                     />
                   </div>
-                  
+
                   <div>
                     <div className="text-sm font-semibold mb-2 text-gray-700">Lớp:</div>
                     <Select
@@ -1457,7 +1494,7 @@ RULES:
                       size="large"
                     />
                   </div>
-                  
+
                   <div>
                     <div className="text-sm font-semibold mb-2 text-gray-700">Chọn bài học:</div>
                     <Select
@@ -1475,19 +1512,28 @@ RULES:
 
                 <div className="flex justify-end">
                   <Button
+                    size="large"
+                    icon={<DeploymentUnitOutlined />}
+                    onClick={handleShowInfographic}
+                    disabled={!lesson.trim()}
+                    className="mr-3 !bg-white !border-blue-400 !text-blue-500 hover:!border-blue-500 hover:!text-blue-600 !h-12 !px-6 !text-base !font-semibold !rounded-lg"
+                  >
+                    Infographic
+                  </Button>
+                  <Button
                     type="primary"
                     size="large"
                     icon={loading ? <Spin /> : <SendOutlined />}
                     onClick={handleCreateMindmap_2018}
                     disabled={!lesson.trim() || loading || isLoadingPdf}
-                    className="!bg-orange-500 !border-orange-500 hover:!bg-orange-600 hover:border-orange-600 !h-12 !px-8 !text-base !font-semibold"
+                    className="!bg-orange-500 !border-orange-500 hover:!bg-orange-600 hover:border-orange-600 !h-12 !px-8 !text-base !font-semibold !rounded-lg"
                   >
                     {loading ? 'Đang tạo...' : 'BẮT ĐẦU TẠO'}
                   </Button>
                 </div>
               </div>
             </Card>
-            )}
+          )}
 
           {/* Container để render mindmap - hiển thị cho cả hai loại */}
           {showMindmap && (
@@ -1505,11 +1551,11 @@ RULES:
                   <Text strong>Điều khiển Mindmap:</Text>
                   <Space>
                     <Tooltip title="Thêm nút con">
-                      <Button 
-                        icon={<PlusOutlined />} 
-                        onClick={addNode} 
+                      <Button
+                        icon={<PlusOutlined />}
+                        onClick={addNode}
                         type="primary"
-                        style={{ 
+                        style={{
                           background: '#1890ff',
                           borderColor: '#1890ff',
                           fontWeight: '600'
@@ -1519,11 +1565,11 @@ RULES:
                       </Button>
                     </Tooltip>
                     <Tooltip title="Xóa nút đã chọn">
-                      <Button 
-                        icon={<MinusOutlined />} 
-                        onClick={removeNode} 
+                      <Button
+                        icon={<MinusOutlined />}
+                        onClick={removeNode}
                         danger
-                        style={{ 
+                        style={{
                           fontWeight: '600'
                         }}
                       >
@@ -1568,8 +1614,8 @@ RULES:
                       </Button>
                     </Dropdown>
                     <Tooltip title="Vừa màn hình">
-                      <Button 
-                        icon={<FullscreenOutlined />} 
+                      <Button
+                        icon={<FullscreenOutlined />}
                         onClick={handleFitToScreen}
                         title="Vừa màn hình"
                       >
@@ -1577,20 +1623,20 @@ RULES:
                       </Button>
                     </Tooltip>
                     <Tooltip title="Căn giữa">
-                      <Button 
-                        icon={<BranchesOutlined />} 
+                      <Button
+                        icon={<BranchesOutlined />}
                         onClick={handleCenterView}
                         title="Căn giữa"
                       >
                         Căn giữa
                       </Button>
                     </Tooltip>
-                    
+
                     {/* Zoom Controls - Gộp lại thành 1 nhóm */}
                     <div className="flex items-center gap-1 border border-gray-300 rounded-lg bg-white px-1">
                       <Tooltip title="Thu nhỏ">
-                        <Button 
-                          icon={<ZoomOutOutlined />} 
+                        <Button
+                          icon={<ZoomOutOutlined />}
                           onClick={handleZoomOut}
                           disabled={zoomLevel <= 0.5}
                           size="small"
@@ -1601,8 +1647,8 @@ RULES:
                         {Math.round(zoomLevel * 100)}%
                       </span>
                       <Tooltip title="Phóng to">
-                        <Button 
-                          icon={<ZoomInOutlined />} 
+                        <Button
+                          icon={<ZoomInOutlined />}
                           onClick={handleZoomIn}
                           disabled={zoomLevel >= 2}
                           size="small"
@@ -1611,7 +1657,7 @@ RULES:
                       </Tooltip>
                       <div className="h-6 w-px bg-gray-300 mx-1" />
                       <Tooltip title="Reset về 100%">
-                        <Button 
+                        <Button
                           onClick={handleResetZoom}
                           size="small"
                           type="text"
@@ -1624,20 +1670,20 @@ RULES:
                   </Space>
                 </div>
               </div>
-              
-              <div 
-                id="jsmind_container" 
-                style={{ 
-                  width: '100%', 
-                  height: '600px', 
-                  background: '#fdfdfd', 
-                  border: '1px solid #e0e0e0', 
+
+              <div
+                id="jsmind_container"
+                style={{
+                  width: '100%',
+                  height: '600px',
+                  background: '#fdfdfd',
+                  border: '1px solid #e0e0e0',
                   borderRadius: '8px',
                   overflow: 'auto',
                   position: 'relative'
                 }}
               />
-              
+
               {/* CSS nâng cao cho mindmap đẹp hơn */}
               <style dangerouslySetInnerHTML={{
                 __html: `
@@ -1775,7 +1821,7 @@ RULES:
                   }
                 `
               }} />
-          </Card>
+            </Card>
           )}
 
           {/* Input Box ở dưới cùng - chỉ hiển thị cho Mindmap Tiêu chuẩn */}
@@ -1788,19 +1834,19 @@ RULES:
                     <div className="mb-3 p-3 bg-gray-50 rounded-lg relative">
                       <div className="flex items-center gap-3">
                         {fileType === 'image' && filePreview ? (
-                          <Image 
-                            src={filePreview} 
-                            alt="Preview" 
-                            width={60} 
-                            height={60} 
-                            className="rounded-lg object-cover" 
+                          <Image
+                            src={filePreview}
+                            alt="Preview"
+                            width={60}
+                            height={60}
+                            className="rounded-lg object-cover"
                           />
                         ) : (
                           <div className="w-15 h-15 flex items-center justify-center bg-white rounded-lg border">
                             {getFileIcon(selectedFile)}
                           </div>
                         )}
-                        
+
                         <div className="flex-1">
                           <p className="text-sm text-gray-600 mb-1">
                             {fileType === 'image' ? 'Ảnh' : FileParser.getFileTypeDescription(selectedFile?.type || '')} đã chọn
@@ -1811,10 +1857,10 @@ RULES:
                             {parsedFileContent && ` • ${parsedFileContent.length} ký tự`}
                           </p>
                         </div>
-                        <Button 
-                          type="text" 
-                          size="small" 
-                          onClick={removeSelectedFile} 
+                        <Button
+                          type="text"
+                          size="small"
+                          onClick={removeSelectedFile}
                           className="text-red-500 hover:text-red-700"
                         >
                           ✕
@@ -1842,18 +1888,17 @@ RULES:
                       }}
                       disabled={loading}
                     />
-                    
+
                     <div className="flex gap-2 flex-shrink-0">
                       <Tooltip title='File tài liệu (PDF, Word, Excel, PowerPoint, Ảnh, Text)'>
                         <Upload showUploadList={false} beforeUpload={handleFileUpload} accept="image/*,.txt,.csv,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
-                          <Button 
-                            shape='circle' 
-                            size='large' 
-                            icon={isParsingFile ? <Spin size="small" /> : <PictureOutlined />} 
-                            className={`w-10 h-10 border ${
-                              selectedFile ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-                            } hover:border-gray-400 hover:bg-gray-50`} 
-                            disabled={loading || isParsingFile} 
+                          <Button
+                            shape='circle'
+                            size='large'
+                            icon={isParsingFile ? <Spin size="small" /> : <PictureOutlined />}
+                            className={`w-10 h-10 border ${selectedFile ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+                              } hover:border-gray-400 hover:bg-gray-50`}
+                            disabled={loading || isParsingFile}
                           />
                         </Upload>
                       </Tooltip>
@@ -1883,6 +1928,27 @@ RULES:
           )}
         </div>
       </div>
+
+      <Modal
+        title={`Infographic - ${SUBJECTS.find(s => s.value === subject)?.label} Lớp ${grade} - ${lessonOptions.find(l => l.value === lesson)?.label}`}
+        open={showInfographic}
+        onCancel={() => setShowInfographic(false)}
+        footer={null}
+        width={1000}
+        centered
+      >
+        <div className="flex justify-center items-center bg-gray-100 p-4 rounded-lg min-h-[400px]">
+          {infographicUrl ? (
+            <Image
+              src={infographicUrl}
+              alt="Infographic"
+              style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }}
+            />
+          ) : (
+            <div className="text-gray-400">Không có hình ảnh</div>
+          )}
+        </div>
+      </Modal>
     </div>
   )
 }

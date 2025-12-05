@@ -12,6 +12,10 @@
       "title": "Các quy tắc an toàn trong phòng thực hành Vật lí"
     },
     {
+      "number": 3,
+      "title": "Thực hành tính sai số trong phép đo. Ghi kết quả đo"
+    },
+    {
       "number": 4,
       "title": "Độ dịch chuyển và quãng đường đi được"
     },
@@ -24,6 +28,10 @@
       "title": "Đồ thị độ dịch chuyển – thời gian"
     },
     {
+      "number": 6,
+      "title": "Thực hành: Đo tốc độ của vật chuyển động"
+    },
+    {
       "number": 8,
       "title": "Chuyển động biến đổi. Gia tốc"
     },
@@ -34,6 +42,10 @@
     {
       "number": 10,
       "title": "Sự rơi tự do"
+    },
+    {
+      "number": 11,
+      "title": "Thực hành: Đo gia tốc rơi tự do"
     },
     {
       "number": 12,
@@ -76,6 +88,10 @@
       "title": "Moment lực. Cân bằng của vật rắn"
     },
     {
+      "number": 22,
+      "title": "Thực hành: Tổng hợp lực"
+    },
+    {
       "number": 23,
       "title": "Năng lượng. Công cơ học"
     },
@@ -102,6 +118,10 @@
     {
       "number": 29,
       "title": "Định luật bảo toàn động lượng"
+    },
+    {
+      "number": 30,
+      "title": "Thực hành: Xác định động lượng của vật trước và sau va chạm"
     },
     {
       "number": 31,

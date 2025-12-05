@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Download, ArrowLeft, Plus, Trash2, Edit3 } from "lucide-react";
-
+import { Document, Packer, Paragraph, TextRun, Table, TableCell, TableRow, AlignmentType, WidthType, BorderStyle } from 'docx';
+import { saveAs } from 'file-saver';
 // Types
 interface LessonData {
   title: string;
@@ -258,102 +259,310 @@ const LessonResultEnhanced: React.FC = () => {
     });
   };
 
-  const exportToWord = () => {
-    // Tạo nội dung Word với định dạng đầy đủ
-    let content = `
-KẾ HOẠCH BÀI DẠY
-
-Trường: ${lesson.school}
-Tổ: ${lesson.department}
-Giáo viên: ${lesson.teacher}
-
-TÊN BÀI DẠY: ${lesson.title}
-Môn: ${lesson.subject}; Lớp: ${lesson.grade}
-Thời lượng: ${lesson.periods} tiết
-
-I. Mục tiêu
-
-1. Kiến thức:
-${lesson.knowledge.map(k => `   • ${k}`).join('\n')}
-
-2. Năng lực:
-
-2.1. Năng lực chung:
-${lesson.generalCompetencies.map(c => `   • ${c}`).join('\n')}
-
-2.2. Năng lực Vật lý:
-${lesson.subjectCompetencies.map(c => `   • ${c}`).join('\n')}
-
-2.3. Năng lực số (theo Thông tư 02/2025/TT-BGDĐT):
-${lesson.digitalCompetencies.map(c => `   • ${c}`).join('\n')}
-
-3. Phẩm chất:
-${lesson.qualities.map(q => `   • ${q}`).join('\n')}
-
-II. Thiết bị dạy học và học liệu
-
-Giáo viên:
-${lesson.teacherEquipment.map(e => `   • ${e}`).join('\n')}
-
-Học sinh:
-${lesson.studentEquipment.map(e => `   • ${e}`).join('\n')}
-
-III. Tiến trình dạy học
-
-Hoạt động 1: Khởi động
-
-a) Mục tiêu:
-${lesson.activity1.objectives.map(o => `   • ${o}`).join('\n')}
-
-b) Nội dung:
-${lesson.activity1.content.map(c => `   • ${c}`).join('\n')}
-
-c) Sản phẩm:
-${lesson.activity1.products.map(p => `   • ${p}`).join('\n')}
-
-Tổ chức thực hiện:
-
-Bước 1. Giáo viên giao nhiệm vụ
-${lesson.activity1.steps.step1.map(s => `- ${s}`).join('\n')}
-
-Bước 2. Học sinh thực hiện nhiệm vụ
-${lesson.activity1.steps.step2.map(s => `- ${s}`).join('\n')}
-
-Bước 3. Giáo viên tổ chức báo cáo và thảo luận
-${lesson.activity1.steps.step3.map(s => `- ${s}`).join('\n')}
-
-Bước 4. Kết luận
-${lesson.activity1.steps.step4.map(s => `- ${s}`).join('\n')}
-
-Dự kiến sản phẩm:
-${lesson.activity1.steps.expectedProducts.map(p => `- ${p}`).join('\n')}
-
-PHIẾU HỌC TẬP
-
-${lesson.worksheet.tasks.map(t => `${t}`).join('\n\n')}
-
-Phân công nhiệm vụ:
-${lesson.worksheet.groupAssignments.map(g => `• ${g}`).join('\n')}
-
-CÂU HỎI TRẮC NGHIỆM
-
-${lesson.quiz.questions.map((q, i) => `
-Câu ${i + 1}: ${q.question}
-${q.options.join('\n')}
-`).join('\n')}
-
-Đáp án: ${lesson.quiz.questions.map((q, i) => `${i + 1}.${q.answer}`).join(', ')}
-`;
-
-    // Tạo blob và download
-    const blob = new Blob([content], { type: 'application/msword' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${lesson.title}.doc`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const exportToWord = async () => {
+  // Helper function để tạo paragraph với định dạng
+  const createParagraph = (text: string, options: { bold?: boolean, alignment?: any } = {}) => {
+    return new Paragraph({
+      children: [
+        new TextRun({
+          text: text,
+          bold: options.bold || false,
+          size: 26, // 13pt = 26 half-points
+          font: 'Times New Roman',
+        }),
+      ],
+      alignment: options.alignment || AlignmentType.LEFT,
+      spacing: {
+        after: 120, // 6pt = 120 twips
+        line: 240, // 1.0 line spacing = 240 twips
+      },
+    });
   };
+
+  // Helper function để tạo danh sách với gạch đầu dòng
+  const createListItems = (items: string[], prefix = '•') => {
+    return items.map(item => 
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: `${prefix} ${item}`,
+            size: 26,
+            font: 'Times New Roman',
+          }),
+        ],
+        spacing: {
+          after: 120,
+          line: 240,
+        },
+      })
+    );
+  };
+
+  // Helper function để tạo bảng 2 cột
+const createActivityTable = (activity: any) => {
+  const rows = [];
+  
+  // Kiểm tra an toàn cho expectedProducts
+  const expectedProducts = activity.steps?.expectedProducts || [];
+  
+  // Header row
+  rows.push(
+    new TableRow({
+      children: [
+        new TableCell({
+          children: [createParagraph('Hoạt động của GV-HS', { bold: true })],
+          width: { size: 50, type: WidthType.PERCENTAGE },
+        }),
+        new TableCell({
+          children: [createParagraph('Dự kiến sản phẩm', { bold: true })],
+          width: { size: 50, type: WidthType.PERCENTAGE },
+        }),
+      ],
+    })
+  );
+
+  // Bước 1
+  rows.push(
+    new TableRow({
+      children: [
+        new TableCell({
+          children: [
+            createParagraph('Bước 1. Giáo viên giao nhiệm vụ', { bold: true }),
+            ...(activity.steps?.step1 || []).map((s: string) => 
+              new Paragraph({
+                children: [new TextRun({ text: `- ${s}`, size: 26, font: 'Times New Roman' })],
+                spacing: { after: 120, line: 240 },
+              })
+            ),
+          ],
+        }),
+        new TableCell({
+          children: expectedProducts.slice(0, 1).map((p: string) =>
+            new Paragraph({
+              children: [new TextRun({ text: `- ${p}`, size: 26, font: 'Times New Roman' })],
+              spacing: { after: 120, line: 240 },
+            })
+          ),
+        }),
+      ],
+    })
+  );
+
+  // Bước 2
+  rows.push(
+    new TableRow({
+      children: [
+        new TableCell({
+          children: [
+            createParagraph('Bước 2. Học sinh thực hiện nhiệm vụ', { bold: true }),
+            ...(activity.steps?.step2 || []).map((s: string) => 
+              new Paragraph({
+                children: [new TextRun({ text: `- ${s}`, size: 26, font: 'Times New Roman' })],
+                spacing: { after: 120, line: 240 },
+              })
+            ),
+          ],
+        }),
+        new TableCell({
+          children: expectedProducts.slice(1, 2).map((p: string) =>
+            new Paragraph({
+              children: [new TextRun({ text: `- ${p}`, size: 26, font: 'Times New Roman' })],
+              spacing: { after: 120, line: 240 },
+            })
+          ),
+        }),
+      ],
+    })
+  );
+
+  // Bước 3
+  rows.push(
+    new TableRow({
+      children: [
+        new TableCell({
+          children: [
+            createParagraph('Bước 3. Giáo viên tổ chức báo cáo và thảo luận', { bold: true }),
+            ...(activity.steps?.step3 || []).map((s: string) => 
+              new Paragraph({
+                children: [new TextRun({ text: `- ${s}`, size: 26, font: 'Times New Roman' })],
+                spacing: { after: 120, line: 240 },
+              })
+            ),
+          ],
+        }),
+        new TableCell({
+          children: expectedProducts.slice(2, 3).map((p: string) =>
+            new Paragraph({
+              children: [new TextRun({ text: `- ${p}`, size: 26, font: 'Times New Roman' })],
+              spacing: { after: 120, line: 240 },
+            })
+          ),
+        }),
+      ],
+    })
+  );
+
+  // Bước 4
+  rows.push(
+    new TableRow({
+      children: [
+        new TableCell({
+          children: [
+            createParagraph('Bước 4. Kết luận', { bold: true }),
+            ...(activity.steps?.step4 || []).map((s: string) => 
+              new Paragraph({
+                children: [new TextRun({ text: `- ${s}`, size: 26, font: 'Times New Roman' })],
+                spacing: { after: 120, line: 240 },
+              })
+            ),
+          ],
+        }),
+        new TableCell({
+          children: expectedProducts.slice(3).map((p: string) =>
+            new Paragraph({
+              children: [new TextRun({ text: `- ${p}`, size: 26, font: 'Times New Roman' })],
+              spacing: { after: 120, line: 240 },
+            })
+          ),
+        }),
+      ],
+    })
+  );
+
+  return new Table({
+    rows: rows,
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    borders: {
+      top: { style: BorderStyle.SINGLE, size: 1 },
+      bottom: { style: BorderStyle.SINGLE, size: 1 },
+      left: { style: BorderStyle.SINGLE, size: 1 },
+      right: { style: BorderStyle.SINGLE, size: 1 },
+      insideHorizontal: { style: BorderStyle.SINGLE, size: 1 },
+      insideVertical: { style: BorderStyle.SINGLE, size: 1 },
+    },
+  });
+};
+
+  // Helper function để render activity với subActivities
+  const renderActivity = (activity: any, activityNumber: number, activityName: string) => {
+    const elements = [];
+    
+    // Nếu có subActivities (như activity2)
+    if (activity.subActivities && activity.subActivities.length > 0) {
+      elements.push(createParagraph(`Hoạt động ${activityNumber}: ${activityName}`, { bold: true }));
+      
+      activity.subActivities.forEach((subActivity: any) => {
+        elements.push(createParagraph(subActivity.title, { bold: true }));
+        elements.push(createParagraph('a) Mục tiêu', { bold: true }));
+        elements.push(...createListItems(subActivity.objectives));
+        elements.push(createParagraph('b) Nội dung', { bold: true }));
+        elements.push(...createListItems(subActivity.content));
+        elements.push(createParagraph('c) Sản phẩm', { bold: true }));
+        elements.push(...createListItems(subActivity.products));
+        elements.push(createParagraph('Tổ chức thực hiện:', { bold: true }));
+        elements.push(createActivityTable(subActivity));
+      });
+    } 
+    // Nếu không có subActivities (như activity1, activity3, activity4)
+    else if (activity.objectives) {
+      elements.push(createParagraph(`Hoạt động ${activityNumber}: ${activityName}`, { bold: true }));
+      elements.push(createParagraph('a) Mục tiêu', { bold: true }));
+      elements.push(...createListItems(activity.objectives));
+      elements.push(createParagraph('b) Nội dung', { bold: true }));
+      elements.push(...createListItems(activity.content));
+      elements.push(createParagraph('c) Sản phẩm', { bold: true }));
+      elements.push(...createListItems(activity.products));
+      elements.push(createParagraph('Tổ chức thực hiện:', { bold: true }));
+      elements.push(createActivityTable(activity));
+    }
+    
+    return elements;
+  };
+
+  // Tạo document
+  const doc = new Document({
+    sections: [{
+      properties: {
+        page: {
+          margin: {
+            top: 1134, // 2cm = 1134 twips
+            right: 850, // 1.5cm = 850 twips
+            bottom: 1134, // 2cm
+            left: 1134, // 2cm
+          },
+        },
+      },
+      children: [
+        // Header
+        createParagraph('KẾ HOẠCH BÀI DẠY', { bold: true, alignment: AlignmentType.CENTER }),
+        createParagraph(`Trường: ${lesson.school}`, { alignment: AlignmentType.CENTER }),
+        createParagraph(`Tổ: ${lesson.department}`, { alignment: AlignmentType.CENTER }),
+        createParagraph(`Giáo viên: ${lesson.teacher}`, { alignment: AlignmentType.CENTER }),
+        createParagraph(`TÊN BÀI DẠY: ${lesson.title}`, { bold: true, alignment: AlignmentType.CENTER }),
+        createParagraph(`Môn: ${lesson.subject}; Lớp: ${lesson.grade}`, { alignment: AlignmentType.CENTER }),
+        createParagraph(`Thời lượng: ${lesson.periods} tiết`, { alignment: AlignmentType.CENTER }),
+        
+        // I. Mục tiêu
+        createParagraph('I. Mục tiêu', { bold: true }),
+        createParagraph('1. Kiến thức', { bold: true }),
+        ...createListItems(lesson.knowledge),
+        
+        createParagraph('2. Năng lực:', { bold: true }),
+        createParagraph('2.1. Năng lực chung', { bold: true }),
+        ...createListItems(lesson.generalCompetencies),
+        
+        createParagraph(`2.2. Năng lực ${lesson.subject}`, { bold: true }),
+        ...createListItems(lesson.subjectCompetencies),
+        
+        createParagraph('2.3. Năng lực số (theo Thông tư 02/2025/TT-BGDĐT)', { bold: true }),
+        ...createListItems(lesson.digitalCompetencies),
+        
+        createParagraph('3. Phẩm chất', { bold: true }),
+        ...createListItems(lesson.qualities),
+        
+        // II. Thiết bị
+        createParagraph('II. Thiết bị dạy học và học liệu', { bold: true }),
+        createParagraph('Giáo viên:', { bold: true }),
+        ...createListItems(lesson.teacherEquipment),
+        createParagraph('Học sinh:', { bold: true }),
+        ...createListItems(lesson.studentEquipment),
+        
+        // III. Tiến trình dạy học
+        createParagraph('III. Tiến trình dạy học', { bold: true }),
+        
+        // Hoạt động 1: Khởi động
+        ...(lesson.activity1 ? renderActivity(lesson.activity1, 1, 'Khởi động') : []),
+        
+        // Hoạt động 2: Hình thành kiến thức mới
+        ...(lesson.activity2 ? renderActivity(lesson.activity2, 2, 'Hình thành kiến thức mới') : []),
+        
+        // Hoạt động 3: Luyện tập
+        ...(lesson.activity3 ? renderActivity(lesson.activity3, 3, 'Luyện tập') : []),
+        
+        // Hoạt động 4: Vận dụng
+        ...(lesson.activity4 ? renderActivity(lesson.activity4, 4, 'Vận dụng') : []),
+        
+        // Phiếu học tập
+        createParagraph('PHIẾU HỌC TẬP', { bold: true }),
+        ...lesson.worksheet.tasks.map(task => createParagraph(task)),
+        createParagraph('Phân công nhiệm vụ:', { bold: true }),
+        ...createListItems(lesson.worksheet.groupAssignments),
+        
+        // Câu hỏi trắc nghiệm
+        createParagraph('CÂU HỎI TRẮC NGHIỆM', { bold: true }),
+        ...lesson.quiz.questions.flatMap((q, i) => [
+          createParagraph(`Câu ${i + 1}: ${q.question}`, { bold: true }),
+          ...q.options.map(opt => createParagraph(opt)),
+        ]),
+        createParagraph(`Đáp án: ${lesson.quiz.questions.map((q, i) => `${i + 1}.${q.answer}`).join(', ')}`, { bold: true }),
+      ],
+    }],
+  });
+
+  // Tạo và download file
+  const blob = await Packer.toBlob(doc);
+  saveAs(blob, `${lesson.title}.docx`);
+};
 
   const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
     <div className="mb-6 bg-white rounded-lg shadow-sm p-6 border border-gray-200">

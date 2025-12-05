@@ -111,7 +111,7 @@ const ItemTopArticles = ({ item }: { item: IArticle }) => {
           {/* Content Preview */}
           {item.content && (
             <p
-              className='mb-4 line-clamp-1 text-sm leading-relaxed text-gray-600'
+              className='mb-4 line-clamp-1 text-sm leading-relaxed text-gray-600 w-full'
               dangerouslySetInnerHTML={{
                 __html: item.content.substring(0, 100) + '...'
               }}

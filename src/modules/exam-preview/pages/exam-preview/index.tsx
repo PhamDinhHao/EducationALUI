@@ -122,6 +122,7 @@ export default function ExamEditor() {
 
   // Export Word
   const exportWord = async () => {
+    console.log(exam)
     const multipleChoices = exam.find((e : any) => e.type === 'Nhiều phương án lựa chọn')?.questions || []
     const trueFalse = exam.find((e : any) => e.type === 'Trắc nghiệm đúng sai')?.questions || []
     const shortAnswers = exam.find((e : any) => e.type === 'Trả lời ngắn')?.questions || []
@@ -139,7 +140,7 @@ export default function ExamEditor() {
         alignment: 'center'
       }),
       new Paragraph({
-        children: [new TextRun({ text: 'MÔN: Lịch sử – LỚP 10', bold: true })],
+        children: [new TextRun({ text: 'MÔN: ............ LỚP: ............', bold: true })],
         alignment: 'center'
       }),
       new Paragraph({
@@ -215,6 +216,90 @@ export default function ExamEditor() {
     saveAs(blob, 'exam.docx')
   }
 
+  const exportAnswer = async () => {
+  if (!Array.isArray(exam) || exam.length === 0) {
+    alert("Không có dữ liệu để xuất đáp án!");
+    return;
+  }
+
+  const multipleChoices = exam.find((e) => e.type === "Nhiều phương án lựa chọn")?.questions || [];
+  const trueFalse = exam.find((e) => e.type === "Trắc nghiệm đúng sai")?.questions || [];
+  const shortAnswers = exam.find((e) => e.type === "Trả lời ngắn")?.questions || [];
+
+  let counter = 1;
+  const children: Paragraph[] = [];
+
+  // ===== SECTION 1 =====
+  children.push(
+    new Paragraph({ children: [new TextRun({ text: "PHẦN I. Nhiều phương án lựa chọn", bold: true })] })
+  );
+
+  multipleChoices.forEach((q : Question) => {
+    children.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: `${counter}. ${q.answer}`,
+            bold: true,
+            color: "008000",
+          }),
+        ],
+      })
+    );
+    counter++;
+  });
+
+  children.push(new Paragraph(""));
+
+  // ===== SECTION 2 =====
+  children.push(
+    new Paragraph({ children: [new TextRun({ text: "PHẦN II. Trắc nghiệm đúng sai", bold: true })] })
+  );
+
+  trueFalse.forEach((q : Question) => {
+    children.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: `${counter}. ${q.answer}`,
+            color: "008000",
+          }),
+        ],
+      })
+    );
+    counter++;
+  });
+
+  children.push(new Paragraph(""));
+
+  // ===== SECTION 3 =====
+  children.push(
+    new Paragraph({ children: [new TextRun({ text: "PHẦN III. Trả lời ngắn", bold: true })] })
+  );
+
+  shortAnswers.forEach((q : Question) => {
+    children.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: `${counter}. ${q.answer}`,
+            color: "008000",
+          }),
+        ],
+      })
+    );
+    counter++;
+  });
+
+  const doc = new Document({
+    sections: [{ children }],
+  });
+
+  const blob = await Packer.toBlob(doc);
+  saveAs(blob, "dap_an.docx");
+};
+
+
   return (
     <div className='min-h-screen bg-gray-50 p-6'>
       <div className='mx-auto max-w-6xl'>
@@ -238,6 +323,13 @@ export default function ExamEditor() {
             >
               <FileDown size={18} />
               Xuất Word
+            </button>
+            <button
+              onClick={exportAnswer}
+              className='flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-sky-700'
+            >
+              <FileDown size={18} />
+              Xuất đáp án
             </button>
           </div>
         </div>

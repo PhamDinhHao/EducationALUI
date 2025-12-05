@@ -6,6 +6,7 @@ import { useBoundStore } from '@/shared/stores'
 import { Save, FileDown, Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Question } from '@/shared/core/types'
+import Sidebar from '@/shared/components/Sidebar'
 
 const EXAM_STORAGE_KEY = 'exam_data'
 export default function ExamEditor() {
@@ -301,8 +302,9 @@ export default function ExamEditor() {
 
 
   return (
-    <div className='min-h-screen bg-gray-50 p-6'>
-      <div className='mx-auto max-w-6xl'>
+    <div className='flex min-h-screen bg-gray-50'>
+      <Sidebar></Sidebar>
+      <div className='mx-10 w-full'>
         {/* Header */}
         <div className='mb-6 rounded-lg bg-white p-6 shadow-sm'>
           <h1 className='mb-2 text-3xl font-bold text-gray-800'>Chỉnh sửa đề thi</h1>

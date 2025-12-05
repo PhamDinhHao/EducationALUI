@@ -326,7 +326,7 @@ export default function ExamEditor() {
             </button>
             <button
               onClick={exportAnswer}
-              className='flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-sky-700'
+              className='flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-white transition hover:bg-sky-700'
             >
               <FileDown size={18} />
               Xuất đáp án

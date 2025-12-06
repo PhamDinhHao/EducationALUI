@@ -1431,262 +1431,263 @@ RULES:
 
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex h-full bg-gray-50">
       <Sidebar />
-      <div className="w-full p-6 pb-48">
-        <div className="max-w-[1100px] mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Title level={1} className="!text-orange-500 !mb-0">Mindmap</Title>
+      <div className="flex flex-1 flex-col h-full overflow-hidden">
+        <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
+          <div className="max-w-[1100px] mx-auto relative min-h-full pb-24">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <Title level={1} className="!text-orange-500 !mb-0">Mindmap</Title>
+              </div>
+              <Text className="text-lg text-gray-700">GEN AI giúp bạn xây dựng sơ đồ tư duy và có cái nhìn tổng quát</Text>
             </div>
-            <Text className="text-lg text-gray-700">GEN AI giúp bạn xây dựng sơ đồ tư duy và có cái nhìn tổng quát</Text>
-          </div>
 
-          {/* Mindmap Type Selection */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
-            {MINDMAP_TYPES.map((type) => (
-              <Card
-                key={type.key}
-                hoverable
-                onClick={() => handleTypeChange(type.key)}
-                className={`cursor-pointer transition-all duration-200 ${selectedType === type.key ? 'ring-2 ring-orange-500 shadow-lg' : 'hover:shadow-md'
-                  }`}
-                bodyStyle={{ padding: '20px', textAlign: 'center' }}
-              >
-                <div className="mb-3">{type.icon}</div>
-                <Title level={4} className="!mb-2">{type.title}</Title>
-                <Text type="secondary" className="text-sm">{type.description}</Text>
+            {/* Mindmap Type Selection */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+              {MINDMAP_TYPES.map((type) => (
+                <Card
+                  key={type.key}
+                  hoverable
+                  onClick={() => handleTypeChange(type.key)}
+                  className={`cursor-pointer transition-all duration-200 ${selectedType === type.key ? 'ring-2 ring-orange-500 shadow-lg' : 'hover:shadow-md'
+                    }`}
+                  bodyStyle={{ padding: '20px', textAlign: 'center' }}
+                >
+                  <div className="mb-3">{type.icon}</div>
+                  <Title level={4} className="!mb-2">{type.title}</Title>
+                  <Text type="secondary" className="text-sm">{type.description}</Text>
+                </Card>
+              ))}
+            </div>
+
+            {/* Form GDPT 2018 - hiển thị ngay dưới select mindmap */}
+            {selectedType === 'gdpt2018' && (
+              <Card className="mt-2">
+                <div className="p-6">
+                  <div className="text-center mb-4">
+                    <Title level={4} className="!text-blue-600 !mb-2">Mindmap chương trình GDPT 2018</Title>
+                    <Text className="text-gray-600 text-sm">
+                      - Chọn môn, lớp và bài học. Hệ thống sẽ tự động tải nội dung PDF từ chương trình GDPT 2018.
+                    </Text>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                      <div className="text-sm font-semibold mb-2 text-gray-700">Môn:</div>
+                      <Select
+                        className="w-full"
+                        value={subject}
+                        options={SUBJECTS}
+                        onChange={setSubject}
+                        size="large"
+                      />
+                    </div>
+
+                    <div>
+                      <div className="text-sm font-semibold mb-2 text-gray-700">Lớp:</div>
+                      <Select
+                        className="w-full"
+                        value={grade}
+                        options={GRADES}
+                        onChange={setGrade}
+                        size="large"
+                      />
+                    </div>
+
+                    <div>
+                      <div className="text-sm font-semibold mb-2 text-gray-700">Chọn bài học:</div>
+                      <Select
+                        size="large"
+                        className="w-full"
+                        value={lesson}
+                        options={lessonOptions}
+                        onChange={setLesson}
+                        placeholder="Chọn bài học"
+                        loading={!chuongTrinhData}
+                        disabled={lessonOptions.length === 0}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Button
+                      size="large"
+                      icon={<DeploymentUnitOutlined />}
+                      onClick={handleShowInfographic}
+                      disabled={!lesson.trim()}
+                      className="mr-3 !bg-white !border-blue-400 !text-blue-500 hover:!border-blue-500 hover:!text-blue-600 !h-12 !px-6 !text-base !font-semibold !rounded-lg"
+                    >
+                      Infographic
+                    </Button>
+                    <Button
+                      type="primary"
+                      size="large"
+                      icon={loading ? <Spin /> : <SendOutlined />}
+                      onClick={handleCreateMindmap_2018}
+                      disabled={!lesson.trim() || loading || isLoadingPdf}
+                      className="!bg-orange-500 !border-orange-500 hover:!bg-orange-600 hover:border-orange-600 !h-12 !px-8 !text-base !font-semibold !rounded-lg"
+                    >
+                      {loading ? 'Đang tạo...' : 'BẮT ĐẦU TẠO'}
+                    </Button>
+                  </div>
+                </div>
               </Card>
-            ))}
-          </div>
+            )}
 
-          {/* Form GDPT 2018 - hiển thị ngay dưới select mindmap */}
-          {selectedType === 'gdpt2018' && (
-            <Card className="mt-2">
-              <div className="p-6">
-                <div className="text-center mb-4">
-                  <Title level={4} className="!text-blue-600 !mb-2">Mindmap chương trình GDPT 2018</Title>
-                  <Text className="text-gray-600 text-sm">
-                    - Chọn môn, lớp và bài học. Hệ thống sẽ tự động tải nội dung PDF từ chương trình GDPT 2018.
+            {/* Container để render mindmap - hiển thị cho cả hai loại */}
+            {showMindmap && (
+              <Card className="mt-2">
+                {/* Usage Instructions */}
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <Text className="text-blue-800 text-sm">
+                    💡 <strong>Hướng dẫn:</strong> Click vào node để chọn → Double-click để chỉnh sửa nội dung → Sử dụng toolbar để thêm/xóa/zoom → Right-click để xem thêm tùy chọn
                   </Text>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div>
-                    <div className="text-sm font-semibold mb-2 text-gray-700">Môn:</div>
-                    <Select
-                      className="w-full"
-                      value={subject}
-                      options={SUBJECTS}
-                      onChange={setSubject}
-                      size="large"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="text-sm font-semibold mb-2 text-gray-700">Lớp:</div>
-                    <Select
-                      className="w-full"
-                      value={grade}
-                      options={GRADES}
-                      onChange={setGrade}
-                      size="large"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="text-sm font-semibold mb-2 text-gray-700">Chọn bài học:</div>
-                    <Select
-                      size="large"
-                      className="w-full"
-                      value={lesson}
-                      options={lessonOptions}
-                      onChange={setLesson}
-                      placeholder="Chọn bài học"
-                      loading={!chuongTrinhData}
-                      disabled={lessonOptions.length === 0}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end">
-                  <Button
-                    size="large"
-                    icon={<DeploymentUnitOutlined />}
-                    onClick={handleShowInfographic}
-                    disabled={!lesson.trim()}
-                    className="mr-3 !bg-white !border-blue-400 !text-blue-500 hover:!border-blue-500 hover:!text-blue-600 !h-12 !px-6 !text-base !font-semibold !rounded-lg"
-                  >
-                    Infographic
-                  </Button>
-                  <Button
-                    type="primary"
-                    size="large"
-                    icon={loading ? <Spin /> : <SendOutlined />}
-                    onClick={handleCreateMindmap_2018}
-                    disabled={!lesson.trim() || loading || isLoadingPdf}
-                    className="!bg-orange-500 !border-orange-500 hover:!bg-orange-600 hover:border-orange-600 !h-12 !px-8 !text-base !font-semibold !rounded-lg"
-                  >
-                    {loading ? 'Đang tạo...' : 'BẮT ĐẦU TẠO'}
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          )}
-
-          {/* Container để render mindmap - hiển thị cho cả hai loại */}
-          {showMindmap && (
-            <Card className="mt-2">
-              {/* Usage Instructions */}
-              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <Text className="text-blue-800 text-sm">
-                  💡 <strong>Hướng dẫn:</strong> Click vào node để chọn → Double-click để chỉnh sửa nội dung → Sử dụng toolbar để thêm/xóa/zoom → Right-click để xem thêm tùy chọn
-                </Text>
-              </div>
-
-              {/* Mindmap Controls */}
-              <div className="flex justify-between items-center mb-4 p-2 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <Text strong>Điều khiển Mindmap:</Text>
-                  <Space>
-                    <Tooltip title="Thêm nút con">
-                      <Button
-                        icon={<PlusOutlined />}
-                        onClick={addNode}
-                        type="primary"
-                        style={{
-                          background: '#1890ff',
-                          borderColor: '#1890ff',
-                          fontWeight: '600'
-                        }}
-                      >
-                        Thêm nút
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title="Xóa nút đã chọn">
-                      <Button
-                        icon={<MinusOutlined />}
-                        onClick={removeNode}
-                        danger
-                        style={{
-                          fontWeight: '600'
-                        }}
-                      >
-                        Xóa nút
-                      </Button>
-                    </Tooltip>
-                  </Space>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Space>
-                    <Dropdown
-                      menu={{
-                        items: [
-                          {
-                            key: 'pdf',
-                            label: 'Xuất PDF (jsPDF + html2canvas)',
-                            icon: <FilePdfOutlined />,
-                            onClick: exportMindmapAsPDF,
-                          },
-                          {
-                            key: 'png',
-                            label: 'Xuất PNG (html2canvas)',
-                            icon: <FileImageOutlined />,
-                            onClick: exportMindmapAsPNG,
-                          },
-                          {
-                            type: 'divider',
-                          },
-                          {
-                            key: 'json',
-                            label: 'Xuất JSON',
-                            icon: <DownloadOutlined />,
-                            onClick: exportMindmapAsJSON,
-                          },
-                        ],
-                      }}
-                      placement="bottomRight"
-                      trigger={['click']}
-                    >
-                      <Button icon={<DownloadOutlined />}>
-                        Xuất file <DownloadOutlined />
-                      </Button>
-                    </Dropdown>
-                    <Tooltip title="Vừa màn hình">
-                      <Button
-                        icon={<FullscreenOutlined />}
-                        onClick={handleFitToScreen}
-                        title="Vừa màn hình"
-                      >
-                        Vừa màn hình
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title="Căn giữa">
-                      <Button
-                        icon={<BranchesOutlined />}
-                        onClick={handleCenterView}
-                        title="Căn giữa"
-                      >
-                        Căn giữa
-                      </Button>
-                    </Tooltip>
-
-                    {/* Zoom Controls - Gộp lại thành 1 nhóm */}
-                    <div className="flex items-center gap-1 border border-gray-300 rounded-lg bg-white px-1">
-                      <Tooltip title="Thu nhỏ">
+                {/* Mindmap Controls */}
+                <div className="flex justify-between items-center mb-4 p-2 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Text strong>Điều khiển Mindmap:</Text>
+                    <Space>
+                      <Tooltip title="Thêm nút con">
                         <Button
-                          icon={<ZoomOutOutlined />}
-                          onClick={handleZoomOut}
-                          disabled={zoomLevel <= 0.5}
-                          size="small"
-                          type="text"
-                        />
-                      </Tooltip>
-                      <span className="px-2 text-sm font-semibold min-w-[65px] text-center text-gray-700">
-                        {Math.round(zoomLevel * 100)}%
-                      </span>
-                      <Tooltip title="Phóng to">
-                        <Button
-                          icon={<ZoomInOutlined />}
-                          onClick={handleZoomIn}
-                          disabled={zoomLevel >= 2}
-                          size="small"
-                          type="text"
-                        />
-                      </Tooltip>
-                      <div className="h-6 w-px bg-gray-300 mx-1" />
-                      <Tooltip title="Reset về 100%">
-                        <Button
-                          onClick={handleResetZoom}
-                          size="small"
-                          type="text"
-                          className="text-xs"
+                          icon={<PlusOutlined />}
+                          onClick={addNode}
+                          type="primary"
+                          style={{
+                            background: '#1890ff',
+                            borderColor: '#1890ff',
+                            fontWeight: '600'
+                          }}
                         >
-                          100%
+                          Thêm nút
                         </Button>
                       </Tooltip>
-                    </div>
-                  </Space>
+                      <Tooltip title="Xóa nút đã chọn">
+                        <Button
+                          icon={<MinusOutlined />}
+                          onClick={removeNode}
+                          danger
+                          style={{
+                            fontWeight: '600'
+                          }}
+                        >
+                          Xóa nút
+                        </Button>
+                      </Tooltip>
+                    </Space>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Space>
+                      <Dropdown
+                        menu={{
+                          items: [
+                            {
+                              key: 'pdf',
+                              label: 'Xuất PDF (jsPDF + html2canvas)',
+                              icon: <FilePdfOutlined />,
+                              onClick: exportMindmapAsPDF,
+                            },
+                            {
+                              key: 'png',
+                              label: 'Xuất PNG (html2canvas)',
+                              icon: <FileImageOutlined />,
+                              onClick: exportMindmapAsPNG,
+                            },
+                            {
+                              type: 'divider',
+                            },
+                            {
+                              key: 'json',
+                              label: 'Xuất JSON',
+                              icon: <DownloadOutlined />,
+                              onClick: exportMindmapAsJSON,
+                            },
+                          ],
+                        }}
+                        placement="bottomRight"
+                        trigger={['click']}
+                      >
+                        <Button icon={<DownloadOutlined />}>
+                          Xuất file <DownloadOutlined />
+                        </Button>
+                      </Dropdown>
+                      <Tooltip title="Vừa màn hình">
+                        <Button
+                          icon={<FullscreenOutlined />}
+                          onClick={handleFitToScreen}
+                          title="Vừa màn hình"
+                        >
+                          Vừa màn hình
+                        </Button>
+                      </Tooltip>
+                      <Tooltip title="Căn giữa">
+                        <Button
+                          icon={<BranchesOutlined />}
+                          onClick={handleCenterView}
+                          title="Căn giữa"
+                        >
+                          Căn giữa
+                        </Button>
+                      </Tooltip>
+
+                      {/* Zoom Controls - Gộp lại thành 1 nhóm */}
+                      <div className="flex items-center gap-1 border border-gray-300 rounded-lg bg-white px-1">
+                        <Tooltip title="Thu nhỏ">
+                          <Button
+                            icon={<ZoomOutOutlined />}
+                            onClick={handleZoomOut}
+                            disabled={zoomLevel <= 0.5}
+                            size="small"
+                            type="text"
+                          />
+                        </Tooltip>
+                        <span className="px-2 text-sm font-semibold min-w-[65px] text-center text-gray-700">
+                          {Math.round(zoomLevel * 100)}%
+                        </span>
+                        <Tooltip title="Phóng to">
+                          <Button
+                            icon={<ZoomInOutlined />}
+                            onClick={handleZoomIn}
+                            disabled={zoomLevel >= 2}
+                            size="small"
+                            type="text"
+                          />
+                        </Tooltip>
+                        <div className="h-6 w-px bg-gray-300 mx-1" />
+                        <Tooltip title="Reset về 100%">
+                          <Button
+                            onClick={handleResetZoom}
+                            size="small"
+                            type="text"
+                            className="text-xs"
+                          >
+                            100%
+                          </Button>
+                        </Tooltip>
+                      </div>
+                    </Space>
+                  </div>
                 </div>
-              </div>
 
-              <div
-                id="jsmind_container"
-                style={{
-                  width: '100%',
-                  height: '600px',
-                  background: '#fdfdfd',
-                  border: '1px solid #e0e0e0',
-                  borderRadius: '8px',
-                  overflow: 'auto',
-                  position: 'relative'
-                }}
-              />
+                <div
+                  id="jsmind_container"
+                  style={{
+                    width: '100%',
+                    height: '600px',
+                    background: '#fdfdfd',
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '8px',
+                    overflow: 'auto',
+                    position: 'relative'
+                  }}
+                />
 
-              {/* CSS nâng cao cho mindmap đẹp hơn */}
-              <style dangerouslySetInnerHTML={{
-                __html: `
+                {/* CSS nâng cao cho mindmap đẹp hơn */}
+                <style dangerouslySetInnerHTML={{
+                  __html: `
                   #jsmind_container {
                     /* Smooth scrolling */
                     scroll-behavior: smooth;
@@ -1820,113 +1821,115 @@ RULES:
                     animation: fadeInScale 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                   }
                 `
-              }} />
-            </Card>
-          )}
+                }} />
+              </Card>
+            )}
 
-          {/* Input Box ở dưới cùng - chỉ hiển thị cho Mindmap Tiêu chuẩn */}
-          {selectedType === 'standard' && (
-            <div className="fixed bottom-0 left-[200px] right-0 z-50">
-              <div className="max-w-[1100px] mx-auto">
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4">
-                  {/* File Preview */}
-                  {selectedFile && (
-                    <div className="mb-3 p-3 bg-gray-50 rounded-lg relative">
-                      <div className="flex items-center gap-3">
-                        {fileType === 'image' && filePreview ? (
-                          <Image
-                            src={filePreview}
-                            alt="Preview"
-                            width={60}
-                            height={60}
-                            className="rounded-lg object-cover"
-                          />
-                        ) : (
-                          <div className="w-15 h-15 flex items-center justify-center bg-white rounded-lg border">
-                            {getFileIcon(selectedFile)}
-                          </div>
-                        )}
+          </div>
+        </div>
 
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-600 mb-1">
-                            {fileType === 'image' ? 'Ảnh' : FileParser.getFileTypeDescription(selectedFile?.type || '')} đã chọn
-                          </p>
-                          <p className="text-xs text-gray-500">{selectedFile?.name}</p>
-                          <p className="text-xs text-gray-400">
-                            {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                            {parsedFileContent && ` • ${parsedFileContent.length} ký tự`}
-                          </p>
-                        </div>
-                        <Button
-                          type="text"
-                          size="small"
-                          onClick={removeSelectedFile}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          ✕
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Input and Buttons */}
-                  <div className="flex items-center gap-3">
-                    <Input.TextArea
-                      ref={inputRef}
-                      size="large"
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      onPaste={handlePaste}
-                      placeholder="Nhập chủ đề mindmap mới... (Ctrl+V để dán ảnh hoặc upload file text)"
-                      autoSize={{ minRows: 1, maxRows: 4 }}
-                      className="flex-1 resize-none border-0 rounded-none p-0 shadow-none text-base leading-6 focus:outline-none focus:ring-0 focus:border-0"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          handleCreateMindmap();
-                        }
-                      }}
-                      disabled={loading}
-                    />
-
-                    <div className="flex gap-2 flex-shrink-0">
-                      <Tooltip title='File tài liệu (PDF, Word, Excel, PowerPoint, Ảnh, Text)'>
-                        <Upload showUploadList={false} beforeUpload={handleFileUpload} accept="image/*,.txt,.csv,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
-                          <Button
-                            shape='circle'
-                            size='large'
-                            icon={isParsingFile ? <Spin size="small" /> : <PictureOutlined />}
-                            className={`w-10 h-10 border ${selectedFile ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-                              } hover:border-gray-400 hover:bg-gray-50`}
-                            disabled={loading || isParsingFile}
-                          />
-                        </Upload>
-                      </Tooltip>
-
-                      <Tooltip title='Tạo mindmap mới'>
-                        <Button
-                          type='primary'
-                          shape='circle'
-                          size='large'
-                          icon={loading ? <Spin size="small" /> : <SendOutlined />}
-                          onClick={handleCreateMindmap}
-                          disabled={(!inputValue.trim() && !selectedFile) || loading || isParsingFile}
-                          className="w-10 h-10 bg-orange-500 border-orange-500 hover:bg-orange-600 hover:border-orange-600"
+        {/* Input Box ở dưới cùng - chỉ hiển thị cho Mindmap Tiêu chuẩn */}
+        {selectedType === 'standard' && (
+          <div className="flex-shrink-0 p-6 pt-0 bg-gray-50 z-10">
+            <div className="max-w-[1100px] mx-auto">
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4">
+                {/* File Preview */}
+                {selectedFile && (
+                  <div className="mb-3 p-3 bg-gray-50 rounded-lg relative">
+                    <div className="flex items-center gap-3">
+                      {fileType === 'image' && filePreview ? (
+                        <Image
+                          src={filePreview}
+                          alt="Preview"
+                          width={60}
+                          height={60}
+                          className="rounded-lg object-cover"
                         />
-                      </Tooltip>
+                      ) : (
+                        <div className="w-15 h-15 flex items-center justify-center bg-white rounded-lg border">
+                          {getFileIcon(selectedFile)}
+                        </div>
+                      )}
+
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600 mb-1">
+                          {fileType === 'image' ? 'Ảnh' : FileParser.getFileTypeDescription(selectedFile?.type || '')} đã chọn
+                        </p>
+                        <p className="text-xs text-gray-500">{selectedFile?.name}</p>
+                        <p className="text-xs text-gray-400">
+                          {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                          {parsedFileContent && ` • ${parsedFileContent.length} ký tự`}
+                        </p>
+                      </div>
+                      <Button
+                        type="text"
+                        size="small"
+                        onClick={removeSelectedFile}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        ✕
+                      </Button>
                     </div>
                   </div>
-                </div>
+                )}
 
-                <div className="text-center my-2">
-                  <Text type='secondary' className="text-xs">
-                    Khi đặt câu hỏi, bạn đồng ý với <strong>Điều khoản</strong> và <strong>Chính sách quyền riêng tư</strong>.
-                  </Text>
+                {/* Input and Buttons */}
+                <div className="flex items-center gap-3">
+                  <Input.TextArea
+                    ref={inputRef}
+                    size="large"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onPaste={handlePaste}
+                    placeholder="Nhập chủ đề mindmap mới... (Ctrl+V để dán ảnh hoặc upload file text)"
+                    autoSize={{ minRows: 1, maxRows: 4 }}
+                    className="flex-1 resize-none border-0 rounded-none p-0 shadow-none text-base leading-6 focus:outline-none focus:ring-0 focus:border-0"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleCreateMindmap();
+                      }
+                    }}
+                    disabled={loading}
+                  />
+
+                  <div className="flex gap-2 flex-shrink-0">
+                    <Tooltip title='File tài liệu (PDF, Word, Excel, PowerPoint, Ảnh, Text)'>
+                      <Upload showUploadList={false} beforeUpload={handleFileUpload} accept="image/*,.txt,.csv,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
+                        <Button
+                          shape='circle'
+                          size='large'
+                          icon={isParsingFile ? <Spin size="small" /> : <PictureOutlined />}
+                          className={`w-10 h-10 border ${selectedFile ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+                            } hover:border-gray-400 hover:bg-gray-50`}
+                          disabled={loading || isParsingFile}
+                        />
+                      </Upload>
+                    </Tooltip>
+
+                    <Tooltip title='Tạo mindmap mới'>
+                      <Button
+                        type='primary'
+                        shape='circle'
+                        size='large'
+                        icon={loading ? <Spin size="small" /> : <SendOutlined />}
+                        onClick={handleCreateMindmap}
+                        disabled={(!inputValue.trim() && !selectedFile) || loading || isParsingFile}
+                        className="w-10 h-10 bg-orange-500 border-orange-500 hover:bg-orange-600 hover:border-orange-600"
+                      />
+                    </Tooltip>
+                  </div>
                 </div>
               </div>
+
+              <div className="text-center my-2">
+                <Text type='secondary' className="text-xs">
+                  Khi đặt câu hỏi, bạn đồng ý với <strong>Điều khoản</strong> và <strong>Chính sách quyền riêng tư</strong>.
+                </Text>
+              </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <Modal

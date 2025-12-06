@@ -231,9 +231,9 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
   }
 
   return (
-    <div className='flex h-full flex-col'>
+    <div className='flex h-full flex-col overflow-hidden'>
       {/* Scrollable Messages Area */}
-      <div className='flex-1 overflow-y-auto pb-4'>
+      <div className='flex-1 overflow-y-auto p-4'>
         <div className='mb-8'>
           <div className='mb-12 mt-8 text-center'>
             <div className='mb-4 flex items-center justify-center gap-3'>
@@ -290,9 +290,8 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
             {messages.map((msg, index) => (
               <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
-                  className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${
-                    msg.role === 'user' ? 'bg-blue-500 text-white' : 'border border-gray-200 bg-white text-gray-800'
-                  }`}
+                  className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${msg.role === 'user' ? 'bg-blue-500 text-white' : 'border border-gray-200 bg-white text-gray-800'
+                    }`}
                 >
                   <div className='mb-2 flex items-center gap-2'>
                     {msg.role === 'user' ? (
@@ -317,9 +316,8 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
 
                   {msg.content && (
                     <div
-                      className={`whitespace-pre-wrap text-sm leading-relaxed ${
-                        msg.role === 'model' ? 'prose prose-sm max-w-none' : ''
-                      }`}
+                      className={`whitespace-pre-wrap text-sm leading-relaxed ${msg.role === 'model' ? 'prose prose-sm max-w-none' : ''
+                        }`}
                       dangerouslySetInnerHTML={{
                         __html: msg.role === 'model' ? formatAIText(msg.content) : msg.content
                       }}
@@ -346,79 +344,76 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
         )}
       </div>
 
-      {/* Fixed Bottom Input */}
-      <div className='sticky bottom-0 left-0 z-50 w-full bg-white'>
-        <div className='bg-gray-50 p-4'>
-          <div className='rounded-2xl border border-[#f97316] bg-white p-4'>
-            {/* Image Preview */}
-            {imagePreview && (
-              <div className='relative mb-3 rounded-lg bg-gray-50 p-3'>
-                <div className='flex items-center gap-3'>
-                  <Image src={imagePreview} alt='Preview' width={60} height={60} className='rounded-lg object-cover' />
-                  <div className='flex-1'>
-                    <p className='text-xs text-gray-500'>{selectedImage?.name}</p>
-                  </div>
-                  <Button
-                    type='text'
-                    size='small'
-                    onClick={removeSelectedImage}
-                    className='text-red-500 hover:text-red-700'
-                  >
-                    ✕
-                  </Button>
+      {/* Input Area */}
+      <div className='flex-shrink-0 p-4'>
+        <div className='rounded-2xl border border-[#f97316] bg-white p-4'>
+          {/* Image Preview */}
+          {imagePreview && (
+            <div className='relative mb-3 rounded-lg bg-gray-50 p-3'>
+              <div className='flex items-center gap-3'>
+                <Image src={imagePreview} alt='Preview' width={60} height={60} className='rounded-lg object-cover' />
+                <div className='flex-1'>
+                  <p className='text-xs text-gray-500'>{selectedImage?.name}</p>
                 </div>
-              </div>
-            )}
-
-            {/* Input + Buttons */}
-            <div className='flex items-center gap-3'>
-              <Input.TextArea
-                ref={inputRef}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                onPaste={handlePaste}
-                autoSize={{ minRows: 1, maxRows: 4 }}
-                className='flex-1 resize-none rounded-none border-0 p-0 text-base leading-6 shadow-none focus:ring-0'
-                placeholder='Đặt câu hỏi cho AI'
-                disabled={isLoading}
-              />
-
-              <div className='flex flex-shrink-0 gap-2'>
-                <Tooltip title='Ảnh bài tập (hoặc Ctrl+V để dán ảnh)'>
-                  <Upload showUploadList={false} beforeUpload={handleImageUpload} accept='image/*'>
-                    <Button
-                      shape='circle'
-                      size='large'
-                      icon={<PictureOutlined />}
-                      className={`h-10 w-10 border ${
-                        selectedImage ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-                      } hover:border-gray-400 hover:bg-gray-50`}
-                    />
-                  </Upload>
-                </Tooltip>
-
-                <Tooltip title='Gửi'>
-                  <Button
-                    type='primary'
-                    shape='circle'
-                    size='large'
-                    icon={<SendOutlined />}
-                    onClick={handleSend}
-                    className='h-10 w-10 border-[#f97316] bg-[#f97316] hover:bg-[#f97316]'
-                    loading={isLoading}
-                    disabled={(!inputValue.trim() && !selectedImage) || isLoading}
-                  />
-                </Tooltip>
+                <Button
+                  type='text'
+                  size='small'
+                  onClick={removeSelectedImage}
+                  className='text-red-500 hover:text-red-700'
+                >
+                  ✕
+                </Button>
               </div>
             </div>
-          </div>
+          )}
 
-          <div className='my-2 text-center'>
-            <Text type='secondary' className='text-xs'>
-              Khi đặt câu hỏi, bạn đồng ý với <strong>Điều khoản</strong> và <strong>Chính sách quyền riêng tư</strong>.
-            </Text>
+          {/* Input + Buttons */}
+          <div className='flex items-center gap-3'>
+            <Input.TextArea
+              ref={inputRef}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
+              autoSize={{ minRows: 1, maxRows: 4 }}
+              className='flex-1 resize-none rounded-none border-0 p-0 text-base leading-6 shadow-none focus:ring-0'
+              placeholder='Đặt câu hỏi cho AI'
+              disabled={isLoading}
+            />
+
+            <div className='flex flex-shrink-0 gap-2'>
+              <Tooltip title='Ảnh bài tập (hoặc Ctrl+V để dán ảnh)'>
+                <Upload showUploadList={false} beforeUpload={handleImageUpload} accept='image/*'>
+                  <Button
+                    shape='circle'
+                    size='large'
+                    icon={<PictureOutlined />}
+                    className={`h-10 w-10 border ${selectedImage ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+                      } hover:border-gray-400 hover:bg-gray-50`}
+                  />
+                </Upload>
+              </Tooltip>
+
+              <Tooltip title='Gửi'>
+                <Button
+                  type='primary'
+                  shape='circle'
+                  size='large'
+                  icon={<SendOutlined />}
+                  onClick={handleSend}
+                  className='h-10 w-10 border-[#f97316] bg-[#f97316] hover:bg-[#f97316]'
+                  loading={isLoading}
+                  disabled={(!inputValue.trim() && !selectedImage) || isLoading}
+                />
+              </Tooltip>
+            </div>
           </div>
+        </div>
+
+        <div className='my-2 text-center'>
+          <Text type='secondary' className='text-xs'>
+            Khi đặt câu hỏi, bạn đồng ý với <strong>Điều khoản</strong> và <strong>Chính sách quyền riêng tư</strong>.
+          </Text>
         </div>
       </div>
     </div>
@@ -428,10 +423,11 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
 // Main Component
 const ExercisePage = () => {
   return (
-    <div className='flex h-screen bg-gray-50'>
+    <div className='flex h-full bg-gray-50'>
       <Sidebar />
-      <div className='flex-1 p-6'>
-        <div className='mx-auto flex h-full max-w-[1100px] flex-col'>
+      <div className='flex flex-1 flex-col h-full overflow-hidden'>
+        {/* Header/Content Area */}
+        <div className='mx-auto flex w-full max-w-[1100px] flex-1 flex-col overflow-hidden'>
           <ChatBox activeKey='math' />
         </div>
       </div>

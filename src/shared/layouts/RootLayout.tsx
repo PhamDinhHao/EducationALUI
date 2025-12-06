@@ -52,7 +52,8 @@ const RootLayout = () => {
         <div className='root-layout-content' style={{ width: '100%', flex: 1, overflowX: 'hidden', minHeight: 0 }}>
           <Outlet />
         </div>
-        {location.pathname !== '/ai/search-ai' && <FloatingAIChat />}
+        {/* FloatingAIChat only visible on non-ai routes */}
+        {!location.pathname.startsWith('/ai') && <FloatingAIChat />}
       </div>
     </>
   )

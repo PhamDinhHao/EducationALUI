@@ -126,7 +126,7 @@ const buildRequestMoreInfoPlan = (type: PlanKey): StudyPlan => {
 
 const StudyPlanPage = () => {
   const [active, setActive] = useState<PlanKey>('general')
-  const [inputValue, setInputValue] = useState('')
+  const [inputValue, setInputValue] = useState(PLACEHOLDER_BY_TYPE['general'])
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<string>('')
   const [plan, setPlan] = useState<StudyPlan | null>(null)
@@ -136,7 +136,7 @@ const StudyPlanPage = () => {
   const handleChangeType = (type: PlanKey) => {
     setActive(type)
     // reset all user inputs and results for a fresh start
-    setInputValue('')
+    setInputValue(PLACEHOLDER_BY_TYPE[type])
     setResult('')
     setPlan(null)
     // focus input for convenience
@@ -312,7 +312,7 @@ const StudyPlanPage = () => {
                   onChange={(e) => setInputValue(e.target.value)}
                   autoSize={{ minRows: 2, maxRows: 6 }}
                   className="flex-1 resize-none border-0 rounded-none p-0 shadow-none text-base leading-6 focus:outline-none focus:ring-0 focus:border-0"
-                  placeholder={PLACEHOLDER_BY_TYPE[active]}
+                  placeholder="Nhập thông tin kế hoạch..."
                   disabled={isLoading}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {

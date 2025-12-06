@@ -109,10 +109,10 @@ const buildRequestMoreInfoPlan = (type: PlanKey): StudyPlan => {
     type === 'exam'
       ? ['Kỳ thi gì? (giữa kỳ/cuối kỳ/THPTQG/IELTS...)', 'Ngày thi dự kiến?']
       : type === 'singleSubject'
-      ? ['Môn cụ thể nào? (Toán/Địa lý/Anh...)', 'Phần kiến thức yếu nhất hiện tại?']
-      : type === 'weakStudents'
-      ? ['Những môn đang yếu nhất?', 'Mục tiêu tăng bao nhiêu điểm cho mỗi môn?']
-      : []
+        ? ['Môn cụ thể nào? (Toán/Địa lý/Anh...)', 'Phần kiến thức yếu nhất hiện tại?']
+        : type === 'weakStudents'
+          ? ['Những môn đang yếu nhất?', 'Mục tiêu tăng bao nhiêu điểm cho mỗi môn?']
+          : []
   return {
     title: 'Yêu cầu bổ sung thông tin',
     sections: [
@@ -203,142 +203,144 @@ const StudyPlanPage = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex h-full bg-gray-50">
       <Sidebar />
-      <div className=" w-full p-6 pb-48">
-        <div className="max-w-[1100px] mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Title level={1} className="!text-orange-500 !mb-0">Lập kế hoạch học tập</Title>
+      <div className="flex flex-1 flex-col h-full overflow-hidden">
+        <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
+          <div className="max-w-[1100px] mx-auto relative min-h-full pb-24">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <Title level={1} className="!text-orange-500 !mb-0">Lập kế hoạch học tập</Title>
+              </div>
+              <Text className="text-lg text-gray-700">GEN AI giúp bạn xây dựng kế hoạch học tập hiệu quả</Text>
             </div>
-            <Text className="text-lg text-gray-700">GEN AI giúp bạn xây dựng kế hoạch học tập hiệu quả</Text>
-          </div>
 
-          {/* Plan Type Pills (Mindmap-style buttons) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            {PLAN_TYPES.map((p) => (
-              <button
-                key={p.key}
-                onClick={() => handleChangeType(p.key)}
-                className={`w-full rounded-full border-2 px-6 py-4 text-left transition-all duration-200 flex items-center justify-between shadow-sm ${
-                  active === p.key
+            {/* Plan Type Pills (Mindmap-style buttons) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {PLAN_TYPES.map((p) => (
+                <button
+                  key={p.key}
+                  onClick={() => handleChangeType(p.key)}
+                  className={`w-full rounded-full border-2 px-6 py-4 text-left transition-all duration-200 flex items-center justify-between shadow-sm ${active === p.key
                     ? 'border-orange-400 bg-orange-50'
                     : 'border-orange-300 hover:bg-orange-50'
-                }`}
-                style={{ cursor: 'pointer' }}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-[18px] text-orange-500">{p.icon}</span>
-                  <div>
-                    <div className="font-semibold text-gray-800">{p.title}</div>
-                    <div className="text-xs text-gray-500">{p.description}</div>
+                    }`}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-[18px] text-orange-500">{p.icon}</span>
+                    <div>
+                      <div className="font-semibold text-gray-800">{p.title}</div>
+                      <div className="text-xs text-gray-500">{p.description}</div>
+                    </div>
                   </div>
-                </div>
-                <span className="text-orange-400">➜</span>
-              </button>
-            ))}
-          </div>
+                  <span className="text-orange-400">➜</span>
+                </button>
+              ))}
+            </div>
 
-          {/* Result */}
-          {(result || plan) && (
-            <Card className="rounded-2xl mt-4" title="Kế hoạch được đề xuất" bodyStyle={{ padding: 16 }}>
-              {plan ? (
-                <div className="space-y-4">
-                  {/* Guidance when AI requests more information */}
-                  {plan.sections.some((s) => (s.label || '').toLowerCase().includes('yêu cầu bổ sung')) && (
-                    <Alert
-                      type="warning"
-                      showIcon
-                      message="Thiếu thông tin đầu vào"
-                      description={
-                        <div className="text-sm">
-                          Kế hoạch hiện chỉ có mục "Yêu cầu bổ sung". Hãy cung cấp thêm thông tin theo mẫu gợi ý để AI tạo kế hoạch chi tiết hơn.
-                          <div className="mt-2">
-                            <Button size="small" onClick={() => { setInputValue(exampleByType(active)); setTimeout(() => inputRef.current?.focus?.(), 0) }}>Điền mẫu gợi ý</Button>
+            {/* Result */}
+            {(result || plan) && (
+              <Card className="rounded-2xl mt-4" title="Kế hoạch được đề xuất" bodyStyle={{ padding: 16 }}>
+                {plan ? (
+                  <div className="space-y-4">
+                    {/* Guidance when AI requests more information */}
+                    {plan.sections.some((s) => (s.label || '').toLowerCase().includes('yêu cầu bổ sung')) && (
+                      <Alert
+                        type="warning"
+                        showIcon
+                        message="Thiếu thông tin đầu vào"
+                        description={
+                          <div className="text-sm">
+                            Kế hoạch hiện chỉ có mục "Yêu cầu bổ sung". Hãy cung cấp thêm thông tin theo mẫu gợi ý để AI tạo kế hoạch chi tiết hơn.
+                            <div className="mt-2">
+                              <Button size="small" onClick={() => { setInputValue(exampleByType(active)); setTimeout(() => inputRef.current?.focus?.(), 0) }}>Điền mẫu gợi ý</Button>
+                            </div>
                           </div>
-                        </div>
-                      }
-                      className="mb-2"
-                    />
-                  )}
-                  <div className="text-xl font-semibold">{plan.title}</div>
-                  {(() => {
-                    const hasRequest = plan.sections.some((s) => (s.label || '').toLowerCase().includes('yêu cầu bổ sung'))
-                    const sectionsToShow = hasRequest ? plan.sections.filter((s) => (s.label || '').toLowerCase().includes('yêu cầu bổ sung')) : plan.sections
-                    return sectionsToShow.map((s, idx) => (
-                      <div key={idx}>
-                        <div className="font-semibold text-gray-800 mb-1">{s.label}</div>
-                        <ul className="list-disc pl-5 text-gray-700">
-                          {s.items.map((it, i) => (
-                            <li key={i}>{it}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))
-                  })()}
-                </div>
-              ) : (
-                <div className="max-h-[65vh] overflow-y-auto p-1">
-                  <div className="prose prose-sm max-w-none whitespace-pre-wrap">
-                    {result}
-                  </div>
-                </div>
-              )}
-
-              {/* Export Button */}
-              {plan && !plan.sections.some((s) => (s.label || '').toLowerCase().includes('yêu cầu bổ sung')) && (
-                <div className="mt-4 flex justify-end">
-                  <ExportStudyPlan plan={plan} />
-                </div>
-              )}
-            </Card>
-          )}
-
-          {/* Spacer to avoid overlap with fixed bottom input */}
-          <div className="h-24" />
-
-          {/* Fixed Bottom Input (Mindmap-style) */}
-          <div className="fixed bottom-0 left-[200px] right-0 z-50">
-            <div className="max-w-[1100px] mx-auto">
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4">
-                <div className="flex items-center gap-3">
-                  <Input.TextArea
-                    ref={inputRef}
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    autoSize={{ minRows: 2, maxRows: 6 }}
-                    className="flex-1 resize-none border-0 rounded-none p-0 shadow-none text-base leading-6 focus:outline-none focus:ring-0 focus:border-0"
-                    placeholder={PLACEHOLDER_BY_TYPE[active]}
-                    disabled={isLoading}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault()
-                        handleGenerate()
-                      }
-                    }}
-                  />
-                  <div className="flex gap-2 flex-shrink-0">
-                    <Tooltip title='Tạo kế hoạch'>
-                      <Button
-                        type='primary'
-                        shape='circle'
-                        size='large'
-                        icon={isLoading ? <Spin size="small" /> : <SendOutlined />}
-                        onClick={handleGenerate}
-                        disabled={!inputValue.trim() || isLoading}
-                        className="w-10 h-10 bg-orange-500 border-orange-500 hover:bg-orange-600 hover:border-orange-600"
+                        }
+                        className="mb-2"
                       />
-                    </Tooltip>
+                    )}
+                    <div className="text-xl font-semibold">{plan.title}</div>
+                    {(() => {
+                      const hasRequest = plan.sections.some((s) => (s.label || '').toLowerCase().includes('yêu cầu bổ sung'))
+                      const sectionsToShow = hasRequest ? plan.sections.filter((s) => (s.label || '').toLowerCase().includes('yêu cầu bổ sung')) : plan.sections
+                      return sectionsToShow.map((s, idx) => (
+                        <div key={idx}>
+                          <div className="font-semibold text-gray-800 mb-1">{s.label}</div>
+                          <ul className="list-disc pl-5 text-gray-700">
+                            {s.items.map((it, i) => (
+                              <li key={i}>{it}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))
+                    })()}
                   </div>
+                ) : (
+                  <div className="max-h-[65vh] overflow-y-auto p-1">
+                    <div className="prose prose-sm max-w-none whitespace-pre-wrap">
+                      {result}
+                    </div>
+                  </div>
+                )}
+
+                {/* Export Button */}
+                {plan && !plan.sections.some((s) => (s.label || '').toLowerCase().includes('yêu cầu bổ sung')) && (
+                  <div className="mt-4 flex justify-end">
+                    <ExportStudyPlan plan={plan} />
+                  </div>
+                )}
+              </Card>
+            )}
+
+            {/* Spacer to avoid overlap with fixed bottom input */}
+            <div className="h-24" />
+
+          </div>
+        </div>
+
+        {/* Fixed Bottom Input (Mindmap-style) */}
+        <div className="flex-shrink-0 p-6 pt-0 bg-gray-50 z-10">
+          <div className="max-w-[1100px] mx-auto">
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4">
+              <div className="flex items-center gap-3">
+                <Input.TextArea
+                  ref={inputRef}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  autoSize={{ minRows: 2, maxRows: 6 }}
+                  className="flex-1 resize-none border-0 rounded-none p-0 shadow-none text-base leading-6 focus:outline-none focus:ring-0 focus:border-0"
+                  placeholder={PLACEHOLDER_BY_TYPE[active]}
+                  disabled={isLoading}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault()
+                      handleGenerate()
+                    }
+                  }}
+                />
+                <div className="flex gap-2 flex-shrink-0">
+                  <Tooltip title='Tạo kế hoạch'>
+                    <Button
+                      type='primary'
+                      shape='circle'
+                      size='large'
+                      icon={isLoading ? <Spin size="small" /> : <SendOutlined />}
+                      onClick={handleGenerate}
+                      disabled={!inputValue.trim() || isLoading}
+                      className="w-10 h-10 bg-orange-500 border-orange-500 hover:bg-orange-600 hover:border-orange-600"
+                    />
+                  </Tooltip>
                 </div>
               </div>
+            </div>
 
-              <div className="text-center my-2">
-                <Text type='secondary' className="text-xs">
-                  Khi đặt câu hỏi, bạn đồng ý với <strong>Điều khoản</strong> và <strong>Chính sách quyền riêng tư</strong>.
-                </Text>
-              </div>
+            <div className="text-center my-2">
+              <Text type='secondary' className="text-xs">
+                Khi đặt câu hỏi, bạn đồng ý với <strong>Điều khoản</strong> và <strong>Chính sách quyền riêng tư</strong>.
+              </Text>
             </div>
           </div>
         </div>

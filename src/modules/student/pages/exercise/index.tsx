@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Badge, Button, Card, Col, Image, Input, Row, Space, Spin, Tooltip, Typography, message, Upload } from 'antd'
-import { 
-  CalculatorOutlined, 
-  EnvironmentOutlined, 
-  ExperimentOutlined, 
-  PictureOutlined, 
-  ReadOutlined, 
-  RobotOutlined, 
-  SendOutlined, 
-  ThunderboltOutlined, 
-  UserOutlined 
+import {
+  CalculatorOutlined,
+  EnvironmentOutlined,
+  ExperimentOutlined,
+  PictureOutlined,
+  ReadOutlined,
+  RobotOutlined,
+  SendOutlined,
+  ThunderboltOutlined,
+  UserOutlined
 } from '@ant-design/icons'
 import Sidebar from '@/shared/components/Sidebar'
 import { GeminiService } from '@/modules/ai/pages/ai/Service/gemini.service'
@@ -34,47 +34,47 @@ interface ChatMessageWithImage extends ConversationMessage {
 const { Title, Text } = Typography
 
 const SUBJECTS: Subject[] = [
-  { 
-    key: 'math', 
-    label: 'Toán học', 
-    description: 'Đại số, Hình học, Giải tích, Thống kê', 
-    icon: <CalculatorOutlined />, 
-    color: '#3b82f6' 
+  {
+    key: 'math',
+    label: 'Toán học',
+    description: 'Đại số, Hình học, Giải tích, Thống kê',
+    icon: <CalculatorOutlined />,
+    color: '#3b82f6'
   },
-  { 
-    key: 'physics', 
-    label: 'Vật lý', 
-    description: 'Cơ học, Điện học, Quang học, Nhiệt học', 
-    icon: <ExperimentOutlined />, 
-    color: '#10b981' 
+  {
+    key: 'physics',
+    label: 'Vật lý',
+    description: 'Cơ học, Điện học, Quang học, Nhiệt học',
+    icon: <ExperimentOutlined />,
+    color: '#10b981'
   },
-  { 
-    key: 'chemistry', 
-    label: 'Hóa học', 
-    description: 'Hóa vô cơ, Hóa hữu cơ, Hóa phân tích', 
-    icon: <ThunderboltOutlined />, 
-    color: '#8b5cf6' 
+  {
+    key: 'chemistry',
+    label: 'Hóa học',
+    description: 'Hóa vô cơ, Hóa hữu cơ, Hóa phân tích',
+    icon: <ThunderboltOutlined />,
+    color: '#8b5cf6'
   },
-  { 
-    key: 'biology', 
-    label: 'Sinh học', 
-    description: 'Tế bào, Di truyền, Tiến hóa, Sinh thái', 
-    icon: <EnvironmentOutlined />, 
-    color: '#ef4444' 
+  {
+    key: 'biology',
+    label: 'Sinh học',
+    description: 'Tế bào, Di truyền, Tiến hóa, Sinh thái',
+    icon: <EnvironmentOutlined />,
+    color: '#ef4444'
   },
-  { 
-    key: 'geography', 
-    label: 'Địa lý', 
-    description: 'Địa lý tự nhiên, Địa lý kinh tế - xã hội', 
-    icon: <EnvironmentOutlined />, 
-    color: '#eab308' 
+  {
+    key: 'geography',
+    label: 'Địa lý',
+    description: 'Địa lý tự nhiên, Địa lý kinh tế - xã hội',
+    icon: <EnvironmentOutlined />,
+    color: '#eab308'
   },
-  { 
-    key: 'history', 
-    label: 'Lịch sử', 
-    description: 'Lịch sử Việt Nam, Lịch sử thế giới', 
-    icon: <ReadOutlined />, 
-    color: '#6366f1' 
+  {
+    key: 'history',
+    label: 'Lịch sử',
+    description: 'Lịch sử Việt Nam, Lịch sử thế giới',
+    icon: <ReadOutlined />,
+    color: '#6366f1'
   }
 ]
 
@@ -100,9 +100,9 @@ const ExerciseHeader = () => (
   </div>
 )
 
-type SubjectGridProps = { 
+type SubjectGridProps = {
   activeKey: string
-  onSelect: (key: string) => void 
+  onSelect: (key: string) => void
 }
 
 const SubjectGrid = ({ activeKey, onSelect }: SubjectGridProps) => (
@@ -146,22 +146,31 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string>('')
-  
+
   const inputRef = useRef<any>(null)
   const conversationManagerRef = useRef<ConversationManager>()
   const sessionIdRef = useRef<string>('')
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Initialize conversation manager
   if (!conversationManagerRef.current) {
-    conversationManagerRef.current = new ConversationManager({ 
-      maxRecentMessages: 8, 
-      autoSummarizeThreshold: 12 
+    conversationManagerRef.current = new ConversationManager({
+      maxRecentMessages: 8,
+      autoSummarizeThreshold: 12
     })
   }
-  
+
   if (!sessionIdRef.current || sessionIdRef.current !== `student_${activeKey}`) {
     sessionIdRef.current = `student_${activeKey}`
   }
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
 
   useEffect(() => {
     if (subject && conversationManagerRef.current) {
@@ -196,12 +205,12 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
       message.error('Chỉ được upload file ảnh!')
       return
     }
-    
+
     if (file.size / 1024 / 1024 >= 5) {
       message.error('File ảnh phải nhỏ hơn 5MB!')
       return
     }
-    
+
     setSelectedImage(file)
     const reader = new FileReader()
     reader.onload = (e) => setImagePreview(e.target?.result as string)
@@ -234,17 +243,17 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
     const imageUrlToSend = imagePreview
 
     conversationManagerRef.current?.addMessage(
-      sessionIdRef.current, 
-      'user', 
-      userMessage.content, 
-      imageToSend || undefined, 
+      sessionIdRef.current,
+      'user',
+      userMessage.content,
+      imageToSend || undefined,
       imageUrlToSend || undefined
     )
 
     setMessages(prev => [...prev, userMessage])
     setInputValue('')
     setIsLoading(true)
-    
+
     // Reset image ngay khi bắt đầu gửi
     setSelectedImage(null)
     setImagePreview('')
@@ -252,10 +261,10 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
     try {
       const manager = conversationManagerRef.current
       if (!manager) throw new Error('ConversationManager not initialized')
-      
+
       // Lấy TOÀN BỘ lịch sử trò chuyện, không chỉ recent messages
       const allMessages = manager.getAllMessages(sessionIdRef.current) || []
-      
+
       // Tạo messages array với TOÀN BỘ lịch sử trò chuyện
       const messagesForGemini = allMessages.map(msg => ({
         role: (msg.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
@@ -264,14 +273,14 @@ const ChatBox = ({ activeKey }: ChatBoxProps) => {
       }))
 
       // Handle special cases for rewriting problems - tìm ảnh gốc trong toàn bộ lịch sử
-      if (userMessage.content.toLowerCase().includes('viết lại đề') || 
-          userMessage.content.toLowerCase().includes('đề bài') || 
-          userMessage.content.toLowerCase().includes('đề toán') || 
-          userMessage.content.toLowerCase().includes('câu b') || 
-          userMessage.content.toLowerCase().includes('giải câu') || 
-          userMessage.content.toLowerCase().includes('toàn bộ đề') ||
-          userMessage.content.toLowerCase().includes('giải lại')) {
-        
+      if (userMessage.content.toLowerCase().includes('viết lại đề') ||
+        userMessage.content.toLowerCase().includes('đề bài') ||
+        userMessage.content.toLowerCase().includes('đề toán') ||
+        userMessage.content.toLowerCase().includes('câu b') ||
+        userMessage.content.toLowerCase().includes('giải câu') ||
+        userMessage.content.toLowerCase().includes('toàn bộ đề') ||
+        userMessage.content.toLowerCase().includes('giải lại')) {
+
         // Tìm ảnh gốc trong toàn bộ lịch sử
         const originalImageMessage = allMessages.find(msg => msg.imageFile || msg.imageUrl)
         if (originalImageMessage && !imageToSend) {
@@ -307,8 +316,8 @@ Hãy trả lời câu hỏi của học sinh một cách chi tiết, dễ hiểu
       ]
 
       const aiResponse = await GeminiService.chat(
-        enhancedMessages, 
-        subject?.label || 'môn học', 
+        enhancedMessages,
+        subject?.label || 'môn học',
         imageToSend || undefined
       )
 
@@ -317,7 +326,7 @@ Hãy trả lời câu hỏi của học sinh một cách chi tiết, dễ hiểu
         content: aiResponse,
         timestamp: new Date()
       }
-      
+
       manager.addMessage(sessionIdRef.current, 'model', assistantMessage.content)
       setMessages(prev => [...prev, assistantMessage])
 
@@ -334,156 +343,153 @@ Hãy trả lời câu hỏi của học sinh một cách chi tiết, dễ hiểu
   }
 
   return (
-    <>
-      {/* Chat Messages */}
-      {messages.length > 0 && (
-        <div className="mb-8">
-          <div className="space-y-4">
-            {messages.map((msg, index) => (
-              <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${
-                  msg.role === 'user' 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-white border border-gray-200 text-gray-800'
-                }`}>
-                  <div className="flex items-center gap-2 mb-2">
-                    {msg.role === 'user' ? (
-                      <UserOutlined className="text-sm" />
-                    ) : (
-                      <RobotOutlined className="text-sm text-gray-600" />
-                    )}
-                    <span className="text-xs opacity-75">
-                      {msg.timestamp.toLocaleTimeString()}
-                    </span>
-                  </div>
-                  
-                  {msg.imageUrl && (
-                    <div className="mb-3">
-                      <Image 
-                        src={msg.imageUrl} 
-                        alt="Bài tập" 
-                        width={200} 
-                        className="rounded-lg" 
-                        preview={{ mask: 'Xem ảnh', maskClassName: 'rounded-lg' }} 
-                      />
-                    </div>
-                  )}
-                  
-                  {msg.content && (
-                    <div 
-                      className={`whitespace-pre-wrap text-sm leading-relaxed ${
-                        msg.role === 'model' ? 'prose prose-sm max-w-none' : ''
-                      }`}
-                      dangerouslySetInnerHTML={{
-                        __html: msg.role === 'model' ? formatAIText(msg.content) : msg.content
-                      }}
-                    />
-                  )}
-                </div>
-              </div>
-            ))}
-            
-            {/* Loading Indicator */}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-                  <div className="flex items-center gap-2">
-                    <RobotOutlined className="text-sm text-gray-600" />
-                    <Spin size="small" />
-                    <span className="text-sm text-gray-600">AI đang suy nghĩ...</span>
-                  </div>
-                </div>
-              </div>
-            )}
+    <div className="flex flex-1 flex-col overflow-hidden rounded-2xl bg-white shadow-sm border border-gray-100 mt-6">
+      {/* Scrollable Messages Area */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.length === 0 && (
+          <div className="text-center py-10 text-gray-500">
+            Hãy bắt đầu bằng việc đặt câu hỏi cho gia sư AI...
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Fixed Bottom Input */}
-      <div className="fixed bottom-0 left-[200px] right-0 bg-gray-50 z-50">
-        <div className="max-w-[1100px] mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4">
-            {/* Image Preview */}
-            {imagePreview && (
-              <div className="mb-3 p-3 bg-gray-50 rounded-lg relative">
-                <div className="flex items-center gap-3">
-                  <Image 
-                    src={imagePreview} 
-                    alt="Preview" 
-                    width={60} 
-                    height={60} 
-                    className="rounded-lg object-cover" 
-                  />
-                  <div className="flex-1">
-                    <p className="text-sm text-gray-600 mb-1">Ảnh bài tập đã chọn</p>
-                    <p className="text-xs text-gray-500">{selectedImage?.name}</p>
-                  </div>
-                  <Button 
-                    type="text" 
-                    size="small" 
-                    onClick={removeSelectedImage} 
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    ✕
-                  </Button>
-                </div>
+        {messages.map((msg, index) => (
+          <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${msg.role === 'user'
+              ? 'bg-blue-500 text-white'
+              : 'bg-white border border-gray-200 text-gray-800'
+              }`}>
+              <div className="flex items-center gap-2 mb-2">
+                {msg.role === 'user' ? (
+                  <UserOutlined className="text-sm" />
+                ) : (
+                  <RobotOutlined className="text-sm text-gray-600" />
+                )}
+                <span className="text-xs opacity-75">
+                  {msg.timestamp.toLocaleTimeString()}
+                </span>
               </div>
-            )}
 
-            {/* Input and Buttons */}
-            <div className="flex items-center gap-3">
-              <Input.TextArea
-                ref={inputRef}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                onPaste={handlePaste}
-                autoSize={{ minRows: 1, maxRows: 4 }}
-                className="flex-1 resize-none border-0 rounded-none p-0 shadow-none text-base leading-6 focus:outline-none focus:ring-0 focus:border-0"
-                placeholder={`Đặt câu hỏi cho ${subject?.label.toLowerCase() || 'môn học'}... (Ctrl+V để dán ảnh)`}
-                disabled={isLoading}
-              />
-              
-              <div className="flex gap-2 flex-shrink-0">
-                <Tooltip title='Ảnh bài tập (hoặc Ctrl+V để dán ảnh)'>
-                  <Upload showUploadList={false} beforeUpload={handleImageUpload} accept="image/*">
-                    <Button 
-                      shape='circle' 
-                      size='large' 
-                      icon={<PictureOutlined />} 
-                      className={`w-10 h-10 border ${
-                        selectedImage ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-                      } hover:border-gray-400 hover:bg-gray-50`} 
-                      disabled={isLoading} 
-                    />
-                  </Upload>
-                </Tooltip>
-                
-                <Tooltip title='Gửi'>
-                  <Button 
-                    type='primary' 
-                    shape='circle' 
-                    size='large' 
-                    icon={<SendOutlined />} 
-                    onClick={handleSend} 
-                    className="w-10 h-10 bg-orange-500 border-orange-500 hover:bg-orange-600 hover:border-orange-600" 
-                    loading={isLoading} 
-                    disabled={(!inputValue.trim() && !selectedImage) || isLoading} 
+              {msg.imageUrl && (
+                <div className="mb-3">
+                  <Image
+                    src={msg.imageUrl}
+                    alt="Bài tập"
+                    width={200}
+                    className="rounded-lg"
+                    preview={{ mask: 'Xem ảnh', maskClassName: 'rounded-lg' }}
                   />
-                </Tooltip>
+                </div>
+              )}
+
+              {msg.content && (
+                <div
+                  className={`whitespace-pre-wrap text-sm leading-relaxed ${msg.role === 'model' ? 'prose prose-sm max-w-none' : ''
+                    }`}
+                  dangerouslySetInnerHTML={{
+                    __html: msg.role === 'model' ? formatAIText(msg.content) : msg.content
+                  }}
+                />
+              )}
+            </div>
+          </div>
+        ))}
+
+        {/* Loading Indicator */}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
+              <div className="flex items-center gap-2">
+                <RobotOutlined className="text-sm text-gray-600" />
+                <Spin size="small" />
+                <span className="text-sm text-gray-600">AI đang suy nghĩ...</span>
               </div>
             </div>
           </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
 
-          {/* Terms */}
-          <div className="text-center my-2">
-            <Text type='secondary' className="text-xs">
-              Khi đặt câu hỏi, bạn đồng ý với <strong>Điều khoản</strong> và <strong>Chính sách quyền riêng tư</strong>.
-            </Text>
+      {/* Static Bottom Input */}
+      <div className="flex-shrink-0 bg-gray-50 p-4 border-t border-gray-100">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
+          {/* Image Preview */}
+          {imagePreview && (
+            <div className="mb-3 p-3 bg-gray-50 rounded-lg relative">
+              <div className="flex items-center gap-3">
+                <Image
+                  src={imagePreview}
+                  alt="Preview"
+                  width={60}
+                  height={60}
+                  className="rounded-lg object-cover"
+                />
+                <div className="flex-1">
+                  <p className="text-sm text-gray-600 mb-1">Ảnh bài tập đã chọn</p>
+                  <p className="text-xs text-gray-500">{selectedImage?.name}</p>
+                </div>
+                <Button
+                  type="text"
+                  size="small"
+                  onClick={removeSelectedImage}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  ✕
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Input + Buttons */}
+          <div className="flex items-center gap-3">
+            <Input.TextArea
+              ref={inputRef}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
+              autoSize={{ minRows: 1, maxRows: 4 }}
+              className="flex-1 border-0 shadow-none resize-none p-0 text-base focus:ring-0 leading-6 rounded-none"
+              placeholder={`Đặt câu hỏi cho ${subject?.label.toLowerCase() || 'môn học'}... (Ctrl+V để dán ảnh)`}
+              disabled={isLoading}
+            />
+
+            <div className="flex gap-2 flex-shrink-0">
+              <Tooltip title='Ảnh bài tập (hoặc Ctrl+V để dán ảnh)'>
+                <Upload showUploadList={false} beforeUpload={handleImageUpload} accept="image/*">
+                  <Button
+                    shape='circle'
+                    size='large'
+                    icon={<PictureOutlined />}
+                    className={`w-10 h-10 border ${selectedImage ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+                      } hover:border-gray-400 hover:bg-gray-50`}
+                    disabled={isLoading}
+                  />
+                </Upload>
+              </Tooltip>
+
+              <Tooltip title='Gửi'>
+                <Button
+                  type='primary'
+                  shape='circle'
+                  size='large'
+                  icon={<SendOutlined />}
+                  onClick={handleSend}
+                  className="w-10 h-10 bg-orange-500 border-orange-500 hover:bg-orange-600 hover:border-orange-600"
+                  loading={isLoading}
+                  disabled={(!inputValue.trim() && !selectedImage) || isLoading}
+                />
+              </Tooltip>
+            </div>
           </div>
         </div>
+        {/* Terms */}
+        <div className="text-center my-2">
+          <Text type='secondary' className="text-xs">
+            Khi đặt câu hỏi, bạn đồng ý với <strong>Điều khoản</strong> và <strong>Chính sách quyền riêng tư</strong>.
+          </Text>
+        </div>
       </div>
-    </>
+    </div>
   )
 }
 
@@ -492,10 +498,10 @@ const ExercisePage = () => {
   const [active, setActive] = useState<string>('math')
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex h-full bg-gray-50">
       <Sidebar />
-      <div className=" w-full p-6 pb-48">
-        <div className="max-w-[1100px] mx-auto">
+      <div className="flex flex-1 flex-col h-full overflow-hidden">
+        <div className="mx-auto flex w-full max-w-[1100px] flex-1 flex-col overflow-hidden p-6">
           <ExerciseHeader />
           <SubjectGrid activeKey={active} onSelect={setActive} />
           <ChatBox activeKey={active} />

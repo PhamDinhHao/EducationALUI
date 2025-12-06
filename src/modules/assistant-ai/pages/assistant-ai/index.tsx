@@ -142,10 +142,10 @@ const ExercisePage: React.FC = () => {
   const selectedFunc = FUNCTIONS.find((f) => f.key === activeFunction)
 
   return (
-    <div className='flex min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50'>
+    <div className='flex h-full bg-gradient-to-br from-orange-50 via-white to-orange-50'>
       <Sidebar />
 
-      <div className='flex flex-1 flex-col'>
+      <div className='flex flex-1 flex-col h-full overflow-hidden'>
         {/* Header */}
         <div className='border-b border-orange-100 bg-white shadow-sm'>
           <div className='mx-auto max-w-7xl px-6 py-6'>
@@ -159,7 +159,7 @@ const ExercisePage: React.FC = () => {
         </div>
 
         {/* Main Content */}
-        <div className='flex-1 overflow-y-auto px-6 py-8 pb-32'>
+        <div className='flex-1 overflow-y-auto px-6 py-8'>
           <div className='mx-auto max-w-7xl'>
             {/* Function Grid */}
             <div className='mb-8'>
@@ -172,17 +172,15 @@ const ExercisePage: React.FC = () => {
                   <button
                     key={func.key}
                     onClick={() => setActiveFunction(func.key)}
-                    className={`group relative overflow-hidden rounded-2xl border-2 p-5 text-left transition-all duration-300 ${
-                      activeFunction === func.key
-                        ? 'scale-105 border-orange-400 bg-gradient-to-br from-orange-50 to-orange-100 shadow-lg'
-                        : 'hover:scale-102 border-orange-200 bg-white hover:border-orange-300 hover:shadow-md'
-                    }`}
+                    className={`group relative overflow-hidden rounded-2xl border-2 p-5 text-left transition-all duration-300 ${activeFunction === func.key
+                      ? 'scale-105 border-orange-400 bg-gradient-to-br from-orange-50 to-orange-100 shadow-lg'
+                      : 'hover:scale-102 border-orange-200 bg-white hover:border-orange-300 hover:shadow-md'
+                      }`}
                   >
                     <div className='flex items-start gap-4'>
                       <div
-                        className={`text-4xl transition-transform duration-300 ${
-                          activeFunction === func.key ? 'scale-110' : 'group-hover:scale-110'
-                        }`}
+                        className={`text-4xl transition-transform duration-300 ${activeFunction === func.key ? 'scale-110' : 'group-hover:scale-110'
+                          }`}
                       >
                         {func.icon}
                       </div>
@@ -226,11 +224,10 @@ const ExercisePage: React.FC = () => {
               {messages.map((msg, index) => (
                 <div key={index} className={`flex ${index % 2 === 0 ? 'justify-end' : 'justify-start'} animate-fadeIn`}>
                   <div
-                    className={`max-w-[75%] rounded-2xl p-4 shadow-md ${
-                      index % 2 === 0
-                        ? 'bg-gradient-to-r from-orange-500 to-orange-400 text-white'
-                        : 'border border-gray-200 bg-white text-gray-800'
-                    }`}
+                    className={`max-w-[75%] rounded-2xl p-4 shadow-md ${index % 2 === 0
+                      ? 'bg-gradient-to-r from-orange-500 to-orange-400 text-white'
+                      : 'border border-gray-200 bg-white text-gray-800'
+                      }`}
                   >
                     {msg.imageUrl && (
                       <div className='mb-3'>
@@ -265,8 +262,8 @@ const ExercisePage: React.FC = () => {
         </div>
 
         {/* Input Area - Fixed Bottom */}
-        <div className='fixed bottom-0 left-[200px] right-0 border-t border-gray-200 bg-gradient-to-t from-white via-white to-transparent px-6 pb-6 pt-4 shadow-lg'>
-          <div className='mx-auto max-w-4xl'>
+        <div className='flex-shrink-0 w-full px-6 pb-6 pt-4 z-10'>
+          <div className='mx-auto max-w-7xl'>
             {imagePreview && (
               <div className='mb-3 inline-flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm'>
                 <img src={imagePreview} alt='Preview' className='h-16 w-16 rounded-lg object-cover' />

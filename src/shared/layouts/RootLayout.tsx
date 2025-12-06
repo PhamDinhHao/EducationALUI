@@ -1,5 +1,5 @@
 import { Layout } from 'antd'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 import Menu from '@/shared/components/Menu'
 import images from '@/assets/images'
 import FloatingAIChat from '@/shared/components/FloatingAIChat/FloatingAIChat'
@@ -7,6 +7,8 @@ import FloatingAIChat from '@/shared/components/FloatingAIChat/FloatingAIChat'
 const { Header } = Layout
 
 const RootLayout = () => {
+  const location = useLocation()
+
   return (
     <>
       <style>{`
@@ -50,7 +52,7 @@ const RootLayout = () => {
         <div className='root-layout-content' style={{ width: '100%', flex: 1, overflowX: 'hidden', minHeight: 0 }}>
           <Outlet />
         </div>
-        <FloatingAIChat />
+        {location.pathname !== '/ai/search-ai' && <FloatingAIChat />}
       </div>
     </>
   )

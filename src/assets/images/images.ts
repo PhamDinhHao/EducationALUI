@@ -16,7 +16,7 @@ import icBannerMeme from '@/assets/images/depot/ic_banner_meme.png'
 const images = {
   imgeNotFond: imgeNotFond,
   bgBannerHome: bgBannerHome,
-  bgBanner1: bgBanner1, 
+  bgBanner1: bgBanner1,
   bgBanner2: bgBanner2,
   bgBanner3: bgBanner3,
   bgCompetition: bgCompetition,

@@ -84,7 +84,7 @@ export const OptimizedCourseCard: React.FC<OptimizedCourseCardProps> = ({
                   style={{
                     height: '250px',
                     width: '100%',
-                    objectFit: 'cover',
+                    objectFit: 'contain',
                     opacity: imageLoaded ? 1 : 0,
                     transition: 'opacity 0.3s ease-in-out',
                     position: 'relative',

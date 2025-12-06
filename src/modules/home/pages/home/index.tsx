@@ -111,9 +111,9 @@ const Home = () => {
                   variants={bannerChildVariants}
                 >
                   Chia sẻ miễn phí kiến thức{' '}
-                  <span className='font-semibold text-[#ff8c00]'>Ai Giáo dục</span>
+                  <span className='font-semibold text-[#ff8c00]'>AI Giáo dục</span>
                 </motion.p>
-                
+
                 {/* Search Bar */}
                 <motion.div
                   className='flex gap-3'
@@ -171,7 +171,7 @@ const Home = () => {
                       className='w-[400px] h-[500px] object-contain'
                     />
                   </motion.div>
-                  
+
                   {/* Floating Icons */}
                   <motion.div
                     className='absolute top-10 left-10 w-16 h-16 rounded-xl bg-white shadow-lg'
@@ -188,7 +188,7 @@ const Home = () => {
                   >
                     <img src={images.icBannerNotion} alt='Icon' className='w-full h-full rounded-xl' />
                   </motion.div>
-                  
+
                   <motion.div
                     className='absolute top-32 -left-8 w-20 h-20 rounded-xl bg-white shadow-lg'
                     animate={{
@@ -204,7 +204,7 @@ const Home = () => {
                   >
                     <img src={images.icBannerBorder} alt='Icon' className='w-full h-full rounded-xl' />
                   </motion.div>
-                  
+
                   <motion.div
                     className='absolute top-48 -right-8 w-16 h-16 rounded-xl bg-white shadow-lg'
                     animate={{
@@ -220,7 +220,7 @@ const Home = () => {
                   >
                     <img src={images.icBannerChatGpt} alt='Icon' className='w-full h-full rounded-xl' />
                   </motion.div>
-                  
+
                   <motion.div
                     className='absolute bottom-20 -right-20 w-20 h-20 rounded-xl bg-white shadow-lg'
                     animate={{

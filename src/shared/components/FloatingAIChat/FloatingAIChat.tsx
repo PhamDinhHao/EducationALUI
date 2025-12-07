@@ -57,7 +57,7 @@ const FloatingAIChat = () => {
       const enhancedMessages: ChatMessage[] = [
         {
           role: 'assistant' as const,
-          content: 'Bạn là ETA - Trợ lý AI thân thiện và hữu ích. Hãy trả lời câu hỏi của người dùng một cách chi tiết, dễ hiểu và chính xác. Duy trì context của cuộc trò chuyện.',
+          content: 'Bạn là GENAL - Trợ lý AI thân thiện và hữu ích. Hãy trả lời câu hỏi của người dùng một cách chi tiết, dễ hiểu và chính xác. Duy trì context của cuộc trò chuyện.',
           timestamp: new Date()
         },
         ...messagesForGemini

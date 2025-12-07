@@ -40,7 +40,7 @@ const LessonBuilder = () => {
             </h3>
             
             <p className="text-gray-600 text-sm mb-6 leading-relaxed">
-              Hỗ trợ giáo viên soạn giáo án siêu nhanh theo ứng cả của chuẩn thim GDPT 2018
+              Hỗ trợ giáo viên soạn giáo án siêu nhanh theo chương trình GDPT 2018
             </p>
             
             <button onClick={() => navigate('/ai/lesson-form')} className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-full transition-colors">

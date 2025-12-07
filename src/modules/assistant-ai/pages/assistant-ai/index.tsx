@@ -262,7 +262,7 @@ const ExercisePage: React.FC = () => {
         </div>
 
         {/* Input Area - Fixed Bottom */}
-        <div className='flex-shrink-0 w-full px-6 pb-6 pt-4 z-10'>
+        <div className='flex-shrink-0 w-full px-6 pb-20 pt-4 z-10'>
           <div className='mx-auto max-w-7xl'>
             {imagePreview && (
               <div className='mb-3 inline-flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm'>

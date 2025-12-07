@@ -150,7 +150,7 @@ const ExercisePage: React.FC = () => {
         <div className='border-b border-orange-100 bg-white shadow-sm'>
           <div className='mx-auto max-w-7xl px-6 py-6'>
             <div className='text-center'>
-              <h1 className='mb-2 bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-4xl font-bold text-transparent'>
+              <h1 className='pb-4 bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-4xl font-bold text-transparent'>
                 Trợ lý AI Giáo dục
               </h1>
               <p className='text-lg text-gray-600'>Hỗ trợ giảng dạy thông minh với công nghệ AI</p>

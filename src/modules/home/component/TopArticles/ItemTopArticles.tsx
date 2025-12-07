@@ -121,7 +121,7 @@ const ItemTopArticles = ({ item }: { item: IArticle }) => {
           {/* Tags */}
           {item.tags && item.tags.length > 0 && (
             <div className='flex flex-wrap gap-2'>
-              {item.tags.slice(0, 2).map((tag, idx) => (
+              {item.tags?.slice(0, 2).map((tag, idx) => (
                 <span
                   key={idx}
                   className='article-tag rounded-full border border-indigo-200 bg-gradient-to-r from-indigo-50 to-purple-50 px-3 py-1 text-xs font-semibold text-indigo-700'

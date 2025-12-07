@@ -23,9 +23,9 @@ const TopArticles = () => {
   const handleNavigate = () => {
     naviagte('/blog')
   }
-  
+
   // Limit to 8 articles for grid display (2 rows x 4 items)
-  const displayArticles = blog.slice(0, 8)
+  const displayArticles = (blog || []).slice(0, 8)
 
   return (
     <div>

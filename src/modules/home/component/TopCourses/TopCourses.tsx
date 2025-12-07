@@ -28,15 +28,15 @@ const TopCourses = () => {
 
 
   // Limit to 8 courses for grid display (2 rows x 4 items)
-  const displayCourses = courses.slice(0, 8)
+  const displayCourses = (courses || []).slice(0, 8)
 
   return (
     <div>
-      <TitleHeaderHome 
-        onAction={handleNavigate} 
-        heading='TÀI NGUYÊN NỔI BẬT' 
-        description='Khám phá những đột phá mới và truy cập các tài nguyên trong AI' 
-        buttonLabel='Tất cả khóa học' 
+      <TitleHeaderHome
+        onAction={handleNavigate}
+        heading='TÀI NGUYÊN NỔI BẬT'
+        description='Khám phá những đột phá mới và truy cập các tài nguyên trong AI'
+        buttonLabel='Tất cả khóa học'
         center={true}
       />
       <Row gutter={[16, 16]}>

@@ -1,13 +1,14 @@
 import { BookOutlined, EditOutlined, BulbOutlined } from '@ant-design/icons'
 import Sidebar from '@/shared/components/Sidebar'
 import { useNavigate } from 'react-router-dom'
+import Teacher from '@/assets/images/depot/teacher.png'
 
 const LessonBuilder = () => {
   const navigate = useNavigate()
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
-      <div className="flex-1 bg-gradient-to-br from-orange-50 via-white to-blue-50 flex items-center justify-center p-8">
+      <div className="flex-1 via-white to-blue-50 flex items-center justify-center p-8" style={{ backgroundImage: `url(${Teacher})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="w-full max-w-4xl">
         {/* Header Icon */}
         <div className="flex justify-center mb-6">

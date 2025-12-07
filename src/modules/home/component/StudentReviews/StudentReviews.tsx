@@ -80,7 +80,7 @@ const StudentReviews = () => {
   const carouselRef = useRef<any>(null)
 
   return (
-    <div className='w-full py-16 px-4 sm:px-6 lg:px-8' style={{ background: '#f0f4f8' }}>
+    <div className='w-full py-16 px-4 sm:px-6 lg:px-8' style={{ background: '#f4f9fd' }}>
       <div className='mx-auto max-w-7xl'>
         {/* Heading */}
         <motion.div

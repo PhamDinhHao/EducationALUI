@@ -244,7 +244,7 @@ const Home = () => {
       </section>
 
       {/* Top Courses Section */}
-      <section className='flex w-full items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50' style={{ padding: '60px 0', marginTop: 0 }}>
+      <section className='flex w-full items-center justify-center bg-[#fff]' style={{ padding: '60px 0', marginTop: 0 }}>
         <motion.div
           className='w-full max-w-7xl px-8'
           initial="hidden"
@@ -262,7 +262,7 @@ const Home = () => {
       </section>
 
       {/* Top Articles Section */}
-      <section className='flex w-full items-center justify-center bg-gradient-to-br from-green-50 to-teal-50' style={{ padding: '60px 0' }}>
+      <section className='flex w-full items-center justify-center bg-[#fff]' style={{ padding: '60px 0' }}>
         <motion.div
           className='w-full max-w-7xl px-8'
           initial="hidden"

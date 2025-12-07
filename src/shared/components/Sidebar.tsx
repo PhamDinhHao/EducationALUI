@@ -24,7 +24,7 @@ const MENU_ITEMS: MenuItem[] = [
       { key: PagePath.BUILD_LESSON, label: <Link to={PagePath.BUILD_LESSON}>Xây dựng giáo án</Link> },
       {
         key: PagePath.EXPREANDSUCCE,
-        label: <Link to={PagePath.EXPREANDSUCCE}>Kế hoạch cá nhân & Sáng kiến kinh nghiệm</Link>
+        label: <Link to="/ai/experience-initiative">Kế hoạch cá nhân & Sáng kiến kinh nghiệm</Link>
       },
       { key: PagePath.ASSISTANTAI, label: <Link to={PagePath.ASSISTANTAI}>Trợ lý giáo viên</Link> }
     ]

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from 'react'
+import { useEffect, useMemo, useState, useRef, useCallback } from 'react'
 import type { CSSProperties } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Alert, Breadcrumb, Button, Layout, List, Spin, Typography, Modal, Tag } from 'antd'
@@ -69,13 +69,15 @@ export default function LessonPlayerPage() {
       try {
         const courseId = lesson.courseId
         const progressItems = await getCourseProgress(courseId)
-        const progressMap = new Map<number, number>()
-        
-        progressItems.forEach(item => {
-          progressMap.set(item.lessonId, item.progress)
+        setLessonProgresses(prev => {
+          const newMap = new Map(prev)
+          progressItems.forEach(item => {
+            const localValue = prev.get(item.lessonId) || 0
+            // Preserve higher local value to prevent flicker
+            newMap.set(item.lessonId, Math.max(localValue, item.progress))
+          })
+          return newMap
         })
-
-        setLessonProgresses(progressMap)
 
         // Check if course is completed
         const stats = calculateCourseProgressStats(progressItems, sortedLessons.length)
@@ -109,13 +111,15 @@ export default function LessonPlayerPage() {
       if (customEvent.detail?.courseId === courseId) {
         try {
           const progressItems = await getCourseProgress(courseId)
-          const progressMap = new Map<number, number>()
-          
-          progressItems.forEach(item => {
-            progressMap.set(item.lessonId, item.progress)
+          setLessonProgresses(prev => {
+            const newMap = new Map(prev)
+            progressItems.forEach(item => {
+              const localValue = prev.get(item.lessonId) || 0
+              // Preserve higher local value to prevent flicker
+              newMap.set(item.lessonId, Math.max(localValue, item.progress))
+            })
+            return newMap
           })
-
-          setLessonProgresses(progressMap)
 
           // Check if course is completed
           const stats = calculateCourseProgressStats(progressItems, sortedLessons.length)
@@ -137,7 +141,7 @@ export default function LessonPlayerPage() {
     }
 
     window.addEventListener('lessonProgressUpdated', handleProgressUpdate)
-    
+
     return () => {
       window.removeEventListener('lessonProgressUpdated', handleProgressUpdate)
     }
@@ -164,14 +168,14 @@ export default function LessonPlayerPage() {
             maskEl.style.zIndex = '-1'
           }
         })
-        
+
         // Fix video container
         const videoContainer = document.getElementById('video-player-container')
         if (videoContainer) {
           videoContainer.style.zIndex = '10'
           videoContainer.style.position = 'relative'
         }
-        
+
         // Fix video elements
         const videoElements = document.querySelectorAll('video')
         videoElements.forEach(video => {
@@ -181,7 +185,7 @@ export default function LessonPlayerPage() {
           video.style.zIndex = '10'
           video.style.position = 'relative'
         })
-        
+
         // Fix YouTube iframe if exists
         const iframes = document.querySelectorAll('iframe[src*="youtube"], iframe[id*="youtube"]')
         iframes.forEach(iframe => {
@@ -192,11 +196,11 @@ export default function LessonPlayerPage() {
           iframeEl.style.zIndex = '10'
           iframeEl.style.position = 'relative'
         })
-        
+
         // Trigger resize for YouTube player
         window.dispatchEvent(new Event('resize'))
       }
-      
+
       // Run immediately and after delays
       fixVideoDisplay()
       setTimeout(fixVideoDisplay, 50)
@@ -212,7 +216,7 @@ export default function LessonPlayerPage() {
 
     const checkAndUpdateProgress = async () => {
       if (hasCheckedProgress) return
-      
+
       try {
         const progressData = await getLessonProgress(lesson.id)
         const currentProgress = progressData?.progress || 0
@@ -234,8 +238,8 @@ export default function LessonPlayerPage() {
         if (currentProgress === 0) {
           await updateLessonProgressIfHigher(lesson.id, 10, null)
           if (lesson.courseId) {
-            window.dispatchEvent(new CustomEvent('lessonProgressUpdated', { 
-              detail: { lessonId: lesson.id, courseId: lesson.courseId } 
+            window.dispatchEvent(new CustomEvent('lessonProgressUpdated', {
+              detail: { lessonId: lesson.id, courseId: lesson.courseId }
             }))
           }
         }
@@ -247,13 +251,13 @@ export default function LessonPlayerPage() {
     checkAndUpdateProgress()
   }, [lesson?.id, lesson?.duration, user?.id, lesson?.courseId])
 
-  const handleVideoEnded = async () => {
+  const handleVideoEnded = useCallback(async () => {
     if (!lesson?.id || !user?.id || hasMarkedCompletedRef.current) return
-    
+
     try {
       await updateLessonProgressIfHigher(lesson.id, 100, new Date())
       hasMarkedCompletedRef.current = true
-      
+
       // Update local progress map
       setLessonProgresses(prev => {
         const newMap = new Map(prev)
@@ -262,8 +266,8 @@ export default function LessonPlayerPage() {
       })
 
       if (lesson.courseId) {
-        window.dispatchEvent(new CustomEvent('lessonProgressUpdated', { 
-          detail: { lessonId: lesson.id, courseId: lesson.courseId } 
+        window.dispatchEvent(new CustomEvent('lessonProgressUpdated', {
+          detail: { lessonId: lesson.id, courseId: lesson.courseId }
         }))
       }
 
@@ -279,38 +283,31 @@ export default function LessonPlayerPage() {
     } catch (error) {
       console.error('Error marking lesson as completed:', error)
     }
-  }
+  }, [lesson?.id, lesson?.courseId, user?.id, sortedLessons, navigate])
 
-  const handleTimeUpdate = async (currentTime: number, duration: number) => {
+  const handleTimeUpdate = useCallback(async (currentTime: number, duration: number) => {
     if (!lesson?.id || !user?.id || !duration || duration === 0) return
     if (hasMarkedCompletedRef.current) return
 
-    // Store duration for calculating start time
+    // Simplified duration tracking
     if (!videoDuration || Math.abs(videoDuration - duration) > 1) {
       setVideoDuration(duration)
-      
-      // Recalculate start time if we have progress but no start time yet
-      if (!videoStartTime) {
-        try {
-          const progressData = await getLessonProgress(lesson.id)
-          const currentProgress = progressData?.progress || 0
-          if (currentProgress > 0 && currentProgress < 100) {
-            const calculatedStartTime = Math.floor((currentProgress / 100) * duration)
-            setVideoStartTime(calculatedStartTime)
-            // Set current time for HTML5 video
-            if (videoPlayerRef.current?.setCurrentTime) {
-              videoPlayerRef.current.setCurrentTime(calculatedStartTime)
-            }
-          }
-        } catch (error) {
-          console.error('Error calculating start time:', error)
-        }
-      }
     }
 
     const now = Date.now()
     const progressPercent = Math.min(100, Math.round((currentTime / duration) * 100))
-    
+
+    // Optimistic local update
+    setLessonProgresses(prev => {
+      const current = prev.get(lesson.id) || 0
+      if (progressPercent > current) {
+        const newMap = new Map(prev)
+        newMap.set(lesson.id, progressPercent)
+        return newMap
+      }
+      return prev
+    })
+
     let targetMilestone = 0
     if (progressPercent >= 75) {
       targetMilestone = 75
@@ -322,7 +319,7 @@ export default function LessonPlayerPage() {
       targetMilestone = 10
     }
 
-    const shouldUpdate = 
+    const shouldUpdate =
       targetMilestone > 0 &&
       (now - lastUpdateTimeRef.current >= 10000) &&
       progressPercent > lastProgressRef.current
@@ -331,15 +328,15 @@ export default function LessonPlayerPage() {
       try {
         const progressData = await getLessonProgress(lesson.id)
         const currentProgressValue = progressData?.progress || 0
-        
+
         if (targetMilestone > currentProgressValue && currentProgressValue < 100) {
           await updateLessonProgressIfHigher(lesson.id, targetMilestone, null)
           lastUpdateTimeRef.current = now
           lastProgressRef.current = progressPercent
-          
+
           if (lesson.courseId) {
-            window.dispatchEvent(new CustomEvent('lessonProgressUpdated', { 
-              detail: { lessonId: lesson.id, courseId: lesson.courseId } 
+            window.dispatchEvent(new CustomEvent('lessonProgressUpdated', {
+              detail: { lessonId: lesson.id, courseId: lesson.courseId }
             }))
           }
         }
@@ -351,7 +348,7 @@ export default function LessonPlayerPage() {
         lastProgressRef.current = progressPercent
       }
     }
-  }
+  }, [lesson?.id, lesson?.courseId, user?.id, videoDuration])
 
   if (loading) return <Spin size='large' style={{ margin: 24 }} />
   if (error) return <Alert type='error' message='Error' description={error} showIcon style={{ margin: 24 }} />
@@ -367,8 +364,8 @@ export default function LessonPlayerPage() {
               onClick={() => {
                 // Dispatch event to refresh course detail
                 if (lesson.courseId) {
-                  window.dispatchEvent(new CustomEvent('courseDetailRefresh', { 
-                    detail: { courseId: lesson.courseId } 
+                  window.dispatchEvent(new CustomEvent('courseDetailRefresh', {
+                    detail: { courseId: lesson.courseId }
                   }))
                 }
                 navigate(`/courses/${lesson.courseId}`)
@@ -382,10 +379,10 @@ export default function LessonPlayerPage() {
             {lesson?.title || ''}
           </Breadcrumb.Item>
         </Breadcrumb>
-        <div 
+        <div
           id="video-player-container"
-          style={{ 
-            position: 'relative', 
+          style={{
+            position: 'relative',
             zIndex: 10,
             width: '100%',
             height: '80%',
@@ -429,14 +426,14 @@ export default function LessonPlayerPage() {
               maskEl.style.pointerEvents = 'none'
             }
           })
-          
+
           // Fix video container z-index
           const videoContainer = document.getElementById('video-player-container')
           if (videoContainer) {
             videoContainer.style.zIndex = '10'
             videoContainer.style.position = 'relative'
           }
-          
+
           // Fix all video elements
           const fixVideoElements = () => {
             const videoElements = document.querySelectorAll('video')
@@ -447,7 +444,7 @@ export default function LessonPlayerPage() {
               video.style.zIndex = '10'
               video.style.position = 'relative'
             })
-            
+
             const iframes = document.querySelectorAll('iframe[src*="youtube"], iframe[id*="youtube"]')
             iframes.forEach(iframe => {
               const iframeEl = iframe as HTMLElement
@@ -457,10 +454,10 @@ export default function LessonPlayerPage() {
               iframeEl.style.zIndex = '10'
               iframeEl.style.position = 'relative'
             })
-            
+
             window.dispatchEvent(new Event('resize'))
           }
-          
+
           setTimeout(fixVideoElements, 50)
           setTimeout(fixVideoElements, 200)
           setTimeout(fixVideoElements, 500)
@@ -474,8 +471,8 @@ export default function LessonPlayerPage() {
           <Button key="back" onClick={() => setShowCompletionModal(false)}>
             Đóng
           </Button>,
-          <Button 
-            key="certificate" 
+          <Button
+            key="certificate"
             type="default"
             icon={<FileTextOutlined />}
             onClick={() => {
@@ -485,9 +482,9 @@ export default function LessonPlayerPage() {
           >
             Xem chứng chỉ
           </Button>,
-          <Button 
-            key="course" 
-            type="primary" 
+          <Button
+            key="course"
+            type="primary"
             onClick={() => {
               setShowCompletionModal(false)
               navigate(`/courses/${lesson?.courseId}`)
@@ -500,9 +497,9 @@ export default function LessonPlayerPage() {
         centered
       >
         <div style={{ textAlign: 'center', padding: '24px 0' }}>
-          <div style={{ 
-            fontSize: 80, 
-            color: '#ffc53d', 
+          <div style={{
+            fontSize: 80,
+            color: '#ffc53d',
             marginBottom: 16,
             display: 'flex',
             justifyContent: 'center'
@@ -513,7 +510,7 @@ export default function LessonPlayerPage() {
             Chúc mừng bạn đã hoàn thành khóa học!
           </Title>
           <Text style={{ fontSize: 16, display: 'block', marginBottom: 24 }}>
-            Bạn đã hoàn thành tất cả các bài học trong khóa học này. 
+            Bạn đã hoàn thành tất cả các bài học trong khóa học này.
             Bạn có thể xem lại bất kỳ bài học nào hoặc tiếp tục với các khóa học khác.
           </Text>
           <div style={{
@@ -575,15 +572,15 @@ export default function LessonPlayerPage() {
             return (
               <List.Item
                 key={item.id}
-                style={{ 
-                  background: isCurrentLesson ? '#e6f4ff' : isCompleted ? '#f6ffed' : undefined, 
-                  borderRadius: 8, 
-                  marginBottom: 8, 
-                  padding: 8 
+                style={{
+                  background: isCurrentLesson ? '#e6f4ff' : isCompleted ? '#f6ffed' : undefined,
+                  borderRadius: 8,
+                  marginBottom: 8,
+                  padding: 8
                 }}
                 actions={[
-                  <Button 
-                    size='small' 
+                  <Button
+                    size='small'
                     type={buttonType}
                     icon={buttonIcon}
                     disabled={isCurrentLesson}

@@ -55,7 +55,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(({
       const containerId = `youtube-player-container-${videoId}`
       const playerRef = React.useRef<any>(null)
       const timeUpdateIntervalRef = React.useRef<NodeJS.Timeout | null>(null)
-      
+
       React.useEffect(() => {
         if (!onVideoEnded && !onTimeUpdate) {
           return
@@ -69,9 +69,9 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(({
           const firstScriptTag = document.getElementsByTagName('script')[0]
           firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag)
 
-          ;(window as any).onYouTubeIframeAPIReady = () => {
-            initializePlayer()
-          }
+            ; (window as any).onYouTubeIframeAPIReady = () => {
+              initializePlayer()
+            }
         }
 
         function initializePlayer() {
@@ -125,7 +125,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(({
                           } catch (error) {
                             console.error('Error getting YouTube video time:', error)
                           }
-                        }, 10000)
+                        }, 3000)
                       }
                     },
                     onError: (error: any) => {
@@ -212,9 +212,9 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(({
       if (onTimeUpdate && video.duration && video.duration > 0) {
         const now = Date.now()
         const lastUpdate = (video as any).__lastUpdateTime || 0
-        if (now - lastUpdate >= 5000) {
+        if (now - lastUpdate >= 2000) {
           onTimeUpdate(video.currentTime, video.duration)
-          ;(video as any).__lastUpdateTime = now
+            ; (video as any).__lastUpdateTime = now
         }
       }
     }

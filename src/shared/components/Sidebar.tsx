@@ -23,7 +23,7 @@ const MENU_ITEMS: MenuItem[] = [
       { key: PagePath.BUILD_STRUCTURE, label: <Link to={PagePath.BUILD_STRUCTURE}>Xây dựng đề</Link> },
       { key: PagePath.BUILD_LESSON, label: <Link to={PagePath.BUILD_LESSON}>Xây dựng giáo án</Link> },
       {
-        key: PagePath.EXPREANDSUCCE,
+        key: "/ai/experience-initiative",
         label: <Link to="/ai/experience-initiative">Sáng kiến kinh nghiệm</Link>
       },
       { key: PagePath.ASSISTANTAI, label: <Link to={PagePath.ASSISTANTAI}>Trợ lý giáo viên</Link> }
@@ -85,7 +85,8 @@ const Sidebar: React.FC = () => {
       PagePath.STUDENT_EXERCISE,
       PagePath.STUDENT_REVIEW,
       PagePath.STUDENT_MINDMAP,
-      PagePath.STUDENT_PLAN
+      PagePath.STUDENT_PLAN,
+      "/ai/experience-initiative"
     ]
 
     // Find exact match first
@@ -105,7 +106,8 @@ const Sidebar: React.FC = () => {
       PagePath.BUILD_STRUCTURE,
       PagePath.BUILD_LESSON,
       PagePath.EXPREANDSUCCE,
-      PagePath.ASSISTANTAI
+      PagePath.ASSISTANTAI,
+      "/ai/experience-initiative"
     ]
     return teacherPaths.some((path) => location.pathname.includes(path))
   }, [location.pathname])

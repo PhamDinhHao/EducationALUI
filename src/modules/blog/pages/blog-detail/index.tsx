@@ -209,10 +209,6 @@ const BlogDetail = () => {
   const shareUrl = window.location.href;
   const shareImage = blog?.image || 'https://via.placeholder.com/1200x630?text=Blog+Image';
   const shareDescription = blog?.excerpt || (blog?.content ? blog.content.replace(/<[^>]*>/g, '').substring(0, 150) : 'Read this amazing article');
-  console.log(shareDescription)
-  console.log(shareImage)
-  console.log(shareUrl)
-  console.log(blog?.title)
   return (
     <>
     <Helmet>
@@ -523,7 +519,7 @@ const BlogDetail = () => {
                         {/* Parent Comment */}
                         <div className='flex gap-4'>
                           <img
-                            src={comment.user?.avatar || 'https://via.placeholder.com/48'}
+                            src={comment.user?.avatar || 'https://image.dienthoaivui.com.vn/x,webp,q90/https://dashboard.dienthoaivui.com.vn/uploads/dashboard/editor_upload/nen-trang-tron-23.jpg'}
                             alt={comment.user?.name || 'User'}
                             className='h-12 w-12 rounded-full border-2 border-gray-200'
                           />
@@ -586,7 +582,7 @@ const BlogDetail = () => {
                                 {comment.replies.map((reply: any) => (
                                   <div key={reply.id} className='comment-reply-indicator flex gap-3 py-2 pl-4'>
                                     <img
-                                      src={reply.user?.avatar || 'https://via.placeholder.com/40'}
+                                      src={reply.user?.avatar || 'https://image.dienthoaivui.com.vn/x,webp,q90/https://dashboard.dienthoaivui.com.vn/uploads/dashboard/editor_upload/nen-trang-tron-23.jpg'}
                                       alt={reply.user?.name || 'User'}
                                       className='h-10 w-10 rounded-full border-2 border-gray-200'
                                     />
@@ -662,7 +658,7 @@ const BlogDetail = () => {
                   <h3 className='mb-4 text-xl font-bold text-gray-900'>About the Author</h3>
                   <div className='text-center'>
                     <img
-                      src={blog.user.avatar || 'https://via.placeholder.com/96'}
+                      src={blog.user.avatar || 'https://image.dienthoaivui.com.vn/x,webp,q90/https://dashboard.dienthoaivui.com.vn/uploads/dashboard/editor_upload/nen-trang-tron-23.jpg'}
                       alt={blog.user.name || 'Author'}
                       className='mx-auto mb-4 h-24 w-24 rounded-full border-4 border-indigo-100'
                       onError={(e) => {

@@ -141,7 +141,7 @@ Viết bằng tiếng Việt, chuyên nghiệp và có cấu trúc rõ ràng`
       <div></div>
       <div className='flex w-[520px] flex-col border-r border-gray-200 bg-white'>
         <div className='border-b border-gray-200 p-6'>
-          <h2 className='text-lg font-semibold text-gray-800'>Input data</h2>
+          <h2 className='text-lg font-semibold text-gray-800'>Nhập dữ liệu</h2>
         </div>
 
         <div className='flex-1 space-y-5 overflow-y-auto p-6'>
@@ -155,7 +155,7 @@ Viết bằng tiếng Việt, chuyên nghiệp và có cấu trúc rõ ràng`
               onChange={(e) => handleChange('who', e.target.value)}
               className='w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-transparent focus:ring-2 focus:ring-orange-500'
             >
-              <option value=''>Select value</option>
+              <option value=''>Chọn giá trị</option>
               <option value='giao-vien-mam-non'>Giáo viên mầm non</option>
               <option value='giao-vien-tieu-hoc'>Giáo viên tiểu học</option>
               <option value='giao-vien-trung-hoc'>Giáo viên trung học</option>
@@ -174,7 +174,7 @@ Viết bằng tiếng Việt, chuyên nghiệp và có cấu trúc rõ ràng`
               onChange={(e) => handleChange('researchObject', e.target.value)}
               className='w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-transparent focus:ring-2 focus:ring-orange-500'
             >
-              <option value=''>Select value</option>
+              <option value=''>Chọn giá trị</option>
               <option value='hoc-sinh'>Học sinh</option>
               <option value='gia-vien'>Giáo viên</option>
               <option value='nha-truong'>Nhà trường</option>
@@ -214,7 +214,7 @@ Viết bằng tiếng Việt, chuyên nghiệp và có cấu trúc rõ ràng`
               className='flex items-center gap-2 rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100'
             >
               <X size={18} />
-              Clear
+              Xóa
             </button>
             <button
               onClick={handleSubmit}
@@ -222,7 +222,7 @@ Viết bằng tiếng Việt, chuyên nghiệp và có cấu trúc rõ ràng`
               className='flex items-center gap-2 rounded-lg bg-orange-500 px-6 py-2 text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:bg-gray-300'
             >
               <FileText size={18} />
-              Create content
+              Tạo nội dung
               {loading && (
                 <span className='ml-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
               )}
@@ -288,14 +288,14 @@ Viết bằng tiếng Việt, chuyên nghiệp và có cấu trúc rõ ràng`
                 />
 
                 {/* Actions */}
-                <div className='mt-8 flex gap-3 border-t border-gray-200 pt-4'>
+                {/* <div className='mt-8 flex gap-3 border-t border-gray-200 pt-4'>
                   <button className='rounded-lg bg-orange-500 px-4 py-2 text-white transition-colors hover:bg-orange-600'>
                     📥 Tải xuống
                   </button>
                   <button className='rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50'>
                     📋 Sao chép
                   </button>
-                </div>
+                </div> */}
               </div>
             </div>
           ) : (
@@ -304,7 +304,7 @@ Viết bằng tiếng Việt, chuyên nghiệp và có cấu trúc rõ ràng`
                 <div className='mb-4 text-gray-300'>
                   <FileText size={64} className='mx-auto' />
                 </div>
-                <p className='text-lg text-gray-400'>Điền thông tin và nhấn "Create content"</p>
+                <p className='text-lg text-gray-400'>Điền thông tin và nhấn "Tạo nội dung"</p>
                 <p className='mt-2 text-sm text-gray-400'>AI sẽ tạo nội dung sáng kiến kinh nghiệm cho bạn</p>
               </div>
             </div>

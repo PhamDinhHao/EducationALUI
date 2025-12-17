@@ -8,10 +8,10 @@ import { useBoundStore } from '@/shared/stores'
 import images from '@/assets/images/images'
 
 const categories = [
-  { name: 'Học sinh', icon: '🎓' },
-  { name: 'Giáo viên', icon: '🏫' },
-  { name: 'Cán bộ quản lý', icon: '💼' },
-  { name: 'Công nghệ mới', icon: '📱' }
+  { key: 'STUDENT', name: 'Học sinh', icon: '🎓' },
+  { key: 'TEACHER', name: 'Giáo viên', icon: '🏫' },
+  { key: 'MANAGEMENT_STAFF', name: 'Cán bộ quản lý', icon: '💼' },
+  { key: 'NEW_TECHNOLOGY', name: 'Công nghệ mới', icon: '📱' }
 ]
 
 const Blog = () => {
@@ -69,7 +69,7 @@ const Blog = () => {
         ...(title && { title }),
         ...(tag && { tags: tag }),
         ...(activeTab === 'contests' ? { type: 'CONTESTS' } : { type: 'BLOG' }),
-        ...(activeCategory && { category: activeCategory.toUpperCase().replace(' ', '_') })
+        ...(activeCategory && { category: activeCategory })
       }
 
       Promise.all([
@@ -713,9 +713,9 @@ const Blog = () => {
                 <div className='space-y-1'>
                   {categories.map((item, idx) => (
                     <div
-                      onClick={() => setActiveCategory(item.name.toLowerCase())}
+                      onClick={() => setActiveCategory(item.key)}
                       key={idx}
-                      className={`sidebar-item group flex cursor-pointer items-center justify-between rounded-2xl px-4 py-4 transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 ${activeCategory === item.name.toLowerCase() ? 'bg-gradient-to-r from-indigo-50 to-purple-50' : ''}`}
+                      className={`sidebar-item group flex cursor-pointer items-center justify-between rounded-2xl px-4 py-4 transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 ${activeCategory === item.key ? 'bg-gradient-to-r from-indigo-50 to-purple-50' : ''}`}
                     >
                       <div className='flex items-center gap-3'>
                         <span className='category-icon text-2xl'>{item.icon}</span>

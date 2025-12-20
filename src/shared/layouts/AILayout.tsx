@@ -1,7 +1,6 @@
 import { Layout } from 'antd'
 import { Link, Outlet } from 'react-router-dom'
 import Menu from '@/shared/components/Menu'
-import BaseRoute from '@/shared/static-pages/Base'
 import images from '@/assets/images'
 import Sidebar from '@/shared/components/Sidebar'
 const { Content, Header } = Layout

@@ -1,5 +1,5 @@
 import { Menu as MenuAntd, Button, Layout } from 'antd'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ReadOutlined, SearchOutlined, UserOutlined, DownloadOutlined } from '@ant-design/icons'
 import { MenuItem } from '@/shared/core/types'
 import { PagePath } from '@/shared/core/enum/page.enum'
@@ -45,6 +45,7 @@ const MENU_ITEMS: MenuItem[] = [
 const Sidebar: React.FC = () => {
   const { onMenuClick } = useMenu()
   const location = useLocation()
+  const navigate = useNavigate()
 
   const [searchText] = useState('')
 
@@ -262,6 +263,7 @@ const Sidebar: React.FC = () => {
           <Button
             type='primary'
             block
+            onClick={() => navigate(PagePath.GAME)}
             style={{
               background: '#ff8c00',
               border: 'none',
@@ -270,7 +272,7 @@ const Sidebar: React.FC = () => {
               fontWeight: 600
             }}
           >
-            Bắt đầu
+            Trò chơi
           </Button>
         </div>
 

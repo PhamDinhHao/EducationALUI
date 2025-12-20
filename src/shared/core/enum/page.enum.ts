@@ -18,7 +18,7 @@ export enum ModuleName {
   PROMPT_LESSON = "prompt-lesson",
   STEM_LESSON = "stem-lesson",
   ASSISTANTAI = "assistant-ai",
-  BUILD_TOPIC = "build-topic", 
+  BUILD_TOPIC = "build-topic",
   PERSONAL_PLAN = "personal-plan",
   TEACHER_ASSISTANT = "teacher-assistant",
   BUILD_STRUCTURE = "build-structure",
@@ -28,7 +28,8 @@ export enum ModuleName {
   BLOG_DETAIL = "blog-detail",
   BLOG_ADD = "blog-add",
   BLOG_UPDATE = "blog-update",
-  SEARCH_AI = "search-ai"
+  SEARCH_AI = "search-ai",
+  GAME = "game"
 }
 
 export enum PageName {
@@ -66,7 +67,8 @@ export enum PageName {
   BLOG_DETAIL = "blog-detail",
   BLOG_ADD = "blog-add",
   BLOG_UPDATE = "blog-update",
-  SEARCH_AI = "search-ai"
+  SEARCH_AI = "search-ai",
+  GAME = "game"
 }
 
 export enum PagePath {
@@ -110,5 +112,6 @@ export enum PagePath {
   TEACHER_ASSISTANT = "/ai/teacher-assistant",
   BUILD_STRUCTURE = "/ai/build-structure",
   EXAM_PREVIEW = "/ai/exam-preview",
-  SEARCH_AI = "/ai/search-ai"
+  SEARCH_AI = "/ai/search-ai",
+  GAME = "/ai/game"
 }

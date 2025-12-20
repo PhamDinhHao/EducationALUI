@@ -83,6 +83,10 @@ export const aiRoute = {
     {
       path: 'student/plan',
       element: lazyLoadModuleRoute(ModuleName.AI, 'StudentPlan')
+    },
+    {
+      path: 'game',
+      element: lazyLoadModuleRoute(ModuleName.GAME, PageName.GAME)
     }
   ]
 }

@@ -24,7 +24,7 @@ const PageWrapper = ({ title, icon, children }: PageWrapperProps) => {
     {
       label: (
         <Space onClick={handleLogout}>
-          Logout
+          Đăng xuất
           <LogoutOutlined />
         </Space>
       ),

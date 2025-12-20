@@ -66,7 +66,7 @@ const DesktopMenu = memo<{
     ? [
       {
         key: 'profile',
-        label: 'Profile',
+        label: 'Trang cá nhân',
         icon: <UserOutlined />,
         onClick: () => onNavigate(PagePath.PROFILE)
       },
@@ -81,7 +81,7 @@ const DesktopMenu = memo<{
       },
       {
         key: 'logout',
-        label: 'Logout',
+        label: 'Đăng xuất',
         icon: <LogoutOutlined />,
         danger: true,
         onClick: onLogout
@@ -125,7 +125,7 @@ const DesktopMenu = memo<{
           </Dropdown>
         ) : (
           <Button type='text' icon={<LoginOutlined />} className='flex items-center' onClick={onLogin}>
-            Login
+            Đăng nhập
           </Button>
         )}
       </div>
@@ -211,7 +211,7 @@ const MobileMenu = memo<{
               className='flex w-full items-center text-left mb-2'
               onClick={() => handleMenuClick(PagePath.PROFILE)}
             >
-              Profile
+              Trang cá nhân
             </Button>
             <Button
               type='text'
@@ -228,7 +228,7 @@ const MobileMenu = memo<{
               className='flex w-full items-center text-left'
               danger
             >
-              Log Out
+              Đăng xuất
             </Button>
           </>
         ) : (
@@ -337,7 +337,7 @@ const Menu: React.FC = () => {
       <Drawer
         title={
           <div className='flex items-center'>
-              <img src={images.icLogo} width={120} alt='Logo' />
+            <img src={images.icLogo} width={120} alt='Logo' />
           </div>
         }
         placement='right'

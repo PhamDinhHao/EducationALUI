@@ -13,26 +13,26 @@ const SignInForm = () => {
           error={errors.email}
           label='Email'
           name='email'
-          placeholder='Enter your email'
+          placeholder='Nhập email của bạn'
           register={register}
           type='email'
         />
         <FormField
           error={errors.password}
-          label='Password'
+          label='Mật khẩu'
           name='password'
-          placeholder='Enter your password'
+          placeholder='Nhập mật khẩu của bạn'
           register={register}
           type='password'
         />
         <button className='mt-2 w-full rounded-xl bg-[#3366FF] py-3 text-white hover:bg-blue-600' type='submit'>
-          Sign In
+          Đăng nhập
         </button>
       </form>
 
       <div className='text-center text-sm'>
         <Link className='text-gray-500 hover:text-gray-700' to={PagePath.REGISTER}>
-          Already have an account? Sign In
+          Bạn chưa có tài khoản? Đăng ký ngay
         </Link>
       </div>
     </div>

@@ -12,35 +12,35 @@ const SignUpForm = () => {
       className='flex w-full max-w-[540px] flex-col gap-6 rounded-2xl bg-white p-8 shadow-[0_0_15px_rgba(0,0,0,0.2)]'
       onSubmit={submitHandler}
     >
-      <h1 className='mb-2 text-center text-2xl font-bold'>Sign Up</h1>
+      <h1 className='mb-2 text-center text-2xl font-bold'>Đăng ký</h1>
       <FormField
         error={errors.name}
-        label='Full Name'
+        label='Họ và tên'
         name='name'
-        placeholder='Enter your full name'
+        placeholder='Nhập họ và tên của bạn'
         register={register}
       />
       <FormField
         error={errors.email}
         label='Email'
         name='email'
-        placeholder='Enter your email'
+        placeholder='Nhập email của bạn'
         register={register}
         type='email'
       />
       <FormField
         error={errors.password}
-        label='Password'
+        label='Mật khẩu'
         name='password'
-        placeholder='Enter your password'
+        placeholder='Nhập mật khẩu của bạn'
         register={register}
         type='password'
       />
       <FormField
         error={errors.confirmPassword}
-        label='Confirm Password'
+        label='Xác nhận mật khẩu'
         name='confirmPassword'
-        placeholder='Enter your password again'
+        placeholder='Nhập lại mật khẩu của bạn'
         register={register}
         type='password'
       />
@@ -48,13 +48,13 @@ const SignUpForm = () => {
         className='mt-4 rounded-xl bg-blue-600 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50'
         type='submit'
       >
-        Sign Up
+        Đăng ký
       </button>
 
       <div className='mt-2 text-center text-sm text-gray-600'>
-        Already have an account?
+        Bạn đã có tài khoản?{' '}
         <Link to={PagePath.LOGIN} className='text-blue-600 hover:underline'>
-          Sign In
+          Đăng nhập
         </Link>
       </div>
     </form>

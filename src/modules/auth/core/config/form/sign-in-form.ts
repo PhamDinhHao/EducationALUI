@@ -1,11 +1,11 @@
 import { z } from 'zod'
 
 export const SignInSchema = z.object({
-  email: z.string({ required_error: 'Email is required' }).email({ message: 'Email is invalid' }),
+  email: z.string({ required_error: 'Email không được để trống' }).email({ message: 'Email không hợp lệ' }),
   password: z
-    .string({ required_error: 'Password is required', invalid_type_error: 'Password is invalid' })
-    .min(8, { message: 'Password must be at least 8 characters long' })
-    .max(20, { message: 'Password must be less than 20 characters long' })
+    .string({ required_error: 'Mật khẩu không được để trống', invalid_type_error: 'Mật khẩu không hợp lệ' })
+    .min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự' })
+    .max(20, { message: 'Mật khẩu không được quá 20 ký tự' })
 })
 
 export type SignInSchemaType = z.infer<typeof SignInSchema>
